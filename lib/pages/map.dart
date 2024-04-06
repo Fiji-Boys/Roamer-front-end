@@ -19,28 +19,26 @@ class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  static const LatLng _pGooglePlex = LatLng(45.262610, 19.838718);
-  static const LatLng _pApplePark = LatLng(45.261735, 19.856769);
-  LatLng? _currentP;
+  static const LatLng startLoc = LatLng(45.262610, 19.838718);
+  static const LatLng destLoc = LatLng(45.261735, 19.856769);
+  LatLng? currentLoc;
 
   Map<PolylineId, Polyline> polylines = {};
+
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   @override
   void initState() {
     super.initState();
-    getLocationUpdates().then(
-      (_) => {
-        getPolylinePoints().then((coordinates) => {
-              generatePolyLineFromPoints(coordinates),
-            }),
-      },
-    );
+    getUserIcon();
+    getLocationUpdates();
+    getPolyPoints();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _currentP == null
+      body: currentLoc == null
           ? const Center(
               child: Text("Loading..."),
             )
@@ -48,23 +46,23 @@ class _MapPageState extends State<MapPage> {
               onMapCreated: ((GoogleMapController controller) =>
                   _mapController.complete(controller)),
               initialCameraPosition: const CameraPosition(
-                target: _pGooglePlex,
+                target: startLoc,
                 zoom: 13,
               ),
               markers: {
                 Marker(
-                  markerId: const MarkerId("_currentLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _currentP!,
-                ),
+                    markerId: const MarkerId("_currentLocation"),
+                    icon: markerIcon,
+                    position: currentLoc!,
+                    zIndex: 100),
                 const Marker(
                     markerId: MarkerId("_sourceLocation"),
                     icon: BitmapDescriptor.defaultMarker,
-                    position: _pGooglePlex),
+                    position: startLoc),
                 const Marker(
                     markerId: MarkerId("_destionationLocation"),
                     icon: BitmapDescriptor.defaultMarker,
-                    position: _pApplePark)
+                    position: destLoc)
               },
               polylines: Set<Polyline>.of(polylines.values),
             ),
@@ -106,42 +104,77 @@ class _MapPageState extends State<MapPage> {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         setState(() {
-          _currentP =
+          currentLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          _cameraToPosition(_currentP!);
         });
       }
     });
   }
 
-  Future<List<LatLng>> getPolylinePoints() async {
-    List<LatLng> polylineCoordinates = [];
+  void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      GOOGLE_MAPS_API_KEY,
-      PointLatLng(_pGooglePlex.latitude, _pGooglePlex.longitude),
-      PointLatLng(_pApplePark.latitude, _pApplePark.longitude),
-      travelMode: TravelMode.driving,
-    );
+        googleMapsApiKey,
+        PointLatLng(startLoc.latitude, startLoc.longitude),
+        PointLatLng(destLoc.latitude, destLoc.longitude),
+        travelMode: TravelMode.walking);
+
+    List<LatLng> polylineCoords = [];
+
     if (result.points.isNotEmpty) {
       for (var point in result.points) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        polylineCoords.add(LatLng(point.latitude, point.longitude));
       }
-    } else {
-      print(result.errorMessage);
+      setState(() {
+        polylines[const PolylineId("route")] = Polyline(
+            polylineId: const PolylineId("route"),
+            points: polylineCoords,
+            width: 6,
+            color: primaryColor);
+      });
     }
-    return polylineCoordinates;
   }
 
-  void generatePolyLineFromPoints(List<LatLng> polylineCoordinates) async {
-    PolylineId id = const PolylineId("poly");
-    Polyline polyline = Polyline(
-        polylineId: id,
-        color: Colors.black,
-        points: polylineCoordinates,
-        width: 8);
-    setState(() {
-      polylines[id] = polyline;
-    });
+  void getUserIcon() {
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), "assets/user_marker.png")
+        .then(
+      (icon) {
+        setState(() {
+          markerIcon = icon;
+        });
+      },
+    );
   }
+
+  // Future<List<LatLng>> getPolylinePoints() async {
+  //   List<LatLng> polylineCoordinates = [];
+  //   PolylinePoints polylinePoints = PolylinePoints();
+  //   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+  //     GOOGLE_MAPS_API_KEY,
+  //     PointLatLng(startingPos.latitude, startingPos.longitude),
+  //     PointLatLng(destPos.latitude, destPos.longitude),
+  //     travelMode: TravelMode.driving,
+  //   );
+  //   if (result.points.isNotEmpty) {
+  //     for (var point in result.points) {
+  //       polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+  //     }
+  //   } else {
+  //     print(result.errorMessage);
+  //   }
+  //   return polylineCoordinates;
+  // }
+
+  // void generatePolyLineFromPoints(List<LatLng> polylineCoordinates) async {
+  //   PolylineId id = const PolylineId("poly");
+  //   Polyline polyline = Polyline(
+  //       polylineId: id,
+  //       color: Colors.black,
+  //       points: polylineCoordinates,
+  //       width: 8);
+  //   setState(() {
+  //     polylines[id] = polyline;
+  //   });
+  // }
 }
