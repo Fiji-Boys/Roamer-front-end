@@ -23,7 +23,7 @@ class _MapPageState extends State<MapPage> {
   static const LatLng destLoc = LatLng(45.261735, 19.856769);
   LatLng? currentLoc;
 
-  Map<PolylineId, Polyline> polylines = {};
+  late Polyline currentPolyline;
 
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
@@ -64,19 +64,8 @@ class _MapPageState extends State<MapPage> {
                     icon: BitmapDescriptor.defaultMarker,
                     position: destLoc)
               },
-              polylines: Set<Polyline>.of(polylines.values),
+              polylines: createPolylineSet(),
             ),
-    );
-  }
-
-  Future<void> _cameraToPosition(LatLng pos) async {
-    final GoogleMapController controller = await _mapController.future;
-    CameraPosition newCameraPosition = CameraPosition(
-      target: pos,
-      zoom: 13,
-    );
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(newCameraPosition),
     );
   }
 
@@ -126,7 +115,7 @@ class _MapPageState extends State<MapPage> {
         polylineCoords.add(LatLng(point.latitude, point.longitude));
       }
       setState(() {
-        polylines[const PolylineId("route")] = Polyline(
+        currentPolyline = Polyline(
             polylineId: const PolylineId("route"),
             points: polylineCoords,
             width: 6,
@@ -145,6 +134,12 @@ class _MapPageState extends State<MapPage> {
         });
       },
     );
+  }
+
+  Set<Polyline> createPolylineSet() {
+    Set<Polyline> set = <Polyline>{};
+    set.add(currentPolyline);
+    return set;
   }
 
   // Future<List<LatLng>> getPolylinePoints() async {
