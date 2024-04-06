@@ -14,11 +14,11 @@ class KeyPoint {
     required this.name,
     required this.description,
     required this.images,
-    required this.longitude,
     required this.latitude,
+    required this.longitude,
   });
 
-  LatLng getPosition() {
+  LatLng getLocation() {
     return LatLng(longitude, latitude);
   }
 }

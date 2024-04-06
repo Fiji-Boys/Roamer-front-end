@@ -6,26 +6,34 @@ import 'keyPoint.dart';
 class Tour {
   String name;
   String description;
-  bool isStarted;
+  bool isStarted = false;
+  bool isCompleted = false;
   List<KeyPoint> keyPoints;
-  int currentKeyPoint = -1;
+  int nextKeyPoint = 0;
 
   Tour({
     required this.name,
     required this.description,
-    required this.isStarted,
     required this.keyPoints,
   });
 
-  LatLng getNextKeyPoint() {
-    var nextKeyPoint =
-        keyPoints.firstWhere((keyPoint) => keyPoint.id == currentKeyPoint + 1);
-    currentKeyPoint = nextKeyPoint.id;
-    return nextKeyPoint.getPosition();
+  LatLng getNextKeyPointLocation() {
+    KeyPoint keyPoint = keyPoints[nextKeyPoint];
+    return keyPoint.getLocation();
   }
 
   void startTour() {
     isStarted = true;
-    currentKeyPoint = 0;
+  }
+
+  void completeTour() {
+    isCompleted = true;
+  }
+
+  void completeKeyPoint() {
+    if (++nextKeyPoint > keyPoints.length) {
+      completeTour();
+      isStarted = false;
+    }
   }
 }

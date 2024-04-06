@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:figenie/consts.dart';
+import 'package:figenie/model/keyPoint.dart';
+import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,6 +17,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final Location _locationController = Location();
+  late Tour tour;
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -67,6 +70,34 @@ class _MapPageState extends State<MapPage> {
               polylines: Set<Polyline>.of(polylines.values),
             ),
     );
+  }
+
+  void startTour() {
+    List<KeyPoint> keyPoints = [
+      KeyPoint(
+          id: 1,
+          name: "KeyPoint1",
+          description: "Description of Key Point 1",
+          images: ["image1.jpg", "image2.jpg"],
+          latitude: 45.262610,
+          longitude: 19.838718),
+      KeyPoint(
+          id: 1,
+          name: "KeyPoint2",
+          description: "Description of Key Point 2",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.262610,
+          longitude: 19.856769),
+      KeyPoint(
+          id: 1,
+          name: "KeyPoint3",
+          description: "Description of Key Point 3",
+          images: ["image5.jpg", "image6.jpg"],
+          latitude: 45.247218,
+          longitude: 19.853681)
+    ];
+    tour = Tour(
+        name: "TestTure", description: "TestDescription", keyPoints: keyPoints);
   }
 
   Future<void> _cameraToPosition(LatLng pos) async {
