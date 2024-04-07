@@ -260,7 +260,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void deleteRoute(String currentKeyPoint, String nextKeyPoint) {
-    currentPolylines.remove(currentKeyPoint + "/" + nextKeyPoint);
+    currentPolylines.remove("$currentKeyPoint/$nextKeyPoint");
     markers.remove(currentKeyPoint);
   }
 }
