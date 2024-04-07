@@ -33,7 +33,7 @@ class Tour {
   }
 
   void completeKeyPoint() {
-    if (++nextKeyPoint > keyPoints.length) {
+    if (++nextKeyPoint >= keyPoints.length) {
       completeTour();
       isStarted = false;
     }
