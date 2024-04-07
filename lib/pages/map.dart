@@ -188,6 +188,10 @@ class _MapPageState extends State<MapPage> {
               activeTour.completeKeyPoint();
             }
 
+            if (activeTour.isCompleted) {
+              isTourAcite = false;
+              return;
+            }
             createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
                 "user", primaryColor);
           }
