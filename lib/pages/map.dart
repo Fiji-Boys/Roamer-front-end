@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -51,21 +52,33 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: currentLoc == null
-          ? const Center(
-              child: Text("Loading..."),
-            )
-          : GoogleMap(
-              onMapCreated: ((GoogleMapController controller) =>
-                  _mapController.complete(controller)),
-              initialCameraPosition: const CameraPosition(
-                target: startLoc,
-                zoom: 13,
-              ),
-              markers: Set<Marker>.of(markers.values),
-              polylines: Set<Polyline>.of(currentPolylines.values),
-            ),
-    );
+        body: Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Container(
+            color: primaryContentColor,
+          ),
+        ),
+        Expanded(
+          flex: 10,
+          child: currentLoc == null
+              ? const Center(
+                  child: Loading(),
+                )
+              : GoogleMap(
+                  onMapCreated: ((GoogleMapController controller) =>
+                      _mapController.complete(controller)),
+                  initialCameraPosition: const CameraPosition(
+                    target: startLoc,
+                    zoom: 13,
+                  ),
+                  markers: Set<Marker>.of(markers.values),
+                  polylines: Set<Polyline>.of(currentPolylines.values),
+                ),
+        )
+      ],
+    ));
   }
 
   Future<void> _getTourMarkers() async {
@@ -99,7 +112,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               child: AlertDialog(
                 backgroundColor: Colors.white,
                 elevation: 0,
-                title: Text(
+                title: const Text(
                   "Tour Information",
                   textAlign: TextAlign.center,
                 ),
