@@ -50,10 +50,10 @@ class NavigationBarController extends GetxController {
   final Rx<int> selectedIndex = 3.obs;
 
   final screens = [
-    Container(color: Colors.green),
+    Container(color: Colors.red),
     Container(color: Colors.green),
     const MapPage(),
     Container(color: Colors.green),
-    Container(color: Colors.green)
+    Container(color: Colors.blue)
   ];
 }
