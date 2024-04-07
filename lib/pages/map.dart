@@ -103,8 +103,8 @@ class _MapPageState extends State<MapPage> {
     activeTour = selectedTour;
     activeTour.startTour();
     isTourAcite = true;
-    createPolyline(currentLoc!, selectedTour.getNextKeyPointLocation(),
-        "$currentLoc/${selectedTour.getNextKeyPointLocation()}", primaryColor);
+    createPolyline(currentLoc!, selectedTour.getNextKeyPointLocation(), "user",
+        primaryColor);
   }
 
   void _showKeyPoint(KeyPoint kp) {
@@ -181,13 +181,15 @@ class _MapPageState extends State<MapPage> {
         setState(() {
           currentLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (isTourAcite && calculateDistance()) {
-            activeTour.completeKeyPoint();
-            createPolyline(
-                currentLoc!,
-                activeTour.getNextKeyPointLocation(),
-                "$currentLoc/${activeTour.getNextKeyPointLocation()}",
-                primaryColor);
+          if (isTourAcite) {
+            if (calculateDistance()) {
+              deleteRoute(activeTour.keyPoints[activeTour.nextKeyPoint].name,
+                  activeTour.keyPoints[activeTour.nextKeyPoint + 1].name);
+              activeTour.completeKeyPoint();
+            }
+
+            createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
+                "user", primaryColor);
           }
           markers["_currentLocation"] = Marker(
               markerId: const MarkerId("_currentLocation"),
@@ -251,5 +253,10 @@ class _MapPageState extends State<MapPage> {
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
     return distance < 50;
+  }
+
+  void deleteRoute(String currentKeyPoint, String nextKeyPoint) {
+    currentPolylines.remove(currentKeyPoint + "/" + nextKeyPoint);
+    markers.remove(currentKeyPoint);
   }
 }
