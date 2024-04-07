@@ -97,21 +97,39 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               left: 0,
               right: 0,
               child: AlertDialog(
-                backgroundColor: Colors.white,
+                backgroundColor: backgroundColor,
                 elevation: 0,
-                title: Text(
+                title: const Text(
                   "Tour Information",
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textLighterColor,
+                  ),
                 ),
                 content: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Tour Name: ${tour.name}"),
-                      Text("Tour Description: ${tour.description}"),
-                      Text("Number of Key Points: ${tour.keyPoints.length}"),
+                      Text(
+                        "Tour Name: ${tour.name}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Tour Description: ${tour.description}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Number of Key Points: ${tour.keyPoints.length}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -120,15 +138,25 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        child: Text("Cancel"),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                           _resetMap();
                         },
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       TextButton(
-                        child: Text("Start Tour"),
+                        child: const Text(
+                          "Start Tour",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
                         onPressed: () {
                           hasStarted = true;
                           Navigator.of(context).pop();
