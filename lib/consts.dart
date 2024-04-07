@@ -8,11 +8,21 @@ const Color primaryContentColor = Color(0xff03192f);
 const Color primaryLightColor = Color(0xff6eb2f6);
 const Color primaryDarkColor = Color(0xff0f7eef);
 
-const Color secondaryColor = Color(0xfff35d3e);
-const Color secondaryContentColor = Color(0xff2f0a03);
-const Color secondaryLightColor = Color(0xfff6856e);
-const Color secondaryDarkColor = Color(0xffef350f);
+const Color secondaryColor = Color(0xfff3993e);
+const Color secondaryContentColor = Color(0xff2f1903);
+const Color secondaryLightColor = Color(0xfff6b26e);
+const Color secondaryDarkColor = Color(0xffef800f);
 
-const Color foreGroundColor = Color(0xff22262a);
-const Color backGroundColor = Color(0xff17191c);
-const Color borderColor = Color(0xff394046);
+const Color foregroundColor = Color(0xff192634);
+const Color backgroundColor = Color(0xff111922);
+const Color borderColor = Color(0xff294056);
+const Color textColor = Color(0xfffafbfd);
+const Color textLightColor = Color(0xffcbd9e6);
+const Color textLighterColor = Color(0xff87a6c5);
+
+const Color successColor = Color(0xff3ef33e);
+const Color successContentColor = Color(0xff032f03);
+const Color warningColor = Color(0xfff3f33e);
+const Color warningContentColor = Color(0xff032f03);
+const Color errorColor = Color(0xfff33e3e);
+const Color errorContentColor = Color(0xffffffff);

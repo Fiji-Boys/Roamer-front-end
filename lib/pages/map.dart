@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:figenie/consts.dart';
-import 'package:figenie/model/keyPoint.dart';
+import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -16,7 +16,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Location _locationController = Location();
 
   List<Tour> tours = <Tour>[];
@@ -45,6 +45,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: currentLoc == null
           ? const Center(
@@ -252,4 +253,7 @@ class _MapPageState extends State<MapPage> {
     debugPrint(distance.toString());
     return distance < 50;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
