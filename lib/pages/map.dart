@@ -178,6 +178,21 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
+  void showSnackBar(BuildContext context, String text) {
+    final snackBar = SnackBar(
+      content: Text(
+        text,
+        style: const TextStyle(
+          color: secondaryColor,
+        ),
+      ),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+      width: 300,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   void _resetMap() {
     _clearMarkers();
     _clearPolylines();
@@ -295,10 +310,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               deleteRoute(activeTour.keyPoints[activeTour.nextKeyPoint].name,
                   activeTour.keyPoints[activeTour.nextKeyPoint + 1].name);
               activeTour.completeKeyPoint();
+              showSnackBar(context,
+                  "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
             }
 
             if (activeTour.isCompleted) {
               isTourAcite = false;
+
+              showSnackBar(context, "Completed tour ${activeTour.name}");
+
               return;
             }
             createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
