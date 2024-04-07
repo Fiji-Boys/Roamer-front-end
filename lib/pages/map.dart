@@ -83,7 +83,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   Future<void> _getTourMarkers() async {
     for (var tour in tours) {
-      final ImageConfiguration imageConfiguration = ImageConfiguration();
+      const ImageConfiguration imageConfiguration = ImageConfiguration();
       final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
           imageConfiguration, 'assets/tour_marker.png');
       markers[tour.name] = Marker(
