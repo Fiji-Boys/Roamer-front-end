@@ -25,7 +25,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   List<Tour> tours = <Tour>[];
   late Tour activeTour;
-  late bool isTourAcite = false;
+  late bool isTourActive = false;
   late bool hasStarted = false;
 
   final Completer<GoogleMapController> _mapController =
@@ -110,21 +110,39 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               left: 0,
               right: 0,
               child: AlertDialog(
-                backgroundColor: Colors.white,
+                backgroundColor: backgroundColor,
                 elevation: 0,
                 title: const Text(
                   "Tour Information",
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textLighterColor,
+                  ),
                 ),
                 content: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Tour Name: ${tour.name}"),
-                      Text("Tour Description: ${tour.description}"),
-                      Text("Number of Key Points: ${tour.keyPoints.length}"),
+                      Text(
+                        "Tour Name: ${tour.name}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Tour Description: ${tour.description}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Number of Key Points: ${tour.keyPoints.length}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -133,15 +151,25 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        child: Text("Cancel"),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                           _resetMap();
                         },
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       TextButton(
-                        child: Text("Start Tour"),
+                        child: const Text(
+                          "Start Tour",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
                         onPressed: () {
                           hasStarted = true;
                           Navigator.of(context).pop();
@@ -161,6 +189,21 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         _resetMap();
       }
     });
+  }
+
+  void showSnackBar(BuildContext context, String text) {
+    final snackBar = SnackBar(
+      content: Text(
+        text,
+        style: const TextStyle(
+          color: secondaryColor,
+        ),
+      ),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+      width: 300,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _resetMap() {
@@ -196,7 +239,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   void _startTour(Tour selectedTour) {
     activeTour = selectedTour;
     activeTour.startTour();
-    isTourAcite = true;
+    isTourActive = true;
     createPolyline(currentLoc!, selectedTour.getNextKeyPointLocation(), "user",
         primaryColor);
   }
@@ -225,22 +268,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           name: "KeyPoint1",
           description: "Description of Key Point 1",
           images: ["image1.jpg", "image2.jpg"],
-          latitude: 45.262610,
-          longitude: 19.838718),
+          latitude: 45.2639,
+          longitude: 19.8304),
       KeyPoint(
           id: 2,
           name: "KeyPoint2",
           description: "Description of Key Point 2",
           images: ["image3.jpg", "image4.jpg"],
-          latitude: 45.262610,
-          longitude: 19.856769),
-      KeyPoint(
-          id: 3,
-          name: "KeyPoint3",
-          description: "Description of Key Point 3",
-          images: ["image5.jpg", "image6.jpg"],
-          latitude: 45.246618,
-          longitude: 19.851681)
+          latitude: 45.2626,
+          longitude: 19.8387),
     ];
 
     Tour newTour = Tour(
@@ -275,13 +311,25 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         setState(() {
           currentLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (isTourAcite) {
+          if (isTourActive) {
             if (calculateDistance()) {
-              deleteRoute(activeTour.keyPoints[activeTour.nextKeyPoint].name,
-                  activeTour.keyPoints[activeTour.nextKeyPoint + 1].name);
+              if (activeTour.nextKeyPoint + 1 < activeTour.keyPoints.length) {
+                deleteRoute(
+                    "${activeTour.keyPoints[activeTour.nextKeyPoint].name}/${activeTour.keyPoints[activeTour.nextKeyPoint + 1].name}");
+              }
+              deleteKeyPoint(
+                  activeTour.keyPoints[activeTour.nextKeyPoint].name);
               activeTour.completeKeyPoint();
+              showSnackBar(context,
+                  "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
             }
 
+            if (activeTour.isCompleted) {
+              debugPrint("COMPLETED");
+              showSnackBar(context, "Completed tour ${activeTour.name}");
+              isTourActive = false;
+              return;
+            }
             createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
                 "user", primaryColor);
           }
@@ -346,11 +394,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 50;
+    return distance < 80;
   }
 
-  void deleteRoute(String currentKeyPoint, String nextKeyPoint) {
-    currentPolylines.remove("$currentKeyPoint/$nextKeyPoint");
+  void deleteKeyPoint(String currentKeyPoint) {
     markers.remove(currentKeyPoint);
+  }
+
+  void deleteRoute(String route) {
+    currentPolylines.remove(route);
   }
 }
