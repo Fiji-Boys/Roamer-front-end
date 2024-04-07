@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:figenie/consts.dart';
@@ -30,11 +29,11 @@ class _MapPageState extends State<MapPage> {
   static const LatLng startLoc = LatLng(45.262610, 19.838718);
   LatLng? currentLoc;
 
-  List<Polyline> currentPolylines = <Polyline>[];
+  Map<String, Polyline> currentPolylines = {};
 
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
-  List<Marker> markers = <Marker>[];
+  Map<String, Marker> markers = {};
 
   @override
   void initState() {
@@ -58,21 +57,21 @@ class _MapPageState extends State<MapPage> {
                 target: startLoc,
                 zoom: 13,
               ),
-              markers: markers.toSet(),
-              polylines: currentPolylines.toSet(),
+              markers: Set<Marker>.of(markers.values),
+              polylines: Set<Polyline>.of(currentPolylines.values),
             ),
     );
   }
 
   void _getTourMarkers() {
     for (var tour in tours) {
-      markers.add(Marker(
+      markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
           icon: BitmapDescriptor.defaultMarker,
           position: tour.getLocation(),
           onTap: () {
             _showTour(tour);
-          }));
+          });
     }
     setState(() {});
   }
@@ -81,13 +80,13 @@ class _MapPageState extends State<MapPage> {
     _clearPolylines();
     _clearMarkers();
     for (int i = 0; i < tour.keyPoints.length; i++) {
-      markers.add(Marker(
+      markers[tour.keyPoints[i].name] = Marker(
           markerId: MarkerId(tour.keyPoints[i].name),
           icon: BitmapDescriptor.defaultMarker,
           position: tour.keyPoints[i].getLocation(),
           onTap: () {
             _showKeyPoint(tour.keyPoints[i]);
-          }));
+          });
       if (i != tour.keyPoints.length - 1) {
         createPolyline(
             tour.keyPoints[i].getLocation(),
@@ -113,19 +112,16 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _clearMarkers() {
-    markers = [
-      Marker(
-          markerId: const MarkerId("_currentLocation"),
-          icon: markerIcon,
-          position: currentLoc!,
-          zIndex: 100)
-    ];
+    markers.clear();
+    markers["_currentLocation"] = Marker(
+        markerId: const MarkerId("_currentLocation"),
+        icon: markerIcon,
+        position: currentLoc!,
+        zIndex: 100);
   }
 
   void _clearPolylines() {
-    if (currentPolylines.isNotEmpty) {
-      currentPolylines = [currentPolylines.first];
-    }
+    currentPolylines.clear();
   }
 
   void getTours() {
@@ -185,7 +181,7 @@ class _MapPageState extends State<MapPage> {
         setState(() {
           currentLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (isTourAcite && calculateDistane()) {
+          if (isTourAcite && calculateDistance()) {
             activeTour.completeKeyPoint();
             createPolyline(
                 currentLoc!,
@@ -193,11 +189,11 @@ class _MapPageState extends State<MapPage> {
                 "$currentLoc/${activeTour.getNextKeyPointLocation()}",
                 primaryColor);
           }
-          markers.add(Marker(
+          markers["_currentLocation"] = Marker(
               markerId: const MarkerId("_currentLocation"),
               icon: markerIcon,
               position: currentLoc!,
-              zIndex: 100));
+              zIndex: 100);
         });
       }
     });
@@ -219,11 +215,11 @@ class _MapPageState extends State<MapPage> {
         polylineCoords.add(LatLng(point.latitude, point.longitude));
       }
       setState(() {
-        currentPolylines.add(Polyline(
+        currentPolylines[polylineId] = Polyline(
             polylineId: PolylineId(polylineId),
             points: polylineCoords,
             width: 6,
-            color: polyLineColor));
+            color: polyLineColor);
       });
     }
   }
@@ -240,7 +236,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  bool calculateDistane() {
+  bool calculateDistance() {
     var p = 0.017453292519943295;
     var c = cos;
     LatLng nextKeyPointLocation = activeTour.getNextKeyPointLocation();
