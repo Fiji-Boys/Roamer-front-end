@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/keyPoint.dart';
@@ -21,6 +22,7 @@ class _MapPageState extends State<MapPage> {
 
   List<Tour> tours = <Tour>[];
   late Tour activeTour;
+  late bool isTourAcite = false;
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -90,10 +92,20 @@ class _MapPageState extends State<MapPage> {
         createPolyline(
             tour.keyPoints[i].getLocation(),
             tour.keyPoints[i + 1].getLocation(),
-            "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}");
+            "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
+            secondaryColor);
       }
     }
     setState(() {});
+    _startTour(tour);
+  }
+
+  void _startTour(Tour selectedTour) {
+    activeTour = selectedTour;
+    activeTour.startTour();
+    isTourAcite = true;
+    createPolyline(currentLoc!, selectedTour.getNextKeyPointLocation(),
+        "$currentLoc/${selectedTour.getNextKeyPointLocation()}", primaryColor);
   }
 
   void _showKeyPoint(KeyPoint kp) {
@@ -137,18 +149,14 @@ class _MapPageState extends State<MapPage> {
           name: "KeyPoint3",
           description: "Description of Key Point 3",
           images: ["image5.jpg", "image6.jpg"],
-          latitude: 45.247218,
-          longitude: 19.853681)
+          latitude: 45.246618,
+          longitude: 19.851681)
     ];
+
     Tour newTour = Tour(
         name: "TestTour", description: "TestDescription", keyPoints: keyPoints);
     tours.add(newTour);
     _getTourMarkers();
-  }
-
-  void startTour(Tour selectedTour) {
-    activeTour = selectedTour;
-    activeTour.startTour();
   }
 
   Future<void> getLocationUpdates() async {
@@ -170,8 +178,6 @@ class _MapPageState extends State<MapPage> {
       }
     }
 
-    bool hasLocationChanged = false;
-
     _locationController.onLocationChanged
         .listen((LocationData currentLocation) {
       if (currentLocation.latitude != null &&
@@ -179,20 +185,26 @@ class _MapPageState extends State<MapPage> {
         setState(() {
           currentLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (!hasLocationChanged) {
-            markers.add(Marker(
-                markerId: const MarkerId("_currentLocation"),
-                icon: markerIcon,
-                position: currentLoc!,
-                zIndex: 100));
-            hasLocationChanged = true;
+          if (isTourAcite && calculateDistane()) {
+            activeTour.completeKeyPoint();
+            createPolyline(
+                currentLoc!,
+                activeTour.getNextKeyPointLocation(),
+                "$currentLoc/${activeTour.getNextKeyPointLocation()}",
+                primaryColor);
           }
+          markers.add(Marker(
+              markerId: const MarkerId("_currentLocation"),
+              icon: markerIcon,
+              position: currentLoc!,
+              zIndex: 100));
         });
       }
     });
   }
 
-  void createPolyline(LatLng source, LatLng dest, String polylineId) async {
+  void createPolyline(LatLng source, LatLng dest, String polylineId,
+      Color polyLineColor) async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleMapsApiKey,
@@ -211,7 +223,7 @@ class _MapPageState extends State<MapPage> {
             polylineId: PolylineId(polylineId),
             points: polylineCoords,
             width: 6,
-            color: primaryColor));
+            color: polyLineColor));
       });
     }
   }
@@ -226,5 +238,22 @@ class _MapPageState extends State<MapPage> {
         });
       },
     );
+  }
+
+  bool calculateDistane() {
+    var p = 0.017453292519943295;
+    var c = cos;
+    LatLng nextKeyPointLocation = activeTour.getNextKeyPointLocation();
+    var a = 0.5 -
+        c((nextKeyPointLocation.latitude - currentLoc!.latitude) * p) / 2 +
+        c(currentLoc!.latitude * p) *
+            c(nextKeyPointLocation.latitude * p) *
+            (1 -
+                c((nextKeyPointLocation.longitude - currentLoc!.longitude) *
+                    p)) /
+            2;
+    double distance = 1000 * 12742 * asin(sqrt(a));
+    debugPrint(distance.toString());
+    return distance < 50;
   }
 }
