@@ -319,9 +319,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               }
               deleteKeyPoint(
                   activeTour.keyPoints[activeTour.nextKeyPoint].name);
-              activeTour.completeKeyPoint();
               showSnackBar(context,
                   "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
+              activeTour.completeKeyPoint();
             }
 
             if (activeTour.isCompleted) {
