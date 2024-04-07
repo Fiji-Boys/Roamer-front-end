@@ -31,7 +31,7 @@ class _MapPageState extends State<MapPage> {
 
   Map<String, Polyline> currentPolylines = {};
 
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor userIcon = BitmapDescriptor.defaultMarker;
 
   Map<String, Marker> markers = {};
 
@@ -115,7 +115,7 @@ class _MapPageState extends State<MapPage> {
     markers.clear();
     markers["_currentLocation"] = Marker(
         markerId: const MarkerId("_currentLocation"),
-        icon: markerIcon,
+        icon: userIcon,
         position: currentLoc!,
         zIndex: 100);
   }
@@ -193,7 +193,7 @@ class _MapPageState extends State<MapPage> {
           }
           markers["_currentLocation"] = Marker(
               markerId: const MarkerId("_currentLocation"),
-              icon: markerIcon,
+              icon: userIcon,
               position: currentLoc!,
               zIndex: 100);
         });
@@ -232,7 +232,7 @@ class _MapPageState extends State<MapPage> {
         .then(
       (icon) {
         setState(() {
-          markerIcon = icon;
+          userIcon = icon;
         });
       },
     );
