@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:figenie/consts.dart';
-import 'package:figenie/model/keyPoint.dart';
+import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -16,12 +16,16 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final Location _locationController = Location();
 
   List<Tour> tours = <Tour>[];
   late Tour activeTour;
   late bool isTourAcite = false;
+  late bool hasStarted = false;
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -45,6 +49,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: currentLoc == null
           ? const Center(
@@ -63,11 +68,14 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void _getTourMarkers() {
+  Future<void> _getTourMarkers() async {
     for (var tour in tours) {
+      final ImageConfiguration imageConfiguration = ImageConfiguration();
+      final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
+          imageConfiguration, 'assets/tour_marker.png');
       markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
-          icon: BitmapDescriptor.defaultMarker,
+          icon: customIcon,
           position: tour.getLocation(),
           onTap: () {
             _showTour(tour);
@@ -77,26 +85,127 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _showTour(Tour tour) {
+    showKeypoints(tour);
+    showDialog(
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return Stack(
+          children: [
+            Positioned(
+              bottom: 70,
+              left: 0,
+              right: 0,
+              child: AlertDialog(
+                backgroundColor: backgroundColor,
+                elevation: 0,
+                title: const Text(
+                  "Tour Information",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: textLighterColor,
+                  ),
+                ),
+                content: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Tour Name: ${tour.name}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Tour Description: ${tour.description}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                      Text(
+                        "Number of Key Points: ${tour.keyPoints.length}",
+                        style: const TextStyle(
+                          color: textLighterColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _resetMap();
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        child: const Text(
+                          "Start Tour",
+                          style: TextStyle(
+                            color: secondaryColor,
+                          ),
+                        ),
+                        onPressed: () {
+                          hasStarted = true;
+                          Navigator.of(context).pop();
+                          _startTour(tour);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    ).then((value) {
+      if (!hasStarted) {
+        _resetMap();
+      }
+    });
+  }
+
+  void _resetMap() {
+    _clearMarkers();
+    _clearPolylines();
+    _getTourMarkers();
+  }
+
+  void showKeypoints(Tour tour) {
     _clearPolylines();
     _clearMarkers();
     for (int i = 0; i < tour.keyPoints.length; i++) {
       markers[tour.keyPoints[i].name] = Marker(
-          markerId: MarkerId(tour.keyPoints[i].name),
-          icon: BitmapDescriptor.defaultMarker,
-          position: tour.keyPoints[i].getLocation(),
-          onTap: () {
-            _showKeyPoint(tour.keyPoints[i]);
-          });
+        markerId: MarkerId(tour.keyPoints[i].name),
+        icon: BitmapDescriptor.defaultMarker,
+        position: tour.keyPoints[i].getLocation(),
+        onTap: () {
+          _showKeyPoint(tour.keyPoints[i]);
+        },
+      );
       if (i != tour.keyPoints.length - 1) {
         createPolyline(
-            tour.keyPoints[i].getLocation(),
-            tour.keyPoints[i + 1].getLocation(),
-            "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
-            secondaryColor);
+          tour.keyPoints[i].getLocation(),
+          tour.keyPoints[i + 1].getLocation(),
+          "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
+          secondaryColor,
+        );
       }
     }
     setState(() {});
-    _startTour(tour);
   }
 
   void _startTour(Tour selectedTour) {
@@ -260,7 +369,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void deleteRoute(String currentKeyPoint, String nextKeyPoint) {
-    currentPolylines.remove(currentKeyPoint + "/" + nextKeyPoint);
+    currentPolylines.remove("$currentKeyPoint/$nextKeyPoint");
     markers.remove(currentKeyPoint);
   }
 }
