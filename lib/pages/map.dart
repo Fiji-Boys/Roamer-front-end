@@ -265,23 +265,88 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     List<KeyPoint> keyPoints = [
       KeyPoint(
           id: 1,
-          name: "KeyPoint1",
-          description: "Description of Key Point 1",
+          name: "Sima",
+          description: "Description of Sima",
           images: ["image1.jpg", "image2.jpg"],
-          latitude: 45.2639,
-          longitude: 19.8304),
+          latitude: 45.262501,
+          longitude: 19.839263),
       KeyPoint(
           id: 2,
-          name: "KeyPoint2",
-          description: "Description of Key Point 2",
+          name: "Vruce kifle",
+          description: "Description of Vruce kifle",
           images: ["image3.jpg", "image4.jpg"],
-          latitude: 45.2626,
-          longitude: 19.8387),
+          latitude: 45.255452,
+          longitude: 19.841251),
+    ];
+    List<KeyPoint> keyPoints2 = [
+      KeyPoint(
+          id: 3,
+          name: "Univer",
+          description: "Description of Univer",
+          images: ["image1.jpg", "image2.jpg"],
+          latitude: 45.253334,
+          longitude: 19.844478),
+      KeyPoint(
+          id: 4,
+          name: "Burgija",
+          description: "Description of Burgija",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.239358,
+          longitude: 19.850856),
+    ];
+    List<KeyPoint> keyPoints3 = [
+      KeyPoint(
+          id: 5,
+          name: "NTP",
+          description: "Description of NTP",
+          images: ["image1.jpg", "image2.jpg"],
+          latitude: 45.244923,
+          longitude: 19.847757),
+      KeyPoint(
+          id: 6,
+          name: "Turbo kruzni",
+          description: "Description of Turbo",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.244777,
+          longitude: 19.84679),
+      KeyPoint(
+          id: 7,
+          name: "Tocionica",
+          description: "Description of Turbo kruzni",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.24262,
+          longitude: 19.846887),
+      KeyPoint(
+          id: 8,
+          name: "Iza ugla",
+          description: "Description of Tocionica",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.242733,
+          longitude: 19.849508),
+      KeyPoint(
+          id: 9,
+          name: "NTP opet",
+          description: "Description of NTP opet",
+          images: ["image3.jpg", "image4.jpg"],
+          latitude: 45.244368,
+          longitude: 19.848467),
     ];
 
     Tour newTour = Tour(
-        name: "TestTour", description: "TestDescription", keyPoints: keyPoints);
+        name: "Put do kifli",
+        description: "Najbrzi put do vrucih(mozda) kifli",
+        keyPoints: keyPoints);
+    Tour newTour2 = Tour(
+        name: "Poseta burice",
+        description: "Do mog dragog brata",
+        keyPoints: keyPoints2);
+    Tour newTour3 = Tour(
+        name: "Setnja sa Luburom",
+        description: "Sa nasim dragim profesorom",
+        keyPoints: keyPoints3);
     tours.add(newTour);
+    tours.add(newTour2);
+    tours.add(newTour3);
     _getTourMarkers();
   }
 
@@ -319,9 +384,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               }
               deleteKeyPoint(
                   activeTour.keyPoints[activeTour.nextKeyPoint].name);
-              activeTour.completeKeyPoint();
               showSnackBar(context,
                   "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
+              activeTour.completeKeyPoint();
             }
 
             if (activeTour.isCompleted) {

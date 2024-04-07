@@ -19,6 +19,7 @@ class Tour {
   });
 
   LatLng getNextKeyPointLocation() {
+    if (nextKeyPoint >= keyPoints.length) return keyPoints.last.getLocation();
     KeyPoint keyPoint = keyPoints[nextKeyPoint];
     return keyPoint.getLocation();
   }
