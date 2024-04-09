@@ -1,6 +1,7 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/pages/map.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
+import 'package:figenie/widgets/tour_info.dart' as tour_info;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -74,7 +75,7 @@ class NavigationBarController extends GetxController {
   final RxInt selectedIndex = 2.obs;
 
   final screens = [
-    const roamer_placeholder.Placeholder(),
+    const tour_info.TourInfo(tourName: "Name", tourDescription: "Description"),
     const roamer_placeholder.Placeholder(),
     const MapPage(),
     const roamer_placeholder.Placeholder(),
