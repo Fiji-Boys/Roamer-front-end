@@ -22,44 +22,66 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        bottomNavigationBar: Obx(() => NavigationMenu(
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.tour), // Icon for Tours
-                    label: 'Tours', // Label for Tours
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.people), // Icon for Encounters
-                    label: 'Encounters', // Label for Encounters
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.map), // Icon for Map
-                    label: 'Map', // Label for Map
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.qr_code), // Icon for QR
-                    label: 'QR', // Label for QR
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.person), // Icon for Profile
-                    label: 'Profile', // Label for Profile
-                  ),
-                ],
-                selectedIndex: controller.selectedIndex.value,
-                onDestinationSelected: (index) => {
-                      _onNavigate(index),
-                      controller.selectedIndex.value = index
-                    })),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: PageView(
-              controller: pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: controller.screens,
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('Do you want to exit the app?'),
+            actions: [
+              TextButton(
+                child: Text('No'),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: Text('Yes'),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+        );
+        return shouldPop ?? false;
+      },
+      child: MaterialApp(
+        home: Scaffold(
+          backgroundColor: Colors.black,
+          bottomNavigationBar: Obx(() => NavigationMenu(
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.tour), // Icon for Tours
+                      label: 'Tours', // Label for Tours
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.people), // Icon for Encounters
+                      label: 'Encounters', // Label for Encounters
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.map), // Icon for Map
+                      label: 'Map', // Label for Map
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.qr_code), // Icon for QR
+                      label: 'QR', // Label for QR
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.person), // Icon for Profile
+                      label: 'Profile', // Label for Profile
+                    ),
+                  ],
+                  selectedIndex: controller.selectedIndex.value,
+                  onDestinationSelected: (index) => {
+                        _onNavigate(index),
+                        controller.selectedIndex.value = index
+                      })),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0.0),
+              child: PageView(
+                controller: pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: controller.screens,
+              ),
             ),
           ),
         ),
