@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/utils/weather_menu.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -60,9 +61,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       children: [
         Expanded(
           flex: 1,
-          child: Container(
-            color: primaryContentColor,
-          ),
+          child: currentLoc != null
+              ? WeatherMenu(currentLoc: currentLoc!)
+              : Container(
+                  color:
+                      primaryContentColor), // Container with blue color if currentLoc is null
         ),
         Expanded(
           flex: 10,
@@ -80,7 +83,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                   markers: Set<Marker>.of(markers.values),
                   polylines: Set<Polyline>.of(currentPolylines.values),
                 ),
-        )
+        ),
       ],
     ));
   }
