@@ -1,12 +1,7 @@
-import 'package:figenie/consts.dart';
-import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/map.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
-import 'package:figenie/widgets/tour_info.dart' as tour_info;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'model/key_point.dart';
 import 'utils/navigation_menu.dart';
 
 void main() {
@@ -76,47 +71,15 @@ class MainApp extends StatelessWidget {
 class NavigationBarController extends GetxController {
   final RxInt selectedIndex = 2.obs;
 
-  late final Tour tour;
   late final List<Widget> screens;
 
   NavigationBarController() {
-    tour = createTourWithKeyPoints();
     screens = [
-      tour_info.TourInfo(tour: tour),
+      const roamer_placeholder.Placeholder(),
       const roamer_placeholder.Placeholder(),
       const MapPage(),
       const roamer_placeholder.Placeholder(),
       const roamer_placeholder.Placeholder()
     ];
-  }
-
-  Tour createTourWithKeyPoints() {
-    List<KeyPoint> keyPoints = [
-      KeyPoint(
-          id: 1,
-          name: "Sima",
-          description: "Description of Sima",
-          images: [
-            "https://i0.wp.com/picjumbo.com/wp-content/uploads/beautiful-nature-mountain-scenery-with-flowers-free-photo.jpg?w=600&quality=80",
-            "https://t4.ftcdn.net/jpg/05/47/97/81/360_F_547978128_vqEEUYBr1vcAwfRAqReZXTYtyawpgLcC.jpg"
-          ],
-          latitude: 45.262501,
-          longitude: 19.839263),
-      KeyPoint(
-          id: 2,
-          name: "Vruce kifle",
-          description: "Description of Vruce kifle",
-          images: [
-            "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg",
-            "https://wallpapers.com/images/featured/nature-2ygv7ssy2k0lxlzu.jpg"
-          ],
-          latitude: 45.255452,
-          longitude: 19.841251),
-    ];
-
-    return Tour(
-        name: "Put do kifli",
-        description: "Najbrzi put do vrucih(mozda) kifli",
-        keyPoints: keyPoints);
   }
 }

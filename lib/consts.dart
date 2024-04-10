@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 const String googleMapsApiKey = "AIzaSyBvq6JFkvx70zUm-r2-FptOZ_mp91_a5-Y";
+const String weatherApiKey = "8FXfexJlHF+asBDRngdGAg==JQG12YEpAUz4oYMW";
 
 // Colors
 const Color primaryColor = Color(0xff3e98f3);

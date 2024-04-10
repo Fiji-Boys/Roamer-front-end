@@ -1,16 +1,22 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:figenie/consts.dart';
-import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
 
-class TourInfo extends StatelessWidget {
-  final Tour tour;
+import 'package:figenie/consts.dart';
+import 'package:figenie/model/tour.dart';
 
+class TourInfo extends StatefulWidget {
+  final Tour tour;
   const TourInfo({
     super.key,
     required this.tour,
   });
 
+  @override
+  State<TourInfo> createState() => _TourInfoState();
+}
+
+class _TourInfoState extends State<TourInfo> {
   @override
   Widget build(BuildContext context) {
     return DraggableSheet(
@@ -21,21 +27,21 @@ class TourInfo extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              tour.name,
+              widget.tour.name,
               style: const TextStyle(
-                color: textLighterColor,
+                color: textColor,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              tour.description,
+              widget.tour.description,
               style: const TextStyle(fontSize: 16, color: textLighterColor),
             ),
             const SizedBox(height: 16),
             CarouselSlider(
-                items: tour.keyPoints.map((keyPoint) {
+                items: widget.tour.keyPoints.map((keyPoint) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
@@ -89,7 +95,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
         key: sheet,
         initialChildSize: 0.5,
         maxChildSize: 0.9,
-        minChildSize: 0,
+        minChildSize: 0.03,
         expand: true,
         snap: true,
         snapSizes: [
@@ -104,8 +110,8 @@ class _DraggableSheetState extends State<DraggableSheet> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black,
-                  blurRadius: 20,
-                  spreadRadius: 1,
+                  blurRadius: 5,
+                  spreadRadius: 0.1,
                   offset: Offset(0, 1),
                 ),
               ],

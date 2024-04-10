@@ -1,14 +1,20 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/utils/weather_menu.dart';
 import 'package:figenie/widgets/loading.dart';
+import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -24,7 +30,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Location _locationController = Location();
 
   List<Tour> tours = <Tour>[];
-  late Tour activeTour;
+  Tour? selectedTour;
   late bool isTourActive = false;
   late bool hasStarted = false;
 
@@ -51,34 +57,47 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-        body: Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            color: backgroundColor,
-          ),
-        ),
-        Expanded(
-          flex: 10,
-          child: currentLoc == null
-              ? const Center(
-                  child: Loading(),
-                )
-              : GoogleMap(
-                  onMapCreated: ((GoogleMapController controller) =>
-                      _mapController.complete(controller)),
-                  initialCameraPosition: const CameraPosition(
-                    target: startLoc,
-                    zoom: 13,
+    return WillPopScope(
+      onWillPop: () async {
+        _resetMap();
+        return false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            currentLoc == null
+                ? const Center(
+                    child: Loading(),
+                  )
+                : GoogleMap(
+                    onMapCreated: ((GoogleMapController controller) =>
+                        _mapController.complete(controller)),
+                    initialCameraPosition: const CameraPosition(
+                      target: startLoc,
+                      zoom: 13,
+                    ),
+                    markers: Set<Marker>.of(markers.values),
+                    polylines: Set<Polyline>.of(currentPolylines.values),
                   ),
-                  markers: Set<Marker>.of(markers.values),
-                  polylines: Set<Polyline>.of(currentPolylines.values),
-                ),
-        )
-      ],
-    ));
+            selectedTour == null ? Container() : TourInfo(tour: selectedTour!),
+            selectedTour != null && !isTourActive
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 10, top: 8),
+                    child: FloatingActionButton(
+                      shape: const CircleBorder(),
+                      backgroundColor: foregroundColor,
+                      foregroundColor: textColor,
+                      child: const Icon(Icons.close),
+                      onPressed: () {
+                        _resetMap();
+                      },
+                    ),
+                  )
+                : Container()
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _getTourMarkers() async {
@@ -99,96 +118,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _showTour(Tour tour) {
     showKeypoints(tour);
-    showDialog(
-      barrierColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return Stack(
-          children: [
-            Positioned(
-              bottom: 70,
-              left: 0,
-              right: 0,
-              child: AlertDialog(
-                backgroundColor: backgroundColor,
-                elevation: 0,
-                title: const Text(
-                  "Tour Information",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: textLighterColor,
-                  ),
-                ),
-                content: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Tour Name: ${tour.name}",
-                        style: const TextStyle(
-                          color: textLighterColor,
-                        ),
-                      ),
-                      Text(
-                        "Tour Description: ${tour.description}",
-                        style: const TextStyle(
-                          color: textLighterColor,
-                        ),
-                      ),
-                      Text(
-                        "Number of Key Points: ${tour.keyPoints.length}",
-                        style: const TextStyle(
-                          color: textLighterColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: secondaryColor,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _resetMap();
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        child: const Text(
-                          "Start Tour",
-                          style: TextStyle(
-                            color: secondaryColor,
-                          ),
-                        ),
-                        onPressed: () {
-                          hasStarted = true;
-                          Navigator.of(context).pop();
-                          _startTour(tour);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    ).then((value) {
-      if (!hasStarted) {
-        _resetMap();
-      }
-    });
   }
 
   void showSnackBar(BuildContext context, String text) {
@@ -207,6 +136,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void _resetMap() {
+    selectedTour = null;
     _clearMarkers();
     _clearPolylines();
     _getTourMarkers();
@@ -215,6 +145,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   void showKeypoints(Tour tour) {
     _clearPolylines();
     _clearMarkers();
+    selectedTour = tour;
     for (int i = 0; i < tour.keyPoints.length; i++) {
       markers[tour.keyPoints[i].name] = Marker(
         markerId: MarkerId(tour.keyPoints[i].name),
@@ -236,11 +167,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     setState(() {});
   }
 
-  void _startTour(Tour selectedTour) {
-    activeTour = selectedTour;
-    activeTour.startTour();
+  void _startTour() {
+    if (selectedTour == null) throw Exception("Tour not selected");
+    selectedTour!.startTour();
     isTourActive = true;
-    createPolyline(currentLoc!, selectedTour.getNextKeyPointLocation(), "user",
+    createPolyline(currentLoc!, selectedTour!.getNextKeyPointLocation(), "user",
         primaryColor);
   }
 
@@ -388,37 +319,46 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         .listen((LocationData currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
-        setState(() {
-          currentLoc =
-              LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (isTourActive) {
-            if (calculateDistance()) {
-              if (activeTour.nextKeyPoint + 1 < activeTour.keyPoints.length) {
-                deleteRoute(
-                    "${activeTour.keyPoints[activeTour.nextKeyPoint].name}/${activeTour.keyPoints[activeTour.nextKeyPoint + 1].name}");
-              }
-              deleteKeyPoint(
-                  activeTour.keyPoints[activeTour.nextKeyPoint].name);
-              showSnackBar(context,
-                  "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
-              activeTour.completeKeyPoint();
-            }
+        setState(
+          () {
+            final newLoc =
+                LatLng(currentLocation.latitude!, currentLocation.longitude!);
+            if (currentLoc != newLoc) {
+              currentLoc = newLoc;
+              if (isTourActive && selectedTour != null) {
+                if (calculateDistance()) {
+                  if (selectedTour!.nextKeyPoint + 1 <
+                      selectedTour!.keyPoints.length) {
+                    deleteRoute(
+                        "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
+                  }
+                  deleteKeyPoint(
+                      selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+                  showSnackBar(context,
+                      "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
+                  selectedTour!.completeKeyPoint();
+                }
 
-            if (activeTour.isCompleted) {
-              debugPrint("COMPLETED");
-              showSnackBar(context, "Completed tour ${activeTour.name}");
-              isTourActive = false;
-              return;
+                if (selectedTour!.isCompleted) {
+                  debugPrint("COMPLETED");
+                  showSnackBar(context, "Completed tour ${selectedTour!.name}");
+                  isTourActive = false;
+                  return;
+                }
+                createPolyline(
+                    currentLoc!,
+                    selectedTour!.getNextKeyPointLocation(),
+                    "user",
+                    primaryColor);
+              }
+              markers["_currentLocation"] = Marker(
+                  markerId: const MarkerId("_currentLocation"),
+                  icon: userIcon,
+                  position: currentLoc!,
+                  zIndex: 100);
             }
-            createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
-                "user", primaryColor);
-          }
-          markers["_currentLocation"] = Marker(
-              markerId: const MarkerId("_currentLocation"),
-              icon: userIcon,
-              position: currentLoc!,
-              zIndex: 100);
-        });
+          },
+        );
       }
     });
   }
@@ -448,22 +388,56 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void getUserIcon() {
-    BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), "assets/user_marker.png")
-        .then(
-      (icon) {
-        setState(() {
-          userIcon = icon;
-        });
+  void createPolylineLocal(LatLng source, LatLng dest, String polylineId,
+      Color polyLineColor) async {
+    final response = await http.post(
+      Uri.parse("http://192.168.1.9:8086/"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode(
+        <String, dynamic>{"pos": source, "dest": dest},
+      ),
     );
+
+    if (response.statusCode != 200) throw Exception("Failed to create route");
+    final list = jsonDecode(response.body) as List;
+    debugPrint(list.toString());
+    final points = list.map((e) => e.cast<double>()).toList();
+
+    List<LatLng> polylineCoords = [];
+    for (var point in points) {
+      polylineCoords.add(LatLng(point[0], point[1]));
+    }
+    setState(() {
+      currentPolylines[polylineId] = Polyline(
+          polylineId: PolylineId(polylineId),
+          points: polylineCoords,
+          width: 6,
+          color: polyLineColor);
+    });
+  }
+
+  void getUserIcon() async {
+    ByteData byteData =
+        await DefaultAssetBundle.of(context).load("assets/user_marker.png");
+    ui.Codec codec = await ui
+        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+    setState(() {
+      userIcon = icon;
+    });
   }
 
   bool calculateDistance() {
     var p = 0.017453292519943295;
     var c = cos;
-    LatLng nextKeyPointLocation = activeTour.getNextKeyPointLocation();
+    if (selectedTour == null) throw Exception("Tour not selected");
+    LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
     var a = 0.5 -
         c((nextKeyPointLocation.latitude - currentLoc!.latitude) * p) / 2 +
         c(currentLoc!.latitude * p) *
