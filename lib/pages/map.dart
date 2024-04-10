@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
@@ -9,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -373,37 +377,43 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         .listen((LocationData currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
-        setState(() {
-          currentLoc =
-              LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          if (isTourActive) {
-            if (calculateDistance()) {
-              if (activeTour.nextKeyPoint + 1 < activeTour.keyPoints.length) {
-                deleteRoute(
-                    "${activeTour.keyPoints[activeTour.nextKeyPoint].name}/${activeTour.keyPoints[activeTour.nextKeyPoint + 1].name}");
-              }
-              deleteKeyPoint(
-                  activeTour.keyPoints[activeTour.nextKeyPoint].name);
-              showSnackBar(context,
-                  "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
-              activeTour.completeKeyPoint();
-            }
+        setState(
+          () {
+            final newLoc =
+                LatLng(currentLocation.latitude!, currentLocation.longitude!);
+            if (currentLoc != newLoc) {
+              currentLoc = newLoc;
+              if (isTourActive) {
+                if (calculateDistance()) {
+                  if (activeTour.nextKeyPoint + 1 <
+                      activeTour.keyPoints.length) {
+                    deleteRoute(
+                        "${activeTour.keyPoints[activeTour.nextKeyPoint].name}/${activeTour.keyPoints[activeTour.nextKeyPoint + 1].name}");
+                  }
+                  deleteKeyPoint(
+                      activeTour.keyPoints[activeTour.nextKeyPoint].name);
+                  showSnackBar(context,
+                      "Completed key point ${activeTour.keyPoints[activeTour.nextKeyPoint].name}");
+                  activeTour.completeKeyPoint();
+                }
 
-            if (activeTour.isCompleted) {
-              debugPrint("COMPLETED");
-              showSnackBar(context, "Completed tour ${activeTour.name}");
-              isTourActive = false;
-              return;
+                if (activeTour.isCompleted) {
+                  debugPrint("COMPLETED");
+                  showSnackBar(context, "Completed tour ${activeTour.name}");
+                  isTourActive = false;
+                  return;
+                }
+                createPolyline(currentLoc!,
+                    activeTour.getNextKeyPointLocation(), "user", primaryColor);
+              }
+              markers["_currentLocation"] = Marker(
+                  markerId: const MarkerId("_currentLocation"),
+                  icon: userIcon,
+                  position: currentLoc!,
+                  zIndex: 100);
             }
-            createPolyline(currentLoc!, activeTour.getNextKeyPointLocation(),
-                "user", primaryColor);
-          }
-          markers["_currentLocation"] = Marker(
-              markerId: const MarkerId("_currentLocation"),
-              icon: userIcon,
-              position: currentLoc!,
-              zIndex: 100);
-        });
+          },
+        );
       }
     });
   }
@@ -433,16 +443,49 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void getUserIcon() {
-    BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), "assets/user_marker.png")
-        .then(
-      (icon) {
-        setState(() {
-          userIcon = icon;
-        });
+  void createPolylineLocal(LatLng source, LatLng dest, String polylineId,
+      Color polyLineColor) async {
+    final response = await http.post(
+      Uri.parse("http://192.168.1.9:8086/"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode(
+        <String, dynamic>{"pos": source, "dest": dest},
+      ),
     );
+
+    if (response.statusCode != 200) throw Exception("Failed to create route");
+    final list = jsonDecode(response.body) as List;
+    debugPrint(list.toString());
+    final points = list.map((e) => e.cast<double>()).toList();
+
+    List<LatLng> polylineCoords = [];
+    for (var point in points) {
+      polylineCoords.add(LatLng(point[0], point[1]));
+    }
+    setState(() {
+      currentPolylines[polylineId] = Polyline(
+          polylineId: PolylineId(polylineId),
+          points: polylineCoords,
+          width: 6,
+          color: polyLineColor);
+    });
+  }
+
+  void getUserIcon() async {
+    ByteData byteData =
+        await DefaultAssetBundle.of(context).load("assets/user_marker.png");
+    ui.Codec codec = await ui
+        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 128);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+    setState(() {
+      userIcon = icon;
+    });
   }
 
   bool calculateDistance() {
