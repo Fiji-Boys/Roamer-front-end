@@ -336,6 +336,16 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           longitude: 19.848467),
     ];
 
+    List<KeyPoint> keyPoints4 = [
+      KeyPoint(
+          id: 5,
+          name: "Sumnjivo dvoriste",
+          description: "Setam samo sa osobama zenskog pola",
+          images: ["image1.jpg", "image2.jpg"],
+          latitude: 45.244085,
+          longitude: 19.852904),
+    ];
+
     Tour newTour = Tour(
         name: "Put do kifli",
         description: "Najbrzi put do vrucih(mozda) kifli",
@@ -348,9 +358,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         name: "Setnja sa Luburom",
         description: "Sa nasim dragim profesorom",
         keyPoints: keyPoints3);
+    Tour newTour4 = Tour(
+        name: "Sumnjivo dvoriste na limanu",
+        description: "Easter egg tura",
+        keyPoints: keyPoints4);
     tours.add(newTour);
     tours.add(newTour2);
     tours.add(newTour3);
+    tours.add(newTour4);
     _getTourMarkers();
   }
 
@@ -502,7 +517,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 80;
+    return distance < 40;
   }
 
   void deleteKeyPoint(String currentKeyPoint) {
