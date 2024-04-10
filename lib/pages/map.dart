@@ -57,7 +57,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         Expanded(
           flex: 1,
           child: Container(
-            color: primaryContentColor,
+            color: backgroundColor,
           ),
         ),
         Expanded(

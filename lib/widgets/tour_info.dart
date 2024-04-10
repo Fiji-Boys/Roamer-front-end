@@ -1,16 +1,14 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:figenie/consts.dart';
-import 'package:figenie/main.dart';
+import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class TourInfo extends StatelessWidget {
-  final String tourName;
-  final String tourDescription;
+  final Tour tour;
 
   const TourInfo({
     super.key,
-    required this.tourName,
-    required this.tourDescription,
+    required this.tour,
   });
 
   @override
@@ -23,7 +21,7 @@ class TourInfo extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              tourName,
+              tour.name,
               style: const TextStyle(
                 color: textLighterColor,
                 fontSize: 20,
@@ -32,9 +30,39 @@ class TourInfo extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              tourDescription,
+              tour.description,
               style: const TextStyle(fontSize: 16, color: textLighterColor),
             ),
+            const SizedBox(height: 16),
+            CarouselSlider(
+                items: tour.keyPoints.map((keyPoint) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        // decoration: const BoxDecoration(color: backgroundColor),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              20.0), // Adjust the borderRadius as needed
+                          child: Image.network(keyPoint.images[0],
+                              fit: BoxFit.cover),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+                options: CarouselOptions(
+                  height: 250,
+                  aspectRatio: 16 / 9,
+                  viewportFraction: 1.0,
+                  initialPage: 0,
+                  enableInfiniteScroll: true,
+                  reverse: false,
+                  enlargeCenterPage: true,
+                  enlargeFactor: 0.3,
+                  scrollDirection: Axis.horizontal,
+                )),
           ],
         ),
       ),
@@ -53,30 +81,6 @@ class DraggableSheet extends StatefulWidget {
 class _DraggableSheetState extends State<DraggableSheet> {
   final sheet = GlobalKey();
   final controller = DraggableScrollableController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(onChanged);
-  }
-
-  void onChanged() {
-    final currentSize = controller.size;
-    if (currentSize <= 0.05) collapse();
-  }
-
-  void collapse() => animateSheet(getSheet.snapSizes!.first);
-  void anchor() => animateSheet(getSheet.snapSizes!.last);
-  void expand() => animateSheet(getSheet.maxChildSize);
-  void hide() => animateSheet(getSheet.minChildSize);
-
-  animateSheet(double size) {
-    controller.animateTo(size,
-        duration: const Duration(microseconds: 50), curve: Curves.easeInOut);
-  }
-
-  DraggableScrollableSheet get getSheet =>
-      (sheet.currentWidget as DraggableScrollableSheet);
 
   @override
   Widget build(BuildContext context) {
