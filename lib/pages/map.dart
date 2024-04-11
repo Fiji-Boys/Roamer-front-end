@@ -81,18 +81,20 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                   ),
             selectedTour == null ? Container() : TourInfo(tour: selectedTour!),
             selectedTour != null && !isTourActive
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 8),
-                    child: FloatingActionButton(
-                      shape: const CircleBorder(),
-                      backgroundColor: foregroundColor,
-                      foregroundColor: textColor,
-                      child: const Icon(Icons.close),
-                      onPressed: () {
-                        _resetMap();
-                      },
-                    ),
-                  )
+                ? Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10, top: 10),
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(),
+                        backgroundColor: foregroundColor,
+                        foregroundColor: textColor,
+                        child: const Icon(Icons.close),
+                        onPressed: () {
+                          _resetMap();
+                        },
+                      ),
+                    ))
                 : Container()
           ],
         ),

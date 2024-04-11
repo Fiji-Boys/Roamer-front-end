@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:figenie/widgets/placeholder.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/widgets.dart' as roamer_placeholder;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 
@@ -44,15 +46,42 @@ class _TourInfoState extends State<TourInfo> {
                 items: widget.tour.keyPoints.map((keyPoint) {
                   return Builder(
                     builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        // decoration: const BoxDecoration(color: backgroundColor),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              20.0), // Adjust the borderRadius as needed
-                          child: Image.network(keyPoint.images[0],
-                              fit: BoxFit.cover),
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            20.0), // Adjust the borderRadius as needed
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          decoration:
+                              const BoxDecoration(color: backgroundColor),
+                          child: Image.network(
+                            keyPoint.images[0],
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context, Object error,
+                                StackTrace? stackTrace) {
+                              return Container(
+                                color: backgroundColor,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/mascot_2.png",
+                                        width: 196,
+                                        height: 196,
+                                      ),
+                                      const Text(
+                                        "Image not found...",
+                                        style: TextStyle(
+                                            color: textLighterColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       );
                     },
