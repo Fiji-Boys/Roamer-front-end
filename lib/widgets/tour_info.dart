@@ -1,9 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:figenie/widgets/placeholder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart' as roamer_placeholder;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 
@@ -122,7 +120,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
     return LayoutBuilder(builder: (context, constraints) {
       return DraggableScrollableSheet(
         key: sheet,
-        initialChildSize: 0.5,
+        initialChildSize: 0.15,
         maxChildSize: 0.9,
         minChildSize: 0.03,
         expand: true,

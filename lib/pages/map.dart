@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
-import 'package:figenie/utils/weather_menu.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +77,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     ),
                     markers: Set<Marker>.of(markers.values),
                     polylines: Set<Polyline>.of(currentPolylines.values),
+                    compassEnabled: false,
+                    zoomControlsEnabled: false,
                   ),
             selectedTour == null ? Container() : TourInfo(tour: selectedTour!),
             selectedTour != null && !isTourActive
@@ -118,6 +119,32 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _showTour(Tour tour) {
     showKeypoints(tour);
+    _centerMapToBounds(tour.keyPoints);
+  }
+
+  void _centerMapToBounds(List<KeyPoint> keyPoints) {
+    if (keyPoints.isEmpty) return;
+
+    double minLat = keyPoints.first.latitude;
+    double maxLat = keyPoints.first.latitude;
+    double minLng = keyPoints.first.longitude;
+    double maxLng = keyPoints.first.longitude;
+
+    for (final keyPoint in keyPoints) {
+      minLat = min(minLat, keyPoint.latitude);
+      maxLat = max(maxLat, keyPoint.latitude);
+      minLng = min(minLng, keyPoint.longitude);
+      maxLng = max(maxLng, keyPoint.longitude);
+    }
+
+    final southWest = LatLng(minLat, minLng);
+    final northEast = LatLng(maxLat, maxLng);
+
+    final bounds = LatLngBounds(southwest: southWest, northeast: northEast);
+
+    _mapController.future.then((controller) {
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 130));
+    });
   }
 
   void showSnackBar(BuildContext context, String text) {
@@ -146,26 +173,82 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _clearPolylines();
     _clearMarkers();
     selectedTour = tour;
+
     for (int i = 0; i < tour.keyPoints.length; i++) {
-      markers[tour.keyPoints[i].name] = Marker(
-        markerId: MarkerId(tour.keyPoints[i].name),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        position: tour.keyPoints[i].getLocation(),
+      final KeyPoint keyPoint = tour.keyPoints[i];
+      markers[keyPoint.name] = Marker(
+        markerId: MarkerId(keyPoint.name),
+        icon: i == 0 // Check if it's the first keypoint
+            ? BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueGreen) // Green for the first keypoint
+            : i == tour.keyPoints.length - 1 // Check if it's the last keypoint
+                ? BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueRed) // Red for the last keypoint
+                : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueAzure), // Blue for other keypoints
+        position: keyPoint.getLocation(),
         onTap: () {
-          _showKeyPoint(tour.keyPoints[i]);
+          _showKeyPoint(keyPoint);
         },
       );
+
       if (i != tour.keyPoints.length - 1) {
         createPolyline(
-          tour.keyPoints[i].getLocation(),
+          keyPoint.getLocation(),
           tour.keyPoints[i + 1].getLocation(),
-          "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
+          "${keyPoint.name}/${tour.keyPoints[i + 1].name}",
           secondaryColor,
         );
       }
     }
+
     setState(() {});
   }
+
+  // void showKeypoints(Tour tour) {
+  //   _clearPolylines();
+  //   _clearMarkers();
+  //   selectedTour = tour;
+
+  //   // Generate markers with numbers for each keypoint
+
+  //   MarkerUtils.generateMarkersWithNumbers(tour.keyPoints).then((markers) {
+  //     // Add starting and ending keypoints without modification
+  //     markers[tour.keyPoints.first.name] = Marker(
+  //       markerId: MarkerId(tour.keyPoints.first.name),
+  //       icon: BitmapDescriptor.defaultMarkerWithHue(
+  //           BitmapDescriptor.hueBlue), // Starting keypoint
+  //       position: tour.keyPoints.first.getLocation(),
+  //       onTap: () {
+  //         _showKeyPoint(tour.keyPoints.first);
+  //       },
+  //     );
+
+  //     markers[tour.keyPoints.last.name] = Marker(
+  //       markerId: MarkerId(tour.keyPoints.last.name),
+  //       icon: BitmapDescriptor.defaultMarkerWithHue(
+  //           BitmapDescriptor.hueRed), // Ending keypoint
+  //       position: tour.keyPoints.last.getLocation(),
+  //       onTap: () {
+  //         _showKeyPoint(tour.keyPoints.last);
+  //       },
+  //     );
+
+  //     setState(() {
+  //       this.markers = markers;
+  //     });
+  //   });
+
+  //   // Generate polylines as before
+  //   for (int i = 0; i < tour.keyPoints.length - 1; i++) {
+  //     createPolyline(
+  //       tour.keyPoints[i].getLocation(),
+  //       tour.keyPoints[i + 1].getLocation(),
+  //       "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
+  //       secondaryColor,
+  //     );
+  //   }
+  // }
 
   void _startTour() {
     if (selectedTour == null) throw Exception("Tour not selected");

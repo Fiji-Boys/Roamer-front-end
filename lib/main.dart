@@ -20,31 +20,36 @@ class MainApp extends StatelessWidget {
     pageController.jumpToPage(index);
   }
 
+  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    bool? exitApp = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirm Exit'),
+        content: Text('Are you sure you want to exit the app?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Yes'),
+          ),
+        ],
+      ),
+    );
+    return exitApp ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldPop = await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('Do you want to exit the app?'),
-            actions: [
-              TextButton(
-                child: Text('No'),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              TextButton(
-                child: Text('Yes'),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
-          ),
-        );
-        return shouldPop ?? false;
-      },
-      child: MaterialApp(
-        home: Scaffold(
+    return MaterialApp(
+      home: WillPopScope(
+        onWillPop: () async {
+          bool exitApp = await _showExitConfirmationDialog(context);
+          return exitApp;
+        },
+        child: Scaffold(
           backgroundColor: Colors.black,
           bottomNavigationBar: Obx(() => NavigationMenu(
                   destinations: const [
