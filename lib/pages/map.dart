@@ -102,14 +102,12 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Future<void> _getTourMarkers() async {
+  void _getTourMarkers() {
     for (var tour in tours) {
-      const ImageConfiguration imageConfiguration = ImageConfiguration();
-      final BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
-          imageConfiguration, 'assets/tour_marker.png');
       markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
-          icon: customIcon,
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
           position: tour.getLocation(),
           onTap: () {
             _showTour(tour);
@@ -151,7 +149,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     for (int i = 0; i < tour.keyPoints.length; i++) {
       markers[tour.keyPoints[i].name] = Marker(
         markerId: MarkerId(tour.keyPoints[i].name),
-        icon: BitmapDescriptor.defaultMarker,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         position: tour.keyPoints[i].getLocation(),
         onTap: () {
           _showKeyPoint(tour.keyPoints[i]);
