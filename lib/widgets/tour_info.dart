@@ -31,18 +31,46 @@ class _TourInfoState extends State<TourInfo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              widget.tour.name,
-              style: const TextStyle(
-                color: textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.tour.description,
-              style: const TextStyle(fontSize: 16, color: textLighterColor),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.tour.name,
+                      style: const TextStyle(
+                        color: textColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.tour.description,
+                      style: const TextStyle(
+                          fontSize: 16, color: textLighterColor),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      widget.onStartTour();
+                      sheetKey.currentState?.hide();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(secondaryColor),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(backgroundColor),
+                    ),
+                    child: const Text('Start Tour'),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             CarouselSlider(
@@ -102,29 +130,14 @@ class _TourInfoState extends State<TourInfo> {
               ),
             ),
             const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  widget.onStartTour();
-                  sheetKey.currentState?.hide();
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(secondaryColor),
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(backgroundColor),
-                ),
-                child: const Text('Start Tour'),
-              ),
-            ),
-            const SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: widget.tour.keyPoints.map((keyPoint) {
+              children: widget.tour.keyPoints.asMap().entries.map((entry) {
+                final index = entry.key;
+                final keyPoint = entry.value;
                 return Container(
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
@@ -134,14 +147,26 @@ class _TourInfoState extends State<TourInfo> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          color: primaryColor,
-                          shape: BoxShape.circle,
-                        ),
+                      CircleAvatar(
+                        radius: 32.0,
+                        backgroundColor: secondaryColor,
+                        child: CircleAvatar(
+                            radius: 30.0,
+                            backgroundImage: NetworkImage(keyPoint.images[0]),
+                            backgroundColor: primaryColor,
+                            child: Container(
+                              alignment: Alignment.topLeft,
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: primaryColor,
+                                child: Text("${index + 1}",
+                                    style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            )),
                       ),
+
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -244,7 +269,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
         snap: true,
         snapSizes: [
           120 / constraints.maxHeight,
-          0.49,
+          0.5,
         ],
         controller: controller,
         builder: (BuildContext context, ScrollController scrollController) {
