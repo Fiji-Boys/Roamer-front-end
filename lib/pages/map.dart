@@ -7,9 +7,11 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -38,11 +40,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   static const LatLng startLoc = LatLng(45.262610, 19.838718);
   LatLng? currentLoc;
-
   Map<String, Polyline> currentPolylines = {};
-
   BitmapDescriptor userIcon = BitmapDescriptor.defaultMarker;
-
   Map<String, Marker> markers = {};
 
   @override
@@ -80,6 +79,31 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     compassEnabled: false,
                     zoomControlsEnabled: false,
                   ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 7.0), // Adjust the value for the top margin as needed
+              child: Align(
+                alignment:
+                    Alignment.topLeft, // Align to the top-left of the Stack
+                child: Container(
+                  height: 66.3,
+                  width: 99,
+                  child: Drawer(
+                    backgroundColor: primaryContentColor.withOpacity(0),
+                    child: currentLoc != null
+                        ? WeatherInfo(
+                            currentLoc:
+                                currentLoc!) // Show weather menu if location is available
+                        : Container(
+                            color: primaryContentColor,
+                            height:
+                                50.0, // Assign a fixed height to the container
+                            // Add more properties if needed
+                          ),
+                  ),
+                ),
+              ),
+            ),
             selectedTour == null ? Container() : TourInfo(tour: selectedTour!),
             selectedTour != null && !isTourActive
                 ? Align(

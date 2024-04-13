@@ -4,33 +4,34 @@ publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: ">=3.3.3 <4.0.0"
+    sdk: ">=3.3.3 <4.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
+    flutter:
+        sdk: flutter
 
-  flutter_polyline_points: ^2.0.0
-  google_maps_flutter: ^2.5.0
-  maps_toolkit: ^3.0.0
-  location: ^6.0.1
-  get: ^4.6.6
-  intl: ^0.19.0
-  http: ^1.2.1
-  geocoding: ^3.0.0
-  carousel_slider: ^4.2.1
+    flutter_polyline_points: ^2.0.0
+    google_maps_flutter: ^2.5.0
+    maps_toolkit: ^3.0.0
+    location: ^6.0.1
+    get: ^4.6.6
+    intl: ^0.19.0
+    weather: ^3.1.1
+    http: ^1.2.1
+    geocoding: ^3.0.0
+    carousel_slider: ^4.2.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
+    flutter_test:
+        sdk: flutter
+    flutter_lints: ^3.0.0
+    flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
-  image_path: "assets/roamer_logo.png"
-  android: true
+    image_path: "assets/roamer_logo.png"
+    android: true
 
 flutter:
-  uses-material-design: true
-  assets:
-    - assets/
+    uses-material-design: true
+    assets:
+        - assets/
