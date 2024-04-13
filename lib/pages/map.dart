@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -11,7 +13,6 @@ import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -85,23 +86,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               child: Align(
                 alignment:
                     Alignment.topLeft, // Align to the top-left of the Stack
-                child: Container(
-                  height: 66.3,
-                  width: 99,
-                  child: Drawer(
-                    backgroundColor: primaryContentColor.withOpacity(0),
-                    child: currentLoc != null
-                        ? WeatherInfo(
-                            currentLoc:
-                                currentLoc!) // Show weather menu if location is available
-                        : Container(
-                            color: primaryContentColor,
-                            height:
-                                50.0, // Assign a fixed height to the container
-                            // Add more properties if needed
-                          ),
-                  ),
-                ),
+                child: currentLoc != null
+                    ? WeatherInfo(
+                        currentLoc:
+                            currentLoc!) // Show weather menu if location is available
+                    : Container(
+                        color: primaryContentColor,
+                        height: 50.0, // Assign a fixed height to the container
+                        // Add more properties if needed
+                      ),
               ),
             ),
             selectedTour == null ? Container() : TourInfo(tour: selectedTour!),

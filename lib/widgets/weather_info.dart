@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 // import 'package:geocoding/geocoding.dart';
 
 import 'package:figenie/consts.dart';
@@ -39,7 +37,8 @@ class _WeatherInfo extends State<WeatherInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: MediaQuery.of(context).size.width, child: _buildUI());
+      child: _buildUI(),
+    );
   }
 
   Widget _buildUI() {
@@ -53,29 +52,33 @@ class _WeatherInfo extends State<WeatherInfo> {
 
     // Container takes up the full width of the screen
     return Container(
-      width: double.infinity,
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(10.0),
+      // ),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(15),
+          bottomRight: Radius.circular(15),
+        ),
+        color: primaryContentColor.withOpacity(0.5),
+      ),
       padding: const EdgeInsets.all(10.0),
-      color: primaryContentColor.withOpacity(0.5),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment
-            .end, // Align the column to the end of the container
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.end, // Align the row content to the end
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
                 Icons.location_on,
                 color: textColor,
                 size: 12,
               ),
-              const SizedBox(width: 5),
               _locationHeader(),
             ],
           ),
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.end, // Align the row content to the end
+            mainAxisSize: MainAxisSize.min,
             children: [_weatherIcon(), _currentTemp()],
           ),
         ],
@@ -101,13 +104,10 @@ class _WeatherInfo extends State<WeatherInfo> {
 
     // If there is no valid icon URL, we don't want to display the container
     if (iconUrl == null) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           height: MediaQuery.of(context).size.height *
