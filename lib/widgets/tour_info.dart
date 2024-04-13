@@ -96,6 +96,22 @@ class _TourInfoState extends State<TourInfo> {
                   enlargeFactor: 0.3,
                   scrollDirection: Axis.horizontal,
                 )),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.tour.startTour();
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(secondaryColor),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(backgroundColor),
+                ),
+                child: const Text('Start Tour'),
+              ),
+            ),
           ],
         ),
       ),
@@ -127,7 +143,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
         snap: true,
         snapSizes: [
           120 / constraints.maxHeight,
-          0.5,
+          0.49,
         ],
         controller: controller,
         builder: (BuildContext context, ScrollController scrollController) {
