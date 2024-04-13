@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:figenie/pages/map.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
 import 'package:flutter/material.dart';
@@ -24,16 +26,16 @@ class MainApp extends StatelessWidget {
     bool? exitApp = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm Exit'),
-        content: Text('Are you sure you want to exit the app?'),
+        title: const Text('Confirm Exit'),
+        content: const Text('Are you sure you want to exit the app?'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('No'),
+            child: const Text('No'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Yes'),
+            child: const Text('Yes'),
           ),
         ],
       ),
