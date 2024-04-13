@@ -80,7 +80,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     compassEnabled: false,
                     zoomControlsEnabled: false,
                   ),
-            selectedTour == null ? Container() : TourInfo(tour: selectedTour!),
+            selectedTour == null
+                ? Container()
+                : TourInfo(tour: selectedTour!, onStartTour: _startTour),
             selectedTour != null && !isTourActive
                 ? Align(
                     alignment: Alignment.topRight,
@@ -205,57 +207,18 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     setState(() {});
   }
 
-  // void showKeypoints(Tour tour) {
-  //   _clearPolylines();
-  //   _clearMarkers();
-  //   selectedTour = tour;
-
-  //   // Generate markers with numbers for each keypoint
-
-  //   MarkerUtils.generateMarkersWithNumbers(tour.keyPoints).then((markers) {
-  //     // Add starting and ending keypoints without modification
-  //     markers[tour.keyPoints.first.name] = Marker(
-  //       markerId: MarkerId(tour.keyPoints.first.name),
-  //       icon: BitmapDescriptor.defaultMarkerWithHue(
-  //           BitmapDescriptor.hueBlue), // Starting keypoint
-  //       position: tour.keyPoints.first.getLocation(),
-  //       onTap: () {
-  //         _showKeyPoint(tour.keyPoints.first);
-  //       },
-  //     );
-
-  //     markers[tour.keyPoints.last.name] = Marker(
-  //       markerId: MarkerId(tour.keyPoints.last.name),
-  //       icon: BitmapDescriptor.defaultMarkerWithHue(
-  //           BitmapDescriptor.hueRed), // Ending keypoint
-  //       position: tour.keyPoints.last.getLocation(),
-  //       onTap: () {
-  //         _showKeyPoint(tour.keyPoints.last);
-  //       },
-  //     );
-
-  //     setState(() {
-  //       this.markers = markers;
-  //     });
-  //   });
-
-  //   // Generate polylines as before
-  //   for (int i = 0; i < tour.keyPoints.length - 1; i++) {
-  //     createPolyline(
-  //       tour.keyPoints[i].getLocation(),
-  //       tour.keyPoints[i + 1].getLocation(),
-  //       "${tour.keyPoints[i].name}/${tour.keyPoints[i + 1].name}",
-  //       secondaryColor,
-  //     );
-  //   }
-  // }
-
   void _startTour() {
     if (selectedTour == null) throw Exception("Tour not selected");
     selectedTour!.startTour();
     isTourActive = true;
-    createPolyline(currentLoc!, selectedTour!.getNextKeyPointLocation(), "user",
-        primaryColor);
+    LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
+    createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
+    _mapController.future.then((controller) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(
+            currentLoc!, 15), // Adjust zoom level as needed
+      );
+    });
   }
 
   void _showKeyPoint(KeyPoint kp) {
