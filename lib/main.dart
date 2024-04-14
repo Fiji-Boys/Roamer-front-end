@@ -22,27 +22,6 @@ class MainApp extends StatelessWidget {
     pageController.jumpToPage(index);
   }
 
-  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
-    bool? exitApp = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Exit'),
-        content: const Text('Are you sure you want to exit the app?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    );
-    return exitApp ?? false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -51,24 +30,24 @@ class MainApp extends StatelessWidget {
         bottomNavigationBar: Obx(() => NavigationMenu(
                 destinations: const [
                   NavigationDestination(
-                    icon: Icon(Icons.tour), // Icon for Tours
-                    label: 'Tours', // Label for Tours
+                    icon: Icon(Icons.tour),
+                    label: 'Tours',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.people), // Icon for Encounters
-                    label: 'Encounters', // Label for Encounters
+                    icon: Icon(Icons.people),
+                    label: 'Encounters',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.map), // Icon for Map
-                    label: 'Map', // Label for Map
+                    icon: Icon(Icons.map),
+                    label: 'Map',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.qr_code), // Icon for QR
-                    label: 'QR', // Label for QR
+                    icon: Icon(Icons.qr_code),
+                    label: 'QR',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.person), // Icon for Profile
-                    label: 'Profile', // Label for Profile
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
                   ),
                 ],
                 selectedIndex: controller.selectedIndex.value,

@@ -450,13 +450,12 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: backgroundColor,
-        contentTextStyle: const TextStyle(
-            fontWeight: FontWeight.bold, color: textColor, fontSize: 12),
+        backgroundColor: foregroundColor,
+        contentTextStyle: const TextStyle(color: textLightColor, fontSize: 16),
         title: const Text(
           'Abandon Tour',
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: textColor, fontSize: 16),
+              fontWeight: FontWeight.bold, color: textColor, fontSize: 20),
         ),
         content: const Text('Are you sure you want to abandon the tour?'),
         actions: <Widget>[
@@ -467,6 +466,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             child: const Text(
               'No',
               style: TextStyle(
+                  decorationColor: borderColor,
                   fontWeight: FontWeight.bold,
                   color: secondaryColor,
                   fontSize: 16),
