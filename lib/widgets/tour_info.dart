@@ -25,6 +25,8 @@ class _TourInfoState extends State<TourInfo> {
   final GlobalKey<_DraggableSheetState> sheetKey =
       GlobalKey<_DraggableSheetState>();
 
+  int _currentCarouselIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -112,61 +114,93 @@ class _TourInfoState extends State<TourInfo> {
               ],
             ),
             const SizedBox(height: 26),
-            CarouselSlider(
-              items: widget.tour.keyPoints.map((keyPoint) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          20.0), // Adjust the borderRadius as needed
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: const BoxDecoration(color: backgroundColor),
-                        child: Image.network(
-                          keyPoint.images[0],
-                          fit: BoxFit.cover,
-                          errorBuilder: (BuildContext context, Object error,
-                              StackTrace? stackTrace) {
-                            return Container(
-                              color: backgroundColor,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/mascot_2.png",
-                                      width: 196,
-                                      height: 196,
+            Stack(
+              children: [
+                CarouselSlider(
+                  items: widget.tour.keyPoints.map((keyPoint) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration:
+                                const BoxDecoration(color: backgroundColor),
+                            child: Image.network(
+                              keyPoint.images[0],
+                              fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context, Object error,
+                                  StackTrace? stackTrace) {
+                                return Container(
+                                  color: backgroundColor,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/mascot_2.png",
+                                          width: 196,
+                                          height: 196,
+                                        ),
+                                        const Text(
+                                          "Image not found...",
+                                          style: TextStyle(
+                                              color: textLighterColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
-                                    const Text(
-                                      "Image not found...",
-                                      style: TextStyle(
-                                          color: textLighterColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
-              }).toList(),
-              options: CarouselOptions(
-                height: 250,
-                aspectRatio: 16 / 9,
-                viewportFraction: 1.0,
-                initialPage: 0,
-                enableInfiniteScroll: true,
-                reverse: false,
-                enlargeCenterPage: true,
-                enlargeFactor: 0.3,
-                scrollDirection: Axis.horizontal,
-              ),
+                  }).toList(),
+                  options: CarouselOptions(
+                    height: 250,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 1.0,
+                    initialPage: 0,
+                    enableInfiniteScroll: true,
+                    reverse: false,
+                    enlargeCenterPage: true,
+                    enlargeFactor: 0.3,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentCarouselIndex = index;
+                      });
+                    },
+                  ),
+                ),
+                Positioned(
+                  bottom: 10.0,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: widget.tour.keyPoints.map((keyPoint) {
+                      int index = widget.tour.keyPoints.indexOf(keyPoint);
+                      return Container(
+                        width: 8.0,
+                        height: 8.0,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 2.0),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentCarouselIndex == index
+                                ? primaryColor
+                                : foregroundColor),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Column(

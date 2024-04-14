@@ -208,14 +208,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       final KeyPoint keyPoint = tour.keyPoints[i];
       markers[keyPoint.name] = Marker(
         markerId: MarkerId(keyPoint.name),
-        icon: i == 0 // Check if it's the first keypoint
+        icon: i == 0
             ? BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueGreen) // Green for the first keypoint
-            : i == tour.keyPoints.length - 1 // Check if it's the last keypoint
+                BitmapDescriptor.hueAzure) //promeniti
+            : i == tour.keyPoints.length - 1
                 ? BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueRed) // Red for the last keypoint
+                    BitmapDescriptor.hueAzure) //promeniti
                 : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure), // Blue for other keypoints
+                    BitmapDescriptor.hueAzure),
         position: keyPoint.getLocation(),
         onTap: () {
           _showKeyPoint(keyPoint);
