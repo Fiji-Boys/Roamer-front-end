@@ -28,6 +28,10 @@ class Tour {
     isStarted = true;
   }
 
+  void abandonTour() {
+    isStarted = false;
+  }
+
   void completeTour() {
     debugPrint("completed");
     isCompleted = true;
