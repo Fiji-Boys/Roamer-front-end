@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:figenie/consts.dart';
@@ -12,6 +11,7 @@ import 'package:figenie/model/tour.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -38,7 +38,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  static const LatLng startLoc = LatLng(45.262610, 19.838718);
+  static const LatLng startLoc = LatLng(45.262501, 19.839263);
   LatLng? currentLoc;
 
   Map<String, Polyline> currentPolylines = {};
@@ -47,12 +47,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   Map<String, Marker> markers = {};
 
+  late ValueNotifier<double> valueNotifier;
+
   @override
   void initState() {
     super.initState();
     getUserIcon();
     getLocationUpdates();
     getTours();
+    valueNotifier = ValueNotifier(0.0);
   }
 
   @override
@@ -84,8 +87,12 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                   ),
             selectedTour == null
                 ? Container()
-                : TourInfo(tour: selectedTour!, onStartTour: _startTour),
-            selectedTour != null && !isTourActive
+                : TourInfo(
+                    tour: selectedTour!,
+                    onStartTour: _startTour,
+                    valueNotifier: valueNotifier,
+                  ),
+            selectedTour != null
                 ? Align(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -96,7 +103,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         foregroundColor: textColor,
                         child: const Icon(Icons.close),
                         onPressed: () {
-                          _resetMap();
+                          if (isTourActive) {
+                            _showAbandonModal();
+                          } else {
+                            _resetMap();
+                          }
                         },
                       ),
                     ))
@@ -215,6 +226,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     isTourActive = true;
     LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
     createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
+    _keypointCheck();
     _mapController.future.then((controller) {
       controller.animateCamera(
         CameraUpdate.newLatLngZoom(
@@ -393,52 +405,127 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       }
     }
 
-    _locationController.onLocationChanged
-        .listen((LocationData currentLocation) {
-      if (currentLocation.latitude != null &&
-          currentLocation.longitude != null) {
-        setState(
-          () {
-            final newLoc =
-                LatLng(currentLocation.latitude!, currentLocation.longitude!);
-            if (currentLoc != newLoc) {
-              currentLoc = newLoc;
-              if (isTourActive && selectedTour != null) {
-                if (calculateDistance()) {
-                  if (selectedTour!.nextKeyPoint + 1 <
-                      selectedTour!.keyPoints.length) {
-                    deleteRoute(
-                        "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
-                  }
-                  deleteKeyPoint(
-                      selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
-                  showSnackBar(context,
-                      "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
-                  selectedTour!.completeKeyPoint();
-                }
+    _locationController.onLocationChanged.listen(
+      (LocationData currentLocation) {
+        if (currentLocation.latitude != null &&
+            currentLocation.longitude != null) {
+          final newLoc =
+              LatLng(currentLocation.latitude!, currentLocation.longitude!);
+          _setUserMarker(newLoc);
+          if (currentLoc != newLoc) {
+            setState(
+              () {
+                currentLoc = newLoc;
+                if (isTourActive && selectedTour != null) {
+                  _keypointCheck();
 
-                if (selectedTour!.isCompleted) {
-                  debugPrint("COMPLETED");
-                  showSnackBar(context, "Completed tour ${selectedTour!.name}");
-                  isTourActive = false;
-                  return;
+                  if (selectedTour!.isCompleted) {
+                    _completeTour();
+                    return;
+                  }
+
+                  createPolyline(
+                      currentLoc!,
+                      selectedTour!.getNextKeyPointLocation(),
+                      "user",
+                      primaryColor);
                 }
-                createPolyline(
-                    currentLoc!,
-                    selectedTour!.getNextKeyPointLocation(),
-                    "user",
-                    primaryColor);
-              }
-              markers["_currentLocation"] = Marker(
-                  markerId: const MarkerId("_currentLocation"),
-                  icon: userIcon,
-                  position: currentLoc!,
-                  zIndex: 100);
-            }
-          },
-        );
+              },
+            );
+          }
+        }
+      },
+    );
+  }
+
+  void _setUserMarker(LatLng loc) {
+    markers["_currentLocation"] = Marker(
+        markerId: const MarkerId("_currentLocation"),
+        icon: userIcon,
+        position: loc,
+        zIndex: 100);
+  }
+
+  void _showAbandonModal() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: backgroundColor,
+        contentTextStyle: const TextStyle(
+            fontWeight: FontWeight.bold, color: textColor, fontSize: 12),
+        title: const Text(
+          'Abandon Tour',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: textColor, fontSize: 16),
+        ),
+        content: const Text('Are you sure you want to abandon the tour?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'No',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: secondaryColor,
+                  fontSize: 16),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _abandonTour();
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Yes',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: secondaryColor,
+                  fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _abandonTour() {
+    selectedTour!.abandonTour();
+    isTourActive = false;
+    selectedTour = null;
+    valueNotifier.value = 0;
+    _resetMap();
+  }
+
+  void _completeTour() {
+    debugPrint("COMPLETED");
+    showSnackBar(context, "Completed tour ${selectedTour!.name}");
+    isTourActive = false;
+    selectedTour = null;
+    valueNotifier.value = 0;
+    _resetMap();
+  }
+
+  void _keypointCheck() {
+    if (calculateDistance()) {
+      _vibrate();
+      if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+        deleteRoute(
+            "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
       }
-    });
+      deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+      showSnackBar(context,
+          "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
+      selectedTour!.completeKeyPoint();
+      valueNotifier.value =
+          selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+    }
+  }
+
+  void _vibrate() {
+    HapticFeedback.mediumImpact();
+    SystemSound.play(SystemSoundType.click);
   }
 
   void createPolyline(LatLng source, LatLng dest, String polylineId,
@@ -526,7 +613,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 40;
+    return distance < 0;
   }
 
   void deleteKeyPoint(String currentKeyPoint) {

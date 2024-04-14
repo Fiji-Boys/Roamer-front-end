@@ -3,14 +3,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class TourInfo extends StatefulWidget {
   final Tour tour;
   final VoidCallback onStartTour;
+  final ValueNotifier<double> valueNotifier;
+
   const TourInfo({
     super.key,
     required this.tour,
     required this.onStartTour,
+    required this.valueNotifier,
   });
 
   @override
@@ -22,11 +26,17 @@ class _TourInfoState extends State<TourInfo> {
       GlobalKey<_DraggableSheetState>();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DraggableSheet(
       key: sheetKey,
       child: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(
+            left: 16.0, top: 10.0, right: 16.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -56,23 +66,52 @@ class _TourInfoState extends State<TourInfo> {
                 ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onStartTour();
-                      sheetKey.currentState?.hide();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(secondaryColor),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(backgroundColor),
-                    ),
-                    child: const Text('Start Tour'),
-                  ),
+                  child: widget.tour.isStarted
+                      ? SimpleCircularProgressBar(
+                          backColor: backgroundColor,
+                          progressColors: const [
+                            secondaryLightColor,
+                            secondaryColor,
+                            secondaryDarkColor,
+                            // primaryLightColor,
+                            // primaryColor,
+                            // primaryDarkColor,
+                          ],
+                          size: 70,
+                          progressStrokeWidth: 10,
+                          backStrokeWidth: 10,
+                          valueNotifier: widget.valueNotifier,
+                          mergeMode: true,
+                          onGetText: (double value) {
+                            TextStyle centerTextStyle = const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: secondaryColor,
+                            );
+
+                            return Text(
+                              '${value.toInt()}%',
+                              style: centerTextStyle,
+                            );
+                          },
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            widget.onStartTour();
+                            sheetKey.currentState?.hide();
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                secondaryColor),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                                backgroundColor),
+                          ),
+                          child: const Text('Start Tour'),
+                        ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 26),
             CarouselSlider(
               items: widget.tour.keyPoints.map((keyPoint) {
                 return Builder(
