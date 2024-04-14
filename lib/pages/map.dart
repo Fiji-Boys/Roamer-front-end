@@ -97,7 +97,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                       ),
               ),
             ),
-            selectedTour == null ? Container() : TourInfo(tour: selectedTour!, onStartTour: _startTour),,
+            selectedTour == null
+                ? Container()
+                : TourInfo(tour: selectedTour!, onStartTour: _startTour),
             selectedTour != null && !isTourActive
                 ? Align(
                     alignment: Alignment.topRight,
