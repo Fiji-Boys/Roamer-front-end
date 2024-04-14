@@ -55,12 +55,12 @@ class _WeatherInfo extends State<WeatherInfo> {
       // decoration: BoxDecoration(
       //   borderRadius: BorderRadius.circular(10.0),
       // ),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
           topRight: Radius.circular(15),
           bottomRight: Radius.circular(15),
         ),
-        color: primaryContentColor.withOpacity(0.5),
+        // color: primaryContentColor.withOpacity(0.5),
       ),
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -72,7 +72,13 @@ class _WeatherInfo extends State<WeatherInfo> {
               const Icon(
                 Icons.location_on,
                 color: textColor,
-                size: 12,
+                size: 20,
+                shadows: <Shadow>[
+                  Shadow(
+                    blurRadius: 9.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ],
               ),
               _locationHeader(),
             ],
@@ -91,7 +97,14 @@ class _WeatherInfo extends State<WeatherInfo> {
       _weather?.areaName ?? "",
       style: const TextStyle(
         color: textColor,
-        fontSize: 12,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        shadows: <Shadow>[
+          Shadow(
+            blurRadius: 7.0,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ],
       ),
     );
   }
@@ -109,17 +122,29 @@ class _WeatherInfo extends State<WeatherInfo> {
 
     return Column(
       children: [
-        Container(
-          height: MediaQuery.of(context).size.height *
-              0.04, // Corrected MediaQuery method
-          width: MediaQuery.of(context).size.height *
-              0.04, // Provide a width to maintain aspect ratio
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit
-                  .fill, // Use BoxFit.fill to make sure the image fills the container
-              image: NetworkImage(iconUrl),
-            ),
+        SizedBox(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                child: Image.network(
+                  iconUrl,
+                  width: MediaQuery.of(context).size.height * 0.055,
+                  height: MediaQuery.of(context).size.height * 0.055,
+                  color: Colors.black.withOpacity(0.3),
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+              Positioned(
+                child: Image.network(
+                  iconUrl,
+                  width: MediaQuery.of(context).size.height * 0.05,
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -131,8 +156,14 @@ class _WeatherInfo extends State<WeatherInfo> {
       "${_weather?.temperature?.celsius?.toStringAsFixed(0)}° C",
       style: const TextStyle(
         color: textColor,
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        shadows: <Shadow>[
+          Shadow(
+            blurRadius: 8.0,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ],
       ),
     );
   }
