@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/widgets/key_poin_info.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -133,12 +134,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void _getTourMarkers() {
+  Future<void> _getTourMarkers() async {
     for (var tour in tours) {
       markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: await getLocationIcon("orange"),
           position: tour.getLocation(),
           onTap: () {
             _showTour(tour);
@@ -199,7 +199,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _getTourMarkers();
   }
 
-  void showKeypoints(Tour tour) {
+  Future<void> showKeypoints(Tour tour) async {
     _clearPolylines();
     _clearMarkers();
     selectedTour = tour;
@@ -209,17 +209,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       markers[keyPoint.name] = Marker(
         markerId: MarkerId(keyPoint.name),
         icon: i == 0
-            ? BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueAzure) //promeniti
+            ? await getLocationIcon("blue")
             : i == tour.keyPoints.length - 1
-                ? BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure) //promeniti
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure),
+                ? await getLocationIcon("blue")
+                : await getLocationIcon("blue"),
         position: keyPoint.getLocation(),
-        onTap: () {
-          _showKeyPoint(keyPoint);
-        },
       );
 
       if (i != tour.keyPoints.length - 1) {
@@ -250,10 +244,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  void _showKeyPoint(KeyPoint kp) {
-    // Ovde nesto da se desi kada se stisne keypoint
-  }
-
   void _clearMarkers() {
     markers.clear();
     markers["_currentLocation"] = Marker(
@@ -271,6 +261,17 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     List<KeyPoint> keyPoints = [
       KeyPoint(
           id: 1,
+          name: "Kuca",
+          description:
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,",
+          images: [
+            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
+            "image2.jpg"
+          ],
+          latitude: 45.262996,
+          longitude: 19.822959),
+      KeyPoint(
+          id: 2,
           name: "Sima",
           description: "Description of Sima",
           images: [
@@ -280,7 +281,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.262501,
           longitude: 19.839263),
       KeyPoint(
-          id: 2,
+          id: 3,
           name: "Vruce kifle",
           description: "Description of Vruce kifle",
           images: [
@@ -292,7 +293,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     ];
     List<KeyPoint> keyPoints2 = [
       KeyPoint(
-          id: 3,
+          id: 4,
           name: "Univer",
           description: "Description of Univer",
           images: [
@@ -302,7 +303,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.253334,
           longitude: 19.844478),
       KeyPoint(
-          id: 4,
+          id: 5,
           name: "Burgija",
           description: "Description of Burgija",
           images: [
@@ -314,7 +315,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     ];
     List<KeyPoint> keyPoints3 = [
       KeyPoint(
-          id: 5,
+          id: 6,
           name: "NTP",
           description: "Description of NTP",
           images: [
@@ -324,7 +325,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.244923,
           longitude: 19.847757),
       KeyPoint(
-          id: 6,
+          id: 7,
           name: "Turbo kruzni",
           description: "Description of Turbo",
           images: [
@@ -334,7 +335,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.244777,
           longitude: 19.84679),
       KeyPoint(
-          id: 7,
+          id: 8,
           name: "Tocionica",
           description: "Description of Turbo kruzni",
           images: [
@@ -344,7 +345,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.24262,
           longitude: 19.846887),
       KeyPoint(
-          id: 8,
+          id: 9,
           name: "Iza ugla",
           description: "Description of Tocionica",
           images: [
@@ -354,7 +355,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           latitude: 45.242733,
           longitude: 19.849508),
       KeyPoint(
-          id: 9,
+          id: 10,
           name: "NTP opet",
           description: "Description of NTP opet",
           images: [
@@ -367,7 +368,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
     List<KeyPoint> keyPoints4 = [
       KeyPoint(
-          id: 5,
+          id: 11,
           name: "Sumnjivo dvoriste",
           description: "Setam samo sa osobama zenskog pola",
           images: [
@@ -524,18 +525,25 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _keypointCheck() {
     if (calculateDistance()) {
-      _vibrate();
-      if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
-        deleteRoute(
-            "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
-      }
-      deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
-      showSnackBar(context,
-          "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
-      selectedTour!.completeKeyPoint();
-      valueNotifier.value =
-          selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+      _changeNextKeypointPicture(
+          selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+      // _vibrate();
+      // if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+      //   deleteRoute(
+      //       "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
+      // }
+      // deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+      // showSnackBar(context,
+      //     "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
+      // selectedTour!.completeKeyPoint();
+      // valueNotifier.value =
+      //     selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
     }
+  }
+
+  void _showKeyPoint(KeyPoint keyPoint) {
+    showDialog(
+        context: context, builder: (_) => KeyPointInfo(keyPoint: keyPoint));
   }
 
   void _vibrate() {
@@ -598,6 +606,29 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
+  Future<BitmapDescriptor> getLocationIcon(String color) async {
+    ByteData byteData;
+    if (color == "orange") {
+      byteData =
+          await DefaultAssetBundle.of(context).load("assets/orange_marker.png");
+    } else if (color == "blue") {
+      byteData =
+          await DefaultAssetBundle.of(context).load("assets/blue_marker.png");
+    } else {
+      byteData =
+          await DefaultAssetBundle.of(context).load("assets/green_marker.png");
+    }
+    ui.Codec codec = await ui
+        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+
+    return icon;
+  }
+
   void getUserIcon() async {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/user_marker.png");
@@ -628,7 +659,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 0;
+    return distance < 50;
   }
 
   void deleteKeyPoint(String currentKeyPoint) {
@@ -637,5 +668,16 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void deleteRoute(String route) {
     currentPolylines.remove(route);
+  }
+
+  _changeNextKeypointPicture(KeyPoint keyPoint) async {
+    markers[keyPoint.name] = Marker(
+      markerId: MarkerId(keyPoint.name),
+      icon: await getLocationIcon("green"),
+      position: keyPoint.getLocation(),
+      onTap: () {
+        _showKeyPoint(keyPoint);
+      },
+    );
   }
 }
