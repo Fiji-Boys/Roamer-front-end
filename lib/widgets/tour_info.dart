@@ -50,12 +50,19 @@ class _TourInfoState extends State<TourInfo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      widget.tour.name,
-                      style: const TextStyle(
-                        color: textColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      width: 200, // Fixed width for the container
+                      child: Text(
+                        widget.tour.name,
+                        style: const TextStyle(
+                          color: textColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        softWrap:
+                            true, // Wrap the text if it exceeds the container's width
+                        overflow:
+                            TextOverflow.clip, // Clip the overflowing text
                       ),
                     ),
                     const SizedBox(height: 8),
