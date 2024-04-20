@@ -42,6 +42,7 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
           _imagesUI(),
           _audioPlayer(),
           _descriptionUI(),
+          _completeButton(),
         ],
       ),
       _backButton(),
@@ -51,10 +52,10 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
   Widget _backButton() {
     return Positioned(
       top: 1.0,
-      left: 2.0,
+      right: 2.0,
       child: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        color: textColor,
+        icon: const Icon(Icons.close),
+        color: errorColor,
         onPressed: () {
           Navigator.of(context).pop();
         },
@@ -98,7 +99,6 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
             ),
           ),
         ),
-        _completeButton(),
       ],
     );
   }
@@ -202,7 +202,7 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
 
   Widget _descriptionUI() {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,12 +230,12 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
   }
 
   Widget _completeButton() {
-    return Positioned(
-      bottom: 8.0,
-      left: 8.0,
+    return Align(
+      alignment: Alignment.center,
       child: Container(
-        width: 60,
-        height: 25,
+        margin: const EdgeInsets.only(bottom: 8.0, right: 8.0),
+        width: 120,
+        height: 40,
         decoration: BoxDecoration(
           color: secondaryColor,
           borderRadius: BorderRadius.circular(5),
@@ -246,13 +246,14 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
             Navigator.of(context).pop();
           },
           style: ButtonStyle(
-            padding:
-                MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              const EdgeInsets.all(0),
+            ),
           ),
           child: const Text(
             'Complete',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 16,
               color: textColor,
             ),
           ),
