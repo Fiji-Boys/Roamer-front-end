@@ -263,9 +263,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           id: 1,
           name: "Kuca",
           description:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,",
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
           images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
+            "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg",
+            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg",
             "image2.jpg"
           ],
           latitude: 45.262996,
@@ -523,19 +524,22 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _resetMap();
   }
 
+  void _completeKeyPoint() {
+    if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+      deleteRoute(
+          "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
+    }
+    deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+    selectedTour!.completeKeyPoint();
+  }
+
   void _keypointCheck() {
     if (calculateDistance()) {
-      _changeNextKeypointPicture(
+      _changeNextKeypointPin(
           selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
       // _vibrate();
-      // if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
-      //   deleteRoute(
-      //       "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
-      // }
-      // deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
       // showSnackBar(context,
       //     "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
-      // selectedTour!.completeKeyPoint();
       // valueNotifier.value =
       //     selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
     }
@@ -543,7 +547,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _showKeyPoint(KeyPoint keyPoint) {
     showDialog(
-        context: context, builder: (_) => KeyPointInfo(keyPoint: keyPoint));
+        context: context,
+        builder: (_) => KeyPointInfo(
+              keyPoint: keyPoint,
+              onComplete: _completeKeyPoint,
+            ));
   }
 
   void _vibrate() {
@@ -670,7 +678,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     currentPolylines.remove(route);
   }
 
-  _changeNextKeypointPicture(KeyPoint keyPoint) async {
+  _changeNextKeypointPin(KeyPoint keyPoint) async {
     markers[keyPoint.name] = Marker(
       markerId: MarkerId(keyPoint.name),
       icon: await getLocationIcon("green"),
