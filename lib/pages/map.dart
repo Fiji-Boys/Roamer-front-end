@@ -8,7 +8,7 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
-import 'package:figenie/widgets/key_poin_info.dart';
+import 'package:figenie/widgets/key_poin_modal.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -526,6 +526,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _completeKeyPoint() {
     if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+      debugPrint("OPET PIZDARIJA SE DESILA");
       deleteRoute(
           "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
     }
@@ -548,7 +549,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   void _showKeyPoint(KeyPoint keyPoint) {
     showDialog(
         context: context,
-        builder: (_) => KeyPointInfo(
+        builder: (_) => KeyPointModal(
               keyPoint: keyPoint,
               onComplete: _completeKeyPoint,
             ));

@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class KeyPointInfo extends StatefulWidget {
   final KeyPoint keyPoint;
   final Function onComplete;
+  final VoidCallback onBack;
 
   const KeyPointInfo({
     super.key,
     required this.keyPoint,
     required this.onComplete,
+    required this.onBack,
   });
 
   @override
@@ -21,19 +23,6 @@ class KeyPointInfo extends StatefulWidget {
 class _KeyPointInfoState extends State<KeyPointInfo> {
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-        insetPadding: const EdgeInsets.all(5),
-        child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: foregroundColor),
-            height: MediaQuery.of(context).size.height * 0.9,
-            child: _buildUI()));
-  }
-
-  Widget _buildUI() {
     return SingleChildScrollView(
         child: Stack(children: [
       Column(
@@ -54,12 +43,9 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
       top: 1.0,
       right: 2.0,
       child: IconButton(
-        icon: const Icon(Icons.close),
-        color: errorColor,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+          icon: const Icon(Icons.close),
+          color: errorColor,
+          onPressed: widget.onBack),
     );
   }
 
@@ -242,8 +228,9 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
         ),
         child: TextButton(
           onPressed: () {
+            debugPrint("PIZDARIJA SE DESILA");
             widget.onComplete();
-            Navigator.of(context).pop();
+            widget.onBack();
           },
           style: ButtonStyle(
             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
