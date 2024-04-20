@@ -9,6 +9,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/services/tour_service.dart';
+import 'package:figenie/widgets/key_poin_info.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -128,7 +129,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                           }
                         },
                       ),
-                    ))
+                    ),
+                  )
                 : Container()
           ],
         ),
@@ -136,12 +138,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void _getTourMarkers() {
+  Future<void> _getTourMarkers() async {
     for (var tour in tours) {
       markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: await getLocationIcon("orange"),
           position: tour.getLocation(),
           zIndex: 10,
           onTap: () {
@@ -203,29 +204,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _getTourMarkers();
   }
 
-  void showKeypoints(Tour tour) {
+  Future<void> showKeypoints(Tour tour) async {
     _clearPolylines();
     _clearMarkers();
     selectedTour = tour;
 
     for (int i = 0; i < tour.keyPoints.length; i++) {
       final KeyPoint keyPoint = tour.keyPoints[i];
-      markers[keyPoint.name] = Marker(
-        markerId: MarkerId(keyPoint.name),
-        icon: i == 0
-            ? BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueAzure) //promeniti
-            : i == tour.keyPoints.length - 1
-                ? BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure) //promeniti
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure),
-        position: keyPoint.getLocation(),
-        zIndex: 10,
-        onTap: () {
-          _showKeyPoint(keyPoint);
-        },
-      );
+      markers[keyPoint.name] = await _createKeyPointMaker(keyPoint, i);
 
       if (selectedTour!.type == TourType.secret) {
         break;
@@ -257,10 +243,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             currentLoc!, 15), // Adjust zoom level as needed
       );
     });
-  }
-
-  void _showKeyPoint(KeyPoint kp) {
-    // Ovde nesto da se desi kada se stisne keypoint
   }
 
   void _clearMarkers() {
@@ -424,7 +406,18 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       selectedTour!.completeKeyPoint();
       valueNotifier.value =
           selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+      if (selectedTour!.nextKeyPoint != 0 &&
+          selectedTour!.type == TourType.secret) {
+        return;
+      }
+      _changeNextKeypointPicture(
+          selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
     }
+  }
+
+  void _showKeyPoint(KeyPoint keyPoint) {
+    showDialog(
+        context: context, builder: (_) => KeyPointInfo(keyPoint: keyPoint));
   }
 
   void _vibrate() {
@@ -487,6 +480,21 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
+  Future<BitmapDescriptor> getLocationIcon(String color) async {
+    ByteData byteData;
+    byteData =
+        await DefaultAssetBundle.of(context).load("assets/${color}_marker.png");
+    ui.Codec codec = await ui
+        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+
+    return icon;
+  }
+
   void getUserIcon() async {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/user_marker.png");
@@ -517,14 +525,49 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 20;
+    return distance < 50;
   }
 
-  void deleteKeyPoint(String currentKeyPoint) {
-    markers.remove(currentKeyPoint);
+  void deleteKeyPoint(String currentKeyPoint) async {
+    markers[currentKeyPoint] = Marker(
+      markerId: MarkerId("${currentKeyPoint}_completed"),
+      icon: await getLocationIcon("gray"),
+      position: markers[currentKeyPoint]!.position,
+      zIndex: 10,
+    );
+    // markers.remove(currentKeyPoint);
   }
 
   void deleteRoute(String route) {
     currentPolylines.remove(route);
+  }
+
+  _changeNextKeypointPicture(KeyPoint keyPoint) async {
+    markers[keyPoint.name] = Marker(
+      markerId: MarkerId(keyPoint.name),
+      icon: await getLocationIcon("blue"),
+      position: keyPoint.getLocation(),
+      zIndex: 10,
+      onTap: () {
+        _showKeyPoint(keyPoint);
+      },
+    );
+  }
+
+  Future<Marker> _createKeyPointMaker(
+    KeyPoint keyPoint,
+    int order,
+  ) async {
+    return Marker(
+      markerId: MarkerId(keyPoint.name),
+      icon: order == 0
+          ? await getLocationIcon("blue")
+          : await getLocationIcon("orange"),
+      position: keyPoint.getLocation(),
+      zIndex: 10,
+      onTap: () {
+        _showKeyPoint(keyPoint);
+      },
+    );
   }
 }
