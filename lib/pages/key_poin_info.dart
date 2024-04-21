@@ -228,7 +228,6 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
         ),
         child: TextButton(
           onPressed: () {
-            debugPrint("PIZDARIJA SE DESILA");
             widget.onComplete();
             widget.onBack();
           },

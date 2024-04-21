@@ -32,6 +32,7 @@ class Tour {
   }
 
   void abandonTour() {
+    nextKeyPoint = 0;
     isStarted = false;
   }
 
