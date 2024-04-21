@@ -8,6 +8,8 @@ import 'dart:ui' as ui;
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/services/tour_service.dart';
+import 'package:figenie/widgets/key_poin_modal.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -17,6 +19,9 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:vibration/vibration.dart';
+
+final TourService service = TourService();
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -35,6 +40,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   Tour? selectedTour;
   late bool isTourActive = false;
   late bool hasStarted = false;
+  late bool hasReachedKeyPoint = false;
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -84,19 +90,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     zoomControlsEnabled: false,
                   ),
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 7.0), // Adjust the value for the top margin as needed
+              padding: const EdgeInsets.only(top: 7.0),
               child: Align(
-                alignment:
-                    Alignment.topLeft, // Align to the top-left of the Stack
+                alignment: Alignment.topLeft,
                 child: currentLoc != null
-                    ? WeatherInfo(
-                        currentLoc:
-                            currentLoc!) // Show weather menu if location is available
+                    ? WeatherInfo(currentLoc: currentLoc!)
                     : Container(
-                        color: primaryContentColor,
-                        height: 50.0, // Assign a fixed height to the container
-                        // Add more properties if needed
+                        color: foregroundColor,
+                        height: 50.0,
                       ),
               ),
             ),
@@ -125,7 +126,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                           }
                         },
                       ),
-                    ))
+                    ),
+                  )
                 : Container()
           ],
         ),
@@ -133,13 +135,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void _getTourMarkers() {
+  Future<void> _getTourMarkers() async {
     for (var tour in tours) {
       markers[tour.name] = Marker(
           markerId: MarkerId(tour.name),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: await getLocationIcon("orange"),
           position: tour.getLocation(),
+          zIndex: 10,
           onTap: () {
             _showTour(tour);
           });
@@ -199,28 +201,18 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _getTourMarkers();
   }
 
-  void showKeypoints(Tour tour) {
+  Future<void> showKeypoints(Tour tour) async {
     _clearPolylines();
     _clearMarkers();
     selectedTour = tour;
 
     for (int i = 0; i < tour.keyPoints.length; i++) {
       final KeyPoint keyPoint = tour.keyPoints[i];
-      markers[keyPoint.name] = Marker(
-        markerId: MarkerId(keyPoint.name),
-        icon: i == 0
-            ? BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueAzure) //promeniti
-            : i == tour.keyPoints.length - 1
-                ? BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure) //promeniti
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure),
-        position: keyPoint.getLocation(),
-        onTap: () {
-          _showKeyPoint(keyPoint);
-        },
-      );
+      markers[keyPoint.name] = await _createKeyPointMaker(keyPoint, i);
+
+      if (selectedTour!.type == TourType.secret) {
+        break;
+      }
 
       if (i != tour.keyPoints.length - 1) {
         createPolyline(
@@ -250,17 +242,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  void _showKeyPoint(KeyPoint kp) {
-    // Ovde nesto da se desi kada se stisne keypoint
-  }
-
   void _clearMarkers() {
     markers.clear();
     markers["_currentLocation"] = Marker(
         markerId: const MarkerId("_currentLocation"),
         icon: userIcon,
         position: currentLoc!,
-        zIndex: 100);
+        zIndex: 1);
   }
 
   void _clearPolylines() {
@@ -268,136 +256,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void getTours() {
-    List<KeyPoint> keyPoints = [
-      KeyPoint(
-          id: 1,
-          name: "Sima",
-          description: "Description of Sima",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.262501,
-          longitude: 19.839263),
-      KeyPoint(
-          id: 2,
-          name: "Vruce kifle",
-          description: "Description of Vruce kifle",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.255452,
-          longitude: 19.841251),
-    ];
-    List<KeyPoint> keyPoints2 = [
-      KeyPoint(
-          id: 3,
-          name: "Univer",
-          description: "Description of Univer",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.253334,
-          longitude: 19.844478),
-      KeyPoint(
-          id: 4,
-          name: "Burgija",
-          description: "Description of Burgija",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.239358,
-          longitude: 19.850856),
-    ];
-    List<KeyPoint> keyPoints3 = [
-      KeyPoint(
-          id: 5,
-          name: "NTP",
-          description: "Description of NTP",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.244923,
-          longitude: 19.847757),
-      KeyPoint(
-          id: 6,
-          name: "Turbo kruzni",
-          description: "Description of Turbo",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.244777,
-          longitude: 19.84679),
-      KeyPoint(
-          id: 7,
-          name: "Tocionica",
-          description: "Description of Turbo kruzni",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.24262,
-          longitude: 19.846887),
-      KeyPoint(
-          id: 8,
-          name: "Iza ugla",
-          description: "Description of Tocionica",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.242733,
-          longitude: 19.849508),
-      KeyPoint(
-          id: 9,
-          name: "NTP opet",
-          description: "Description of NTP opet",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.244368,
-          longitude: 19.848467),
-    ];
-
-    List<KeyPoint> keyPoints4 = [
-      KeyPoint(
-          id: 5,
-          name: "Sumnjivo dvoriste",
-          description: "Setam samo sa osobama zenskog pola",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.244085,
-          longitude: 19.852904),
-    ];
-
-    Tour newTour = Tour(
-        name: "Put do kifli",
-        description: "Najbrzi put do vrucih(mozda) kifli",
-        keyPoints: keyPoints);
-    Tour newTour2 = Tour(
-        name: "Poseta burice",
-        description: "Do mog dragog brata",
-        keyPoints: keyPoints2);
-    Tour newTour3 = Tour(
-        name: "Setnja sa Luburom",
-        description: "Sa nasim dragim profesorom",
-        keyPoints: keyPoints3);
-    Tour newTour4 = Tour(
-        name: "Sumnjivo dvoriste na limanu",
-        description: "Easter egg tura",
-        keyPoints: keyPoints4);
-    tours.add(newTour);
-    tours.add(newTour2);
-    tours.add(newTour3);
-    tours.add(newTour4);
+    tours = service.getAll();
     _getTourMarkers();
   }
 
@@ -439,6 +298,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     return;
                   }
 
+                  if (selectedTour!.type == TourType.secret &&
+                      selectedTour!.nextKeyPoint != 0) {
+                    return;
+                  }
+
                   createPolyline(
                       currentLoc!,
                       selectedTour!.getNextKeyPointLocation(),
@@ -458,7 +322,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         markerId: const MarkerId("_currentLocation"),
         icon: userIcon,
         position: loc,
-        zIndex: 100);
+        zIndex: 1);
   }
 
   void _showAbandonModal() async {
@@ -509,6 +373,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     selectedTour!.abandonTour();
     isTourActive = false;
     selectedTour = null;
+    hasReachedKeyPoint = false;
     valueNotifier.value = 0;
     _resetMap();
   }
@@ -522,25 +387,65 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _resetMap();
   }
 
-  void _keypointCheck() {
-    if (calculateDistance()) {
-      _vibrate();
-      if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+  void _completeKeyPoint() {
+    if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+      if (selectedTour!.nextKeyPoint == 0) {
+        deleteRoute("user");
+      } else {
         deleteRoute(
             "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
       }
-      deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
-      showSnackBar(context,
-          "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
-      selectedTour!.completeKeyPoint();
-      valueNotifier.value =
-          selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+    }
+    deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+    selectedTour!.completeKeyPoint();
+    hasReachedKeyPoint = false;
+    valueNotifier.value =
+        selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+  }
+
+  void _keypointCheck() {
+    if (!hasReachedKeyPoint) {
+      if (calculateDistance()) {
+        _vibrate();
+        hasReachedKeyPoint = true;
+        if (selectedTour!.nextKeyPoint != 0 &&
+            selectedTour!.type == TourType.secret) {
+          return;
+        }
+        _changeNextKeypointMarker(
+            selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+      }
     }
   }
 
-  void _vibrate() {
-    HapticFeedback.mediumImpact();
-    SystemSound.play(SystemSoundType.click);
+  void _showKeyPoint(KeyPoint keyPoint) {
+    showDialog(
+        context: context,
+        builder: (_) => KeyPointModal(
+              keyPoint: keyPoint,
+              onComplete: _completeKeyPoint,
+            ));
+  }
+
+  void _vibrate() async {
+    if (await Vibration.hasVibrator() != null) {
+      Vibration.vibrate(pattern: [
+        0,
+        200,
+        100,
+        500,
+        100,
+        800,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        300
+      ], amplitude: 255);
+    }
   }
 
   void createPolyline(LatLng source, LatLng dest, String polylineId,
@@ -598,6 +503,23 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
+  Future<BitmapDescriptor> getLocationIcon(String color,
+      {int size = 180}) async {
+    ByteData byteData;
+    byteData =
+        await DefaultAssetBundle.of(context).load("assets/${color}_marker.png");
+    ui.Codec codec = await ui.instantiateImageCodec(
+        byteData.buffer.asUint8List(),
+        targetWidth: size);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+
+    return icon;
+  }
+
   void getUserIcon() async {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/user_marker.png");
@@ -628,14 +550,46 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 0;
+    return distance < 100;
   }
 
-  void deleteKeyPoint(String currentKeyPoint) {
-    markers.remove(currentKeyPoint);
+  void deleteKeyPoint(String currentKeyPoint) async {
+    markers[currentKeyPoint] = Marker(
+      markerId: MarkerId("${currentKeyPoint}_completed"),
+      icon: await getLocationIcon("gray"),
+      position: markers[currentKeyPoint]!.position,
+      zIndex: 10,
+    );
+    // markers.remove(currentKeyPoint);
   }
 
   void deleteRoute(String route) {
     currentPolylines.remove(route);
+  }
+
+  _changeNextKeypointMarker(KeyPoint keyPoint) async {
+    markers[keyPoint.name] = Marker(
+      markerId: MarkerId(keyPoint.name),
+      icon: await getLocationIcon("blue_active", size: 200),
+      position: keyPoint.getLocation(),
+      zIndex: 10,
+      onTap: () {
+        _showKeyPoint(keyPoint);
+      },
+    );
+  }
+
+  Future<Marker> _createKeyPointMaker(
+    KeyPoint keyPoint,
+    int order,
+  ) async {
+    return Marker(
+      markerId: MarkerId(keyPoint.name),
+      icon: order == 0
+          ? await getLocationIcon("blue")
+          : await getLocationIcon("orange"),
+      position: keyPoint.getLocation(),
+      zIndex: 10,
+    );
   }
 }
