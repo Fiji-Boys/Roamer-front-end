@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'key_point.dart';
 
+enum TourType { informational, story, secret, adventure }
+
 class Tour {
   String name;
   String description;
@@ -11,12 +13,13 @@ class Tour {
   bool isCompleted = false;
   List<KeyPoint> keyPoints;
   int nextKeyPoint = 0;
+  TourType type;
 
-  Tour({
-    required this.name,
-    required this.description,
-    required this.keyPoints,
-  });
+  Tour(
+      {required this.name,
+      required this.description,
+      required this.keyPoints,
+      required this.type});
 
   LatLng getNextKeyPointLocation() {
     if (nextKeyPoint >= keyPoints.length) return keyPoints.last.getLocation();
@@ -29,6 +32,7 @@ class Tour {
   }
 
   void abandonTour() {
+    nextKeyPoint = 0;
     isStarted = false;
   }
 
