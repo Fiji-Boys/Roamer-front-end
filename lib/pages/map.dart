@@ -17,6 +17,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:figenie/widgets/tour_completion.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -250,9 +251,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  void _showKeyPoint(KeyPoint kp) {
-    // Ovde nesto da se desi kada se stisne keypoint
-  }
+  void _showKeyPoint(KeyPoint kp) {}
 
   void _clearMarkers() {
     markers.clear();
@@ -378,6 +377,29 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           longitude: 19.852904),
     ];
 
+    List<KeyPoint> keyPoints5 = [
+      KeyPoint(
+          id: 6,
+          name: "Test",
+          description: "Test",
+          images: [
+            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
+            "image2.jpg"
+          ],
+          latitude: 45.251785422961035,
+          longitude: 19.844649201971293),
+      KeyPoint(
+          id: 6,
+          name: "Test",
+          description: "Test",
+          images: [
+            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
+            "image2.jpg"
+          ],
+          latitude: 45.25091383453241,
+          longitude: 19.84626981031937),
+    ];
+
     Tour newTour = Tour(
         name: "Put do kifli",
         description: "Najbrzi put do vrucih(mozda) kifli",
@@ -394,10 +416,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         name: "Sumnjivo dvoriste na limanu",
         description: "Easter egg tura",
         keyPoints: keyPoints4);
+    Tour newTour5 =
+        Tour(name: "Test", description: "Test", keyPoints: keyPoints5);
     tours.add(newTour);
     tours.add(newTour2);
     tours.add(newTour3);
     tours.add(newTour4);
+    tours.add(newTour5);
     _getTourMarkers();
   }
 
@@ -515,7 +540,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   void _completeTour() {
     debugPrint("COMPLETED");
-    showSnackBar(context, "Completed tour ${selectedTour!.name}");
+    showDialog(
+      context: context,
+      builder: (context) => const CongratulationsModal(),
+    );
     isTourActive = false;
     selectedTour = null;
     valueNotifier.value = 0;

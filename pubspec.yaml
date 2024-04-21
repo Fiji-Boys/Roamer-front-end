@@ -20,7 +20,8 @@ dependencies:
     http: ^1.2.1
     geocoding: ^3.0.0
     carousel_slider: ^4.2.1
-
+    confetti: ^0.7.0
+    
 dev_dependencies:
     flutter_test:
         sdk: flutter
