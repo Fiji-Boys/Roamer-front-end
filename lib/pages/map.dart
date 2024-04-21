@@ -9,7 +9,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/services/tour_service.dart';
-import 'package:figenie/widgets/key_poin_info.dart';
+import 'package:figenie/widgets/key_poin_modal.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -19,6 +19,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:vibration/vibration.dart';
 
 final TourService service = TourService();
 
@@ -39,6 +40,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   Tour? selectedTour;
   late bool isTourActive = false;
   late bool hasStarted = false;
+  late bool hasReachedKeyPoint = false;
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -88,19 +90,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     zoomControlsEnabled: false,
                   ),
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 7.0), // Adjust the value for the top margin as needed
+              padding: const EdgeInsets.only(top: 7.0),
               child: Align(
-                alignment:
-                    Alignment.topLeft, // Align to the top-left of the Stack
+                alignment: Alignment.topLeft,
                 child: currentLoc != null
-                    ? WeatherInfo(
-                        currentLoc:
-                            currentLoc!) // Show weather menu if location is available
+                    ? WeatherInfo(currentLoc: currentLoc!)
                     : Container(
-                        color: primaryContentColor,
-                        height: 50.0, // Assign a fixed height to the container
-                        // Add more properties if needed
+                        color: foregroundColor,
+                        height: 50.0,
                       ),
               ),
             ),
@@ -376,6 +373,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     selectedTour!.abandonTour();
     isTourActive = false;
     selectedTour = null;
+    hasReachedKeyPoint = false;
     valueNotifier.value = 0;
     _resetMap();
   }
@@ -389,40 +387,65 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     _resetMap();
   }
 
+  void _completeKeyPoint() {
+    if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
+      if (selectedTour!.nextKeyPoint == 0) {
+        deleteRoute("user");
+      } else {
+        deleteRoute(
+            "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
+      }
+    }
+    deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
+    selectedTour!.completeKeyPoint();
+    hasReachedKeyPoint = false;
+    valueNotifier.value =
+        selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+  }
+
   void _keypointCheck() {
-    if (calculateDistance()) {
-      _vibrate();
-      if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
-        if (selectedTour!.nextKeyPoint == 0) {
-          deleteRoute("user");
-        } else {
-          deleteRoute(
-              "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
+    if (!hasReachedKeyPoint) {
+      if (calculateDistance()) {
+        _vibrate();
+        hasReachedKeyPoint = true;
+        if (selectedTour!.nextKeyPoint != 0 &&
+            selectedTour!.type == TourType.secret) {
+          return;
         }
+        _changeNextKeypointMarker(
+            selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
       }
-      deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
-      showSnackBar(context,
-          "Completed key point ${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}");
-      selectedTour!.completeKeyPoint();
-      valueNotifier.value =
-          selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
-      if (selectedTour!.nextKeyPoint != 0 &&
-          selectedTour!.type == TourType.secret) {
-        return;
-      }
-      _changeNextKeypointPicture(
-          selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
     }
   }
 
   void _showKeyPoint(KeyPoint keyPoint) {
     showDialog(
-        context: context, builder: (_) => KeyPointInfo(keyPoint: keyPoint));
+        context: context,
+        builder: (_) => KeyPointModal(
+              keyPoint: keyPoint,
+              onComplete: _completeKeyPoint,
+            ));
   }
 
-  void _vibrate() {
-    HapticFeedback.mediumImpact();
-    SystemSound.play(SystemSoundType.click);
+  void _vibrate() async {
+    if (await Vibration.hasVibrator() != null) {
+      Vibration.vibrate(pattern: [
+        0,
+        200,
+        100,
+        500,
+        100,
+        800,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        300
+      ], amplitude: 255);
+    }
   }
 
   void createPolyline(LatLng source, LatLng dest, String polylineId,
@@ -480,12 +503,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  Future<BitmapDescriptor> getLocationIcon(String color) async {
+  Future<BitmapDescriptor> getLocationIcon(String color,
+      {int size = 180}) async {
     ByteData byteData;
     byteData =
         await DefaultAssetBundle.of(context).load("assets/${color}_marker.png");
-    ui.Codec codec = await ui
-        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
+    ui.Codec codec = await ui.instantiateImageCodec(
+        byteData.buffer.asUint8List(),
+        targetWidth: size);
     ui.FrameInfo fi = await codec.getNextFrame();
     final icon = BitmapDescriptor.fromBytes(
         (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
@@ -525,7 +550,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 50;
+    return distance < 100;
   }
 
   void deleteKeyPoint(String currentKeyPoint) async {
@@ -542,10 +567,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     currentPolylines.remove(route);
   }
 
-  _changeNextKeypointPicture(KeyPoint keyPoint) async {
+  _changeNextKeypointMarker(KeyPoint keyPoint) async {
     markers[keyPoint.name] = Marker(
       markerId: MarkerId(keyPoint.name),
-      icon: await getLocationIcon("blue"),
+      icon: await getLocationIcon("blue_active", size: 200),
       position: keyPoint.getLocation(),
       zIndex: 10,
       onTap: () {
@@ -565,9 +590,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           : await getLocationIcon("orange"),
       position: keyPoint.getLocation(),
       zIndex: 10,
-      onTap: () {
-        _showKeyPoint(keyPoint);
-      },
     );
   }
 }
