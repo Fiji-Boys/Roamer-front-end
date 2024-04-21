@@ -29,8 +29,7 @@ class _CongratulationsModalState extends State<CongratulationsModal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.transparent, // Make the scaffold background transparent
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           Dialog(
@@ -88,16 +87,19 @@ class _CongratulationsModalState extends State<CongratulationsModal> {
             right: 0,
             child: Align(
               alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirectionality: BlastDirectionality.explosive,
-                emissionFrequency: 0.05,
-                numberOfParticles: 20,
-                gravity: 0.9,
-                colors: const [
-                  primaryColor,
-                  secondaryColor,
-                ],
+              child: FractionalTranslation(
+                translation: const Offset(0.0, -0.3),
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 20,
+                  gravity: 0.9,
+                  colors: const [
+                    primaryColor,
+                    secondaryColor,
+                  ],
+                ),
               ),
             ),
           ),
