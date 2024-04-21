@@ -9,7 +9,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/services/tour_service.dart';
-import 'package:figenie/widgets/key_poin_modal.dart';
+import 'package:figenie/widgets/key_point_modal.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';

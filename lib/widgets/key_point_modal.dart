@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
-import 'package:figenie/pages/key_poin_info.dart';
+import 'package:figenie/pages/key_point_info.dart';
 import 'package:flutter/material.dart';
 
 class KeyPointModal extends StatefulWidget {
