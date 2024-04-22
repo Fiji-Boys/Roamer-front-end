@@ -189,6 +189,24 @@ Mirisi vanile, čokolade i voća se mešaju u vazduhu, pružajući vam osećaj t
           ],
           latitude: 45.255452,
           longitude: 19.845789),
+      KeyPoint(
+          id: 3,
+          name: "Crni Ovan",
+          description:
+              """U srcu Novog Sada, u blizini Katedrale, nalazi se tajanstveno mesto gde se svetlost i senke susreću. U starim zidovima, skriven je kafić koji čuva duh otpora i slobode. Bez imena, ali sa bogatom istorijom, ovo mesto okuplja ljude koji cene hrabrost i solidarnost. Ovde se priče razmenjuju uz gutljaj piva, a svetlost sveća stvara toplu atmosferu. Kroz svaku čašu i razgovor, oseća se duh borbe za pravdu i slobodu koji oživljava sećanja na hrabre ljude prošlosti. Zagonetno mesto čeka one koji žele da otkriju tajnu simbola borbe za pravdu i slobodu.""",
+          images: [
+            "https://lh3.googleusercontent.com/p/AF1QipMLz4yRJE7DXBF1zvMygLCKywBnIMXrPfH4gBwl=s680-w680-h510"
+          ],
+          latitude: 45.256845,
+          longitude: 19.845256),
+      KeyPoint(
+          id: 4,
+          name: "Gusan",
+          description:
+              """U srcu grada, gde svetlost izgleda kao da igra sa senkama,Tamo gde se okupljaju prijatelji, deli se smeh i razmenjuju priče u toku noći.Bez zvaničnog imena, ali s dušom koja peva svoju pesmu, Ovo mesto krije tajnu poznatu samo onima koji pažljivo slušaju.Pogledajte duboko, kroz svaki znak i trag,Gde ptice selice nalaze dom, tamo vodi put.Kroz rustičnu atmosferu i čaše piva hladne, Ovo mesto otkriva svoju tajnu svakome ko dovoljno hrabro pokuca na njegova vrata.""",
+          images: ["https://www.pivnicagusan.rs/media/dostava/tocilice.jpg"],
+          latitude: 45.255513,
+          longitude: 19.846789),
     ];
 
     Tour tour3 = Tour(
