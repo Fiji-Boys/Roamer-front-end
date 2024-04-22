@@ -108,6 +108,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                     tour: selectedTour!,
                     onStartTour: _startTour,
                     valueNotifier: valueNotifier,
+                    isTourActive: isTourActive,
                   ),
             selectedTour != null
                 ? Align(
@@ -180,21 +181,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  void showSnackBar(BuildContext context, String text) {
-    final snackBar = SnackBar(
-      content: Text(
-        text,
-        style: const TextStyle(
-          color: secondaryColor,
-        ),
-      ),
-      backgroundColor: backgroundColor,
-      behavior: SnackBarBehavior.floating,
-      width: 300,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   void _resetMap() {
     selectedTour = null;
     _clearMarkers();
@@ -232,6 +218,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     if (selectedTour == null) throw Exception("Tour not selected");
     selectedTour!.startTour();
     isTourActive = true;
+    hasReachedKeyPoint = false;
     LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
     createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
     _keypointCheck();
@@ -294,11 +281,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                 if (isTourActive && selectedTour != null) {
                   _keypointCheck();
 
-                  if (selectedTour!.isCompleted) {
-                    _completeTour();
-                    return;
-                  }
-
                   if (selectedTour!.type == TourType.secret &&
                       selectedTour!.nextKeyPoint != 0) {
                     return;
@@ -308,7 +290,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                       currentLoc!,
                       selectedTour!.getNextKeyPointLocation(),
                       "user",
-                      primaryColor);
+                      primaryColor,
+                      zIndex: 2);
                 }
               },
             );
@@ -380,31 +363,39 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void _completeTour() {
-    debugPrint("COMPLETED");
     showDialog(
       context: context,
       builder: (context) => const CongratulationsModal(),
-    );
-    isTourActive = false;
-    selectedTour = null;
-    valueNotifier.value = 0;
-    _resetMap();
+    ).then((value) {
+      setState(() {
+        isTourActive = false;
+        selectedTour = null;
+        hasReachedKeyPoint = false;
+        _resetMap();
+      });
+      valueNotifier.value = 0;
+    });
   }
 
   void _completeKeyPoint() {
     if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
       if (selectedTour!.nextKeyPoint == 0) {
         deleteRoute("user");
-      } else {
-        deleteRoute(
-            "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
       }
+      deleteRoute(
+          "${selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name}/${selectedTour!.keyPoints[selectedTour!.nextKeyPoint + 1].name}");
     }
     deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
     selectedTour!.completeKeyPoint();
     hasReachedKeyPoint = false;
     valueNotifier.value =
         selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+    if (selectedTour!.type != TourType.secret && !selectedTour!.isCompleted) {
+      createPolyline(currentLoc!, selectedTour!.getNextKeyPointLocation(),
+          "user", primaryColor,
+          zIndex: 2);
+      _setNextKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+    }
   }
 
   void _keypointCheck() {
@@ -412,23 +403,27 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       if (calculateDistance()) {
         _vibrate();
         hasReachedKeyPoint = true;
-        if (selectedTour!.nextKeyPoint != 0 &&
-            selectedTour!.type == TourType.secret) {
-          return;
-        }
-        _changeNextKeypointMarker(
-            selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+        _activateKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
       }
     }
   }
 
   void _showKeyPoint(KeyPoint keyPoint) {
     showDialog(
-        context: context,
-        builder: (_) => KeyPointModal(
-              keyPoint: keyPoint,
-              onComplete: _completeKeyPoint,
-            ));
+      context: context,
+      builder: (_) => KeyPointModal(
+        keyPoint: keyPoint,
+        onComplete: _completeKeyPoint,
+      ),
+    ).then(
+      (value) {
+        if (selectedTour!.isCompleted) {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _completeTour();
+          });
+        }
+      },
+    );
   }
 
   void _vibrate() async {
@@ -452,8 +447,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void createPolyline(LatLng source, LatLng dest, String polylineId,
-      Color polyLineColor) async {
+  void createPolyline(
+      LatLng source, LatLng dest, String polylineId, Color polyLineColor,
+      {zIndex = 1}) async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleMapsApiKey,
@@ -472,7 +468,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             polylineId: PolylineId(polylineId),
             points: polylineCoords,
             width: 6,
-            color: polyLineColor);
+            color: polyLineColor,
+            zIndex: zIndex);
       });
     }
   }
@@ -558,12 +555,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void deleteKeyPoint(String currentKeyPoint) async {
-    markers[currentKeyPoint] = Marker(
-      markerId: MarkerId("${currentKeyPoint}_completed"),
-      icon: await getLocationIcon("gray"),
-      position: markers[currentKeyPoint]!.position,
-      zIndex: 10,
-    );
+    BitmapDescriptor icon = await getLocationIcon("gray");
+    setState(() {
+      markers[currentKeyPoint] = Marker(
+        markerId: MarkerId("${currentKeyPoint}_completed"),
+        icon: icon,
+        position: markers[currentKeyPoint]!.position,
+        zIndex: 10,
+      );
+    });
     // markers.remove(currentKeyPoint);
   }
 
@@ -571,16 +571,31 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     currentPolylines.remove(route);
   }
 
-  _changeNextKeypointMarker(KeyPoint keyPoint) async {
-    markers[keyPoint.name] = Marker(
-      markerId: MarkerId(keyPoint.name),
-      icon: await getLocationIcon("blue_active", size: 200),
-      position: keyPoint.getLocation(),
-      zIndex: 10,
-      onTap: () {
-        _showKeyPoint(keyPoint);
-      },
-    );
+  _activateKeyPoint(KeyPoint keyPoint) async {
+    BitmapDescriptor icon = await getLocationIcon("blue_active", size: 200);
+    setState(() {
+      markers[keyPoint.name] = Marker(
+        markerId: MarkerId(keyPoint.name),
+        icon: icon,
+        position: keyPoint.getLocation(),
+        zIndex: 10,
+        onTap: () {
+          _showKeyPoint(keyPoint);
+        },
+      );
+    });
+  }
+
+  _setNextKeyPoint(KeyPoint keyPoint) async {
+    BitmapDescriptor icon = await getLocationIcon("blue", size: 200);
+    setState(() {
+      markers[keyPoint.name] = Marker(
+        markerId: MarkerId(keyPoint.name),
+        icon: icon,
+        position: keyPoint.getLocation(),
+        zIndex: 10,
+      );
+    });
   }
 
   Future<Marker> _createKeyPointMaker(

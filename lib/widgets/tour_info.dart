@@ -9,12 +9,14 @@ class TourInfo extends StatefulWidget {
   final Tour tour;
   final VoidCallback onStartTour;
   final ValueNotifier<double> valueNotifier;
+  final bool isTourActive;
 
   const TourInfo({
     super.key,
     required this.tour,
     required this.onStartTour,
     required this.valueNotifier,
+    required this.isTourActive,
   });
 
   @override
@@ -80,7 +82,7 @@ class _TourInfoState extends State<TourInfo> {
                 ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: widget.tour.isStarted
+                  child: widget.isTourActive
                       ? SimpleCircularProgressBar(
                           backColor: backgroundColor,
                           progressColors: const [

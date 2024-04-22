@@ -54,6 +54,71 @@ class TourService {
         longitude: 19.845446657629196,
       ),
     ];
+    Tour starterTour = Tour(
+        name: "Starter tour",
+        description: "Explore Novi Sad",
+        keyPoints: starterTourKeyPoints,
+        type: TourType.informational);
+
+    List<KeyPoint> kp1 = [
+      KeyPoint(
+          id: 1,
+          name: "Trg Slobode",
+          description:
+              """Naša tura počinje na Trgu Slobode, središtu Novog Sada. Okružen impozantnim zgradama, trg je srce grada, mesto gde se Novosađani okupljaju i gde se održavaju brojni kulturni događaji.
+
+Dok stojimo na Trgu Slobode, osluškujemo zvuke grada i osećamo puls Novog Sada, grada koji je centar kulture i zabave u Vojvodini.""",
+          images: [
+            "https://live.staticflickr.com/4874/32089154748_ec91ec81c9_b.jpg",
+            "https://gradskeinfo.rs/wp-content/uploads/2021/11/Mileticev-trg-3-scaled.jpg"
+          ],
+          latitude: 45.255421,
+          longitude: 19.845135),
+      KeyPoint(
+          id: 2,
+          name: "Dunavski park",
+          description:
+              """Nastavljamo šetnju kroz Dunavski park, oazu zelenila usred grada. Park je omiljeno mesto Novosađana za šetnju, rekreaciju i opuštanje. Uživamo u miru i tišini, dok oko nas cveta raznovrsno cveće i šarenilo zelenila.
+
+Dok prolazimo kroz Dunavski park, otkrivamo skriveni mir i lepotu koju pruža priroda usred gradskog života.""",
+          images: [
+            "https://live.staticflickr.com/695/20996605404_dd50a482a7_b.jpg",
+            "https://www.kurir.rs/data/images/2023/12/02/20/3728170_shutterstock-2070491330_share.jpg"
+          ],
+          latitude: 45.255143,
+          longitude: 19.850501),
+      KeyPoint(
+          id: 3,
+          name: "Petrovaradinska tvrđava",
+          description:
+              """Naša sledeća stanica je Petrovaradinska tvrđava, simbol grada Novog Sada. Ova impozantna tvrđava pruža predivan pogled na grad i reku Dunav. Šetnja kroz tvrđavu pruža nam uvid u bogatu istoriju ovog grada.
+
+Dok stojimo na tvrđavi, otkrivamo da Novi Sad nije samo grad, već mesto koje spaja prošlost i sadašnjost, sa spektakularnim pogledom na Dunav i okolne predele.""",
+          images: [
+            "https://www.creativehistorybalkans.com/wp-content/uploads/2019/05/Novi_Sad_00_web_feat.jpg",
+            "https://nsuzivo.rs/wp-content/uploads/2021/10/Petrovaradinska_tvrdjava_2.jpg"
+          ],
+          latitude: 45.253467,
+          longitude: 19.861225),
+      KeyPoint(
+          id: 4,
+          name: "Dunavski kej",
+          description:
+              """Poslednja tačka naše ture je šetnja duž Dunavskog keja. Ovde uživamo u prelepom pogledu na reku Dunav i Frušku goru. Dunavski kej je omiljeno mesto Novosađana za šetnju i relaksaciju.
+
+Dok šetamo Dunavskim kejom, osećamo duh slobode koji nosi Dunav, reka koja spaja gradove i ljude duž svog toka.""",
+          images: [
+            "https://www.novisad.rs/sites/default/files/imagecache/800xXXX/images/izabrana3.jpg",
+            "https://live.staticflickr.com/3850/14563428482_c88aa107a4_b.jpg"
+          ],
+          latitude: 45.261341,
+          longitude: 19.856201)
+    ];
+    Tour tour1 = Tour(
+        name: "Tura kroz Novi Sad",
+        description: "Šetnja kroz srce Vojvodine",
+        keyPoints: kp1,
+        type: TourType.informational);
 
     List<KeyPoint> keyPoints = [
       KeyPoint(
@@ -77,125 +142,15 @@ class TourService {
           latitude: 45.255452,
           longitude: 19.841251),
     ];
-    List<KeyPoint> keyPoints2 = [
-      KeyPoint(
-          id: 3,
-          name: "Univer",
-          description: "Description of Univer",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.253334,
-          longitude: 19.844478),
-      KeyPoint(
-          id: 4,
-          name: "Burgija",
-          description: "Description of Burgija",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.239358,
-          longitude: 19.850856),
-    ];
-    List<KeyPoint> keyPoints3 = [
-      KeyPoint(
-          id: 5,
-          name: "NTP",
-          description: "Description of NTP",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.244923,
-          longitude: 19.847757),
-      KeyPoint(
-          id: 6,
-          name: "Turbo kruzni",
-          description: "Description of Turbo",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.244777,
-          longitude: 19.84679),
-      KeyPoint(
-          id: 7,
-          name: "Tocionica",
-          description: "Description of Turbo kruzni",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.24262,
-          longitude: 19.846887),
-      KeyPoint(
-          id: 8,
-          name: "Iza ugla",
-          description: "Description of Tocionica",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.242733,
-          longitude: 19.849508),
-      KeyPoint(
-          id: 9,
-          name: "NTP opet",
-          description: "Description of NTP opet",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image4.jpg"
-          ],
-          latitude: 45.244368,
-          longitude: 19.848467),
-    ];
-
-    List<KeyPoint> keyPoints4 = [
-      KeyPoint(
-          id: 5,
-          name: "Sumnjivo dvoriste",
-          description: "Setam samo sa osobama zenskog pola",
-          images: [
-            "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
-            "image2.jpg"
-          ],
-          latitude: 45.244085,
-          longitude: 19.852904),
-    ];
 
     Tour newTour = Tour(
         name: "Put do kifli",
         description: "Najbrzi put do vrucih(mozda) kifli",
         keyPoints: keyPoints,
         type: TourType.secret);
-    Tour newTour2 = Tour(
-        name: "Poseta burice",
-        description: "Do mog dragog brata",
-        keyPoints: keyPoints2,
-        type: TourType.adventure);
-    Tour newTour3 = Tour(
-        name: "Setnja sa Luburom",
-        description: "Sa nasim dragim profesorom",
-        keyPoints: keyPoints3,
-        type: TourType.adventure);
-    Tour newTour4 = Tour(
-        name: "Sumnjivo dvoriste na limanu",
-        description: "Easter egg tura",
-        keyPoints: keyPoints4,
-        type: TourType.adventure);
-    Tour starterTour = Tour(
-        name: "Starter tour",
-        description: "Explore Novi Sad",
-        keyPoints: starterTourKeyPoints,
-        type: TourType.informational);
-    tours.add(newTour);
-    tours.add(newTour2);
-    tours.add(newTour3);
-    tours.add(newTour4);
-    tours.add(starterTour);
 
+    tours.add(tour1);
+    tours.add(newTour);
     return tours;
   }
 }

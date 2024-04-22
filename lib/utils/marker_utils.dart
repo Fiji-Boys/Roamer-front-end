@@ -10,7 +10,6 @@ class MarkerUtils {
   static Future<BitmapDescriptor> createCustomMarkerIcon(int number) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    final Paint paint = Paint()..color = Colors.blue;
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: number.toString(),
