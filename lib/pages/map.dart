@@ -551,7 +551,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
             2;
     double distance = 1000 * 12742 * asin(sqrt(a));
     debugPrint(distance.toString());
-    return distance < 100;
+    return distance < 50000;
   }
 
   void deleteKeyPoint(String currentKeyPoint) async {
