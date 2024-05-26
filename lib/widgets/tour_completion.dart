@@ -6,10 +6,10 @@ class CongratulationsModal extends StatefulWidget {
   const CongratulationsModal({super.key});
 
   @override
-  _CongratulationsModalState createState() => _CongratulationsModalState();
+  CongratulationsModalState createState() => CongratulationsModalState();
 }
 
-class _CongratulationsModalState extends State<CongratulationsModal> {
+class CongratulationsModalState extends State<CongratulationsModal> {
   late ConfettiController _confettiController;
 
   @override
