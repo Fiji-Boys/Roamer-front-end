@@ -1,41 +1,43 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:ui' as ui;
+import 'dart:math';
 
+import 'package:figenie/model/tour.dart';
+import 'package:figenie/pages/map/map_view.dart';
+import 'package:figenie/services/tour_service.dart';
+import 'package:location/location.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
-import 'package:figenie/model/tour.dart';
-import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/key_point_modal.dart';
-import 'package:figenie/widgets/weather_info.dart';
-import 'package:figenie/widgets/loading.dart';
-import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:figenie/widgets/tour_completion.dart';
 import 'package:vibration/vibration.dart';
-
-final TourService service = TourService();
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  State<MapPage> createState() => MapController();
 }
 
-class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
+final TourService service = TourService();
+
+class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  final Location _locationController = Location();
+  final Location locationController = Location();
+  final Completer<GoogleMapController> mapController =
+      Completer<GoogleMapController>();
+  late ValueNotifier<double> valueNotifier;
+
+  LatLng startLoc = const LatLng(45.262501, 19.839263);
+  LatLng? currentLoc;
 
   List<Tour> tours = <Tour>[];
   Tour? selectedTour;
@@ -43,16 +45,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   late bool hasStarted = false;
   late bool hasReachedKeyPoint = false;
 
-  final Completer<GoogleMapController> _mapController =
-      Completer<GoogleMapController>();
-
-  static const LatLng startLoc = LatLng(45.262501, 19.839263);
-  LatLng? currentLoc;
-  Map<String, Polyline> currentPolylines = {};
   BitmapDescriptor userIcon = BitmapDescriptor.defaultMarker;
+  Map<String, Polyline> currentPolylines = {};
   Map<String, Marker> markers = {};
-
-  late ValueNotifier<double> valueNotifier;
 
   @override
   void initState() {
@@ -63,223 +58,38 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     valueNotifier = ValueNotifier(0.0);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return WillPopScope(
-      onWillPop: () async {
-        _resetMap();
-        return false;
-      },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            currentLoc == null
-                ? const Center(
-                    child: Loading(),
-                  )
-                : GoogleMap(
-                    onMapCreated: ((GoogleMapController controller) =>
-                        _mapController.complete(controller)),
-                    initialCameraPosition: const CameraPosition(
-                      target: startLoc,
-                      zoom: 13,
-                    ),
-                    markers: Set<Marker>.of(markers.values),
-                    polylines: Set<Polyline>.of(currentPolylines.values),
-                    compassEnabled: false,
-                    zoomControlsEnabled: false,
-                  ),
-            Padding(
-              padding: const EdgeInsets.only(top: 7.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: currentLoc != null
-                    ? WeatherInfo(currentLoc: currentLoc!)
-                    : Container(
-                        color: foregroundColor,
-                        height: 50.0,
-                      ),
-              ),
-            ),
-            selectedTour == null
-                ? Container()
-                : TourInfo(
-                    tour: selectedTour!,
-                    onStartTour: _startTour,
-                    valueNotifier: valueNotifier,
-                    isTourActive: isTourActive,
-                  ),
-            selectedTour != null
-                ? Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10, top: 10),
-                      child: FloatingActionButton(
-                        shape: const CircleBorder(),
-                        backgroundColor: foregroundColor,
-                        foregroundColor: textColor,
-                        child: const Icon(Icons.close),
-                        onPressed: () {
-                          if (isTourActive) {
-                            _showAbandonModal();
-                          } else {
-                            _resetMap();
-                          }
-                        },
-                      ),
-                    ),
-                  )
-                : Container()
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _getTourMarkers() async {
-    for (var tour in tours) {
-      markers[tour.name] = Marker(
-          markerId: MarkerId(tour.name),
-          icon: await getLocationIcon("orange"),
-          position: tour.getLocation(),
-          zIndex: 10,
-          onTap: () {
-            _showTour(tour);
-          });
-    }
-    setState(() {});
-  }
-
-  void _showTour(Tour tour) {
-    showKeypoints(tour);
-    _centerMapToBounds(tour.keyPoints);
-  }
-
-  void _centerMapToBounds(List<KeyPoint> keyPoints) {
-    if (keyPoints.isEmpty) return;
-
-    double minLat = keyPoints.first.latitude;
-    double maxLat = keyPoints.first.latitude;
-    double minLng = keyPoints.first.longitude;
-    double maxLng = keyPoints.first.longitude;
-
-    for (final keyPoint in keyPoints) {
-      minLat = min(minLat, keyPoint.latitude);
-      maxLat = max(maxLat, keyPoint.latitude);
-      minLng = min(minLng, keyPoint.longitude);
-      maxLng = max(maxLng, keyPoint.longitude);
-    }
-
-    final southWest = LatLng(minLat, minLng);
-    final northEast = LatLng(maxLat, maxLng);
-
-    final bounds = LatLngBounds(southwest: southWest, northeast: northEast);
-
-    _mapController.future.then((controller) {
-      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 130));
-    });
-  }
-
-  void _resetMap() {
-    selectedTour = null;
-    _clearMarkers();
-    _clearPolylines();
-    _getTourMarkers();
-  }
-
-  Future<void> showKeypoints(Tour tour) async {
-    _clearPolylines();
-    _clearMarkers();
-    selectedTour = tour;
-
-    for (int i = 0; i < tour.keyPoints.length; i++) {
-      final KeyPoint keyPoint = tour.keyPoints[i];
-      markers[keyPoint.name] = await _createKeyPointMaker(keyPoint, i);
-
-      if (selectedTour!.type == TourType.secret) {
-        break;
-      }
-
-      if (i != tour.keyPoints.length - 1) {
-        createPolyline(
-          keyPoint.getLocation(),
-          tour.keyPoints[i + 1].getLocation(),
-          "${keyPoint.name}/${tour.keyPoints[i + 1].name}",
-          secondaryColor,
-        );
-      }
-    }
-
-    setState(() {});
-  }
-
-  void _startTour() {
-    if (selectedTour == null) throw Exception("Tour not selected");
-    selectedTour!.startTour();
-    isTourActive = true;
-    hasReachedKeyPoint = false;
-    LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
-    createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
-    _keypointCheck();
-    _mapController.future.then((controller) {
-      controller.animateCamera(
-        CameraUpdate.newLatLngZoom(
-            currentLoc!, 15), // Adjust zoom level as needed
-      );
-    });
-  }
-
-  void _clearMarkers() {
-    markers.clear();
-    markers["_currentLocation"] = Marker(
-        markerId: const MarkerId("_currentLocation"),
-        icon: userIcon,
-        position: currentLoc!,
-        zIndex: 1);
-  }
-
-  void _clearPolylines() {
-    currentPolylines.clear();
-  }
-
-  void getTours() {
-    tours = service.getAll();
-    _getTourMarkers();
-  }
-
   Future<void> getLocationUpdates() async {
     bool serviceEnabled;
     PermissionStatus permissionGranted;
 
-    serviceEnabled = await _locationController.serviceEnabled();
+    serviceEnabled = await locationController.serviceEnabled();
     if (serviceEnabled) {
-      serviceEnabled = await _locationController.requestService();
+      serviceEnabled = await locationController.requestService();
     } else {
       return;
     }
 
-    permissionGranted = await _locationController.hasPermission();
+    permissionGranted = await locationController.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await _locationController.requestPermission();
+      permissionGranted = await locationController.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
         return;
       }
     }
 
-    _locationController.onLocationChanged.listen(
+    locationController.onLocationChanged.listen(
       (LocationData currentLocation) {
         if (currentLocation.latitude != null &&
             currentLocation.longitude != null) {
           final newLoc =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          _setUserMarker(newLoc);
+          setUserMarker(newLoc);
           if (currentLoc != newLoc) {
             setState(
               () {
                 currentLoc = newLoc;
                 if (isTourActive && selectedTour != null) {
-                  _keypointCheck();
+                  keypointCheck();
 
                   if (selectedTour!.type == TourType.secret &&
                       selectedTour!.nextKeyPoint != 0) {
@@ -301,7 +111,61 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void _setUserMarker(LatLng loc) {
+  void getTours() {
+    tours = service.getAll();
+    getTourMarkers();
+  }
+
+  Future<void> getTourMarkers() async {
+    for (var tour in tours) {
+      markers[tour.name] = Marker(
+          markerId: MarkerId(tour.name),
+          icon: await getLocationIcon("orange"),
+          position: tour.getLocation(),
+          zIndex: 10,
+          onTap: () {
+            showTour(tour);
+          });
+    }
+    setState(() {});
+  }
+
+  void getUserIcon() async {
+    ByteData byteData =
+        await DefaultAssetBundle.of(context).load("assets/user_marker.png");
+    ui.Codec codec = await ui
+        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final icon = BitmapDescriptor.fromBytes(
+        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+            .buffer
+            .asUint8List());
+    setState(() {
+      userIcon = icon;
+    });
+  }
+
+  void resetMap() {
+    selectedTour = null;
+    clearMarkers();
+    clearPolylines();
+    getTourMarkers();
+  }
+
+  void clearMarkers() {
+    markers.clear();
+    markers["_currentLocation"] = Marker(
+        markerId: const MarkerId("_currentLocation"),
+        icon: userIcon,
+        position: currentLoc!,
+        zIndex: 1);
+  }
+
+  void clearPolylines() {
+    currentPolylines.clear();
+  }
+
+  void setUserMarker(LatLng loc) {
     markers["_currentLocation"] = Marker(
         markerId: const MarkerId("_currentLocation"),
         icon: userIcon,
@@ -309,7 +173,88 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         zIndex: 1);
   }
 
-  void _showAbandonModal() async {
+  void showTour(Tour tour) {
+    showKeypoints(tour);
+    centerMapToBounds(tour.keyPoints);
+  }
+
+  Future<void> showKeypoints(Tour tour) async {
+    clearPolylines();
+    clearMarkers();
+    selectedTour = tour;
+
+    for (int i = 0; i < tour.keyPoints.length; i++) {
+      final KeyPoint keyPoint = tour.keyPoints[i];
+      markers[keyPoint.name] = await createKeyPointMaker(keyPoint, i);
+
+      if (selectedTour!.type == TourType.secret) {
+        break;
+      }
+
+      if (i != tour.keyPoints.length - 1) {
+        createPolyline(
+          keyPoint.getLocation(),
+          tour.keyPoints[i + 1].getLocation(),
+          "${keyPoint.name}/${tour.keyPoints[i + 1].name}",
+          secondaryColor,
+        );
+      }
+    }
+
+    setState(() {});
+  }
+
+  void centerMapToBounds(List<KeyPoint> keyPoints) {
+    if (keyPoints.isEmpty) return;
+
+    double minLat = keyPoints.first.latitude;
+    double maxLat = keyPoints.first.latitude;
+    double minLng = keyPoints.first.longitude;
+    double maxLng = keyPoints.first.longitude;
+
+    for (final keyPoint in keyPoints) {
+      minLat = min(minLat, keyPoint.latitude);
+      maxLat = max(maxLat, keyPoint.latitude);
+      minLng = min(minLng, keyPoint.longitude);
+      maxLng = max(maxLng, keyPoint.longitude);
+    }
+
+    final southWest = LatLng(minLat, minLng);
+    final northEast = LatLng(maxLat, maxLng);
+
+    final bounds = LatLngBounds(southwest: southWest, northeast: northEast);
+
+    mapController.future.then((controller) {
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 130));
+    });
+  }
+
+  void startTour() {
+    if (selectedTour == null) throw Exception("Tour not selected");
+    selectedTour!.startTour();
+    isTourActive = true;
+    hasReachedKeyPoint = false;
+    LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
+    createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
+    keypointCheck();
+    mapController.future.then((controller) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(
+            currentLoc!, 15), // Adjust zoom level as needed
+      );
+    });
+  }
+
+  void abandonTour() {
+    selectedTour!.abandonTour();
+    isTourActive = false;
+    selectedTour = null;
+    hasReachedKeyPoint = false;
+    valueNotifier.value = 0;
+    resetMap();
+  }
+
+  void showAbandonModal() async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -337,7 +282,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
           ),
           TextButton(
             onPressed: () {
-              _abandonTour();
+              abandonTour();
               Navigator.of(context).pop();
             },
             child: const Text(
@@ -353,16 +298,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void _abandonTour() {
-    selectedTour!.abandonTour();
-    isTourActive = false;
-    selectedTour = null;
-    hasReachedKeyPoint = false;
-    valueNotifier.value = 0;
-    _resetMap();
-  }
-
-  void _completeTour() {
+  void completeTour() {
     showDialog(
       context: context,
       builder: (context) => const CongratulationsModal(),
@@ -371,13 +307,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         isTourActive = false;
         selectedTour = null;
         hasReachedKeyPoint = false;
-        _resetMap();
+        resetMap();
       });
       valueNotifier.value = 0;
     });
   }
 
-  void _completeKeyPoint() {
+  void completeKeyPoint() {
     if (selectedTour!.nextKeyPoint + 1 < selectedTour!.keyPoints.length) {
       if (selectedTour!.nextKeyPoint == 0) {
         deleteRoute("user");
@@ -394,39 +330,39 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       createPolyline(currentLoc!, selectedTour!.getNextKeyPointLocation(),
           "user", primaryColor,
           zIndex: 2);
-      _setNextKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+      setNextKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
     }
   }
 
-  void _keypointCheck() {
+  void keypointCheck() {
     if (!hasReachedKeyPoint) {
       if (calculateDistance()) {
-        _vibrate();
+        vibrate();
         hasReachedKeyPoint = true;
-        _activateKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
+        activateKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
       }
     }
   }
 
-  void _showKeyPoint(KeyPoint keyPoint) {
+  void showKeyPoint(KeyPoint keyPoint) {
     showDialog(
       context: context,
       builder: (_) => KeyPointModal(
         keyPoint: keyPoint,
-        onComplete: _completeKeyPoint,
+        onComplete: completeKeyPoint,
       ),
     ).then(
       (value) {
         if (selectedTour!.isCompleted) {
           Future.delayed(const Duration(milliseconds: 500), () {
-            _completeTour();
+            completeTour();
           });
         }
       },
     );
   }
 
-  void _vibrate() async {
+  void vibrate() async {
     if (await Vibration.hasVibrator() != null) {
       Vibration.vibrate(pattern: [
         0,
@@ -521,21 +457,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     return icon;
   }
 
-  void getUserIcon() async {
-    ByteData byteData =
-        await DefaultAssetBundle.of(context).load("assets/user_marker.png");
-    ui.Codec codec = await ui
-        .instantiateImageCodec(byteData.buffer.asUint8List(), targetWidth: 150);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    final icon = BitmapDescriptor.fromBytes(
-        (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-            .buffer
-            .asUint8List());
-    setState(() {
-      userIcon = icon;
-    });
-  }
-
   bool calculateDistance() {
     var p = 0.017453292519943295;
     var c = cos;
@@ -571,7 +492,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     currentPolylines.remove(route);
   }
 
-  _activateKeyPoint(KeyPoint keyPoint) async {
+  activateKeyPoint(KeyPoint keyPoint) async {
     BitmapDescriptor icon = await getLocationIcon("blue_active", size: 200);
     setState(() {
       markers[keyPoint.name] = Marker(
@@ -580,13 +501,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         position: keyPoint.getLocation(),
         zIndex: 10,
         onTap: () {
-          _showKeyPoint(keyPoint);
+          showKeyPoint(keyPoint);
         },
       );
     });
   }
 
-  _setNextKeyPoint(KeyPoint keyPoint) async {
+  setNextKeyPoint(KeyPoint keyPoint) async {
     BitmapDescriptor icon = await getLocationIcon("blue", size: 200);
     setState(() {
       markers[keyPoint.name] = Marker(
@@ -598,7 +519,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  Future<Marker> _createKeyPointMaker(
+  Future<Marker> createKeyPointMaker(
     KeyPoint keyPoint,
     int order,
   ) async {
@@ -610,5 +531,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       position: keyPoint.getLocation(),
       zIndex: 10,
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return MapView(this);
   }
 }

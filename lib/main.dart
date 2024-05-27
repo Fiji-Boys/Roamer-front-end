@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:figenie/pages/map.dart';
+import 'package:figenie/pages/map/map_controller.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
