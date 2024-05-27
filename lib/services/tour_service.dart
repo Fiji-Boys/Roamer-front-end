@@ -159,18 +159,18 @@ Dok šetamo Dunavskim kejom, osećamo duh slobode koji nosi Dunav, reka koja spa
 Dok se divite grandioznoj fasadi Katedrale, evo nekoliko zanimljivosti koje biste mogli da primetite:
     1.Arhitektonski Uzorci: Obratite pažnju na detalje fasade - pronaći ćete širok spektar arhitektonskih elemenata koji predstavljaju različite stilove i epohe koje su obeležile graditeljsku tradiciju Novog Sada.
     2.Barokni Duh: Katedrala je simbol barokne umetnosti u ovom delu Evrope. Njeni izuzetni detalji i dekorativni elementi otkrivaju duh vremena u kojem je izgrađena.
-    3.Kulturna Baština: Unutar Katedrale, otkrićete ne samo duhovno svetilište već i dragocenu riznicu umetničkih dela i artefakata koji svedoče o bogatoj kulturnoj baštini Novog Sada.
-                        
-Vaša misija na ovoj tajanstvenoj turi je da istražite četiri lokala .
-                        
-Krzo putovanje, tragovi  će vas voditi od jedne tačke do druge, pružajući vam nezaboravno iskustvo upoznavanja sa skrivenim kutkovima Novog Sada. 
+    3.Kulturna Baština: Unutar Katedrale, otkrićete ne samo duhovno svetilište već i dragocenu riznicu umetničkih dela i artefakata koji svedoče o bogatoj kulturnoj baštini Novog Sada.""",
 
-HINT:"
-      U srcu grada, među mnoštvom slatkih iskušenja, postoji jedno mesto koje se ističe svojom jedinstvenošću. To je mesto gde se kreativnost i slatki ukusi spajaju u savršenom skladu. 
-      U njegovom nazivu, boja noći se susreće sa simbolom neobičnosti. Potražite mesto gde crna životinja simbolizuje izuzetnost, a slatki mirisi čaroliju ukusa. 
-      Pratite put slatkih snova i otkrijte tajne koje čeka mesto sa neobičnim imenom."
+// Vaša misija na ovoj tajanstvenoj turi je da istražite četiri lokala .
 
-Srećno u vašem istraživanju!""",
+// Krzo putovanje, tragovi  će vas voditi od jedne tačke do druge, pružajući vam nezaboravno iskustvo upoznavanja sa skrivenim kutkovima Novog Sada.
+
+// HINT:"
+//       U srcu grada, među mnoštvom slatkih iskušenja, postoji jedno mesto koje se ističe svojom jedinstvenošću. To je mesto gde se kreativnost i slatki ukusi spajaju u savršenom skladu.
+//       U njegovom nazivu, boja noći se susreće sa simbolom neobičnosti. Potražite mesto gde crna životinja simbolizuje izuzetnost, a slatki mirisi čaroliju ukusa.
+//       Pratite put slatkih snova i otkrijte tajne koje čeka mesto sa neobičnim imenom."
+
+// Srećno u vašem istraživanju!""",
           images: [
             "https://live.staticflickr.com/7909/47358208621_d866a5513e_b.jpg"
           ],
@@ -180,10 +180,11 @@ Srećno u vašem istraživanju!""",
           id: 2,
           name: "Crna ovca",
           description:
-              """U srcu grada, među mnoštvom slatkih iskušenja, postoji jedno mesto koje se ističe svojom jedinstvenošću. Kada kročite u ovu poslastičarnicu, čini se kao da ulazite u bajkoviti svet slatkih snova. Svetlošću obasjana vitrina otkriva širok spektar slatkiša, od neodoljivih torti do raznobojnih kolača, svaki od njih kao remek-delo slatke umetnosti.
+              """U srcu grada, među mnoštvom slatkih iskušenja, postoji jedno mesto koje se ističe svojom jedinstvenošću. Kada kročite u ovu poslastičarnicu, čini se kao da ulazite u bajkoviti svet slatkih snova. Svetlošću obasjana vitrina otkriva širok spektar slatkiša, od neodoljivih torti do raznobojnih kolača, svaki od njih kao remek-delo slatke umetnosti."""
 
-Mirisi vanile, čokolade i voća se mešaju u vazduhu, pružajući vam osećaj topline i udobnosti. Enterijer poslastičarnice odiše elegancijom i šarmom, sa udobnim stolicama i stolovima koji vas pozivaju da zastanete i uživate u trenutku.
-""",
+// Mirisi vanile, čokolade i voća se mešaju u vazduhu, pružajući vam osećaj topline i udobnosti. Enterijer poslastičarnice odiše elegancijom i šarmom, sa udobnim stolicama i stolovima koji vas pozivaju da zastanete i uživate u trenutku.
+// """,
+          ,
           images: [
             "https://gradskeinfo.rs/wp-content/uploads/2022/08/crna-ovca-sladoled-1.jpg"
           ],
@@ -193,7 +194,7 @@ Mirisi vanile, čokolade i voća se mešaju u vazduhu, pružajući vam osećaj t
           id: 3,
           name: "Crni Ovan",
           description:
-              """U srcu Novog Sada, u blizini Katedrale, nalazi se tajanstveno mesto gde se svetlost i senke susreću. U starim zidovima, skriven je kafić koji čuva duh otpora i slobode. Bez imena, ali sa bogatom istorijom, ovo mesto okuplja ljude koji cene hrabrost i solidarnost. Ovde se priče razmenjuju uz gutljaj piva, a svetlost sveća stvara toplu atmosferu. Kroz svaku čašu i razgovor, oseća se duh borbe za pravdu i slobodu koji oživljava sećanja na hrabre ljude prošlosti. Zagonetno mesto čeka one koji žele da otkriju tajnu simbola borbe za pravdu i slobodu.""",
+              """U srcu Novog Sada, u blizini Katedrale, nalazi se tajanstveno mesto gde se svetlost i senke susreću. U starim zidovima, skriven je kafić koji čuva duh otpora i slobode. Bez imena, ali sa bogatom istorijom, ovo mesto okuplja ljude koji cene hrabrost i solidarnost. Ovde se priče razmenjuju uz gutljaj piva, a svetlost sveća stvara toplu atmosferu. Kroz svaku čašu i razgovor, oseća se duh borbe za pravdu i slobodu koji oživljava sećanja na hrabre ljude prošlosti. """,
           images: [
             "https://lh3.googleusercontent.com/p/AF1QipMLz4yRJE7DXBF1zvMygLCKywBnIMXrPfH4gBwl=s680-w680-h510"
           ],

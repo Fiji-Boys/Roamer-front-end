@@ -22,11 +22,11 @@ class _KeyPointModalState extends State<KeyPointModal> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      insetPadding: const EdgeInsets.all(5),
+      insetPadding: const EdgeInsets.all(0),
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), color: foregroundColor),
-        height: MediaQuery.of(context).size.height * 0.9,
+        height: MediaQuery.of(context).size.height,
         child: KeyPointInfo(
           keyPoint: widget.keyPoint,
           onComplete: () {
