@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 import 'dart:math';
 
+import 'package:figenie/main.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/map/map_view.dart';
 import 'package:figenie/services/tour_service.dart';
@@ -17,6 +18,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:figenie/widgets/tour_completion.dart';
 import 'package:vibration/vibration.dart';
+import 'package:get/get.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -26,6 +28,7 @@ class MapPage extends StatefulWidget {
 }
 
 final TourService service = TourService();
+final NavigationBarController navBarController = Get.find();
 
 class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
@@ -233,6 +236,7 @@ class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
     if (selectedTour == null) throw Exception("Tour not selected");
     selectedTour!.startTour();
     isTourActive = true;
+    navBarController.setNavBarVisibility(false);
     hasReachedKeyPoint = false;
     LatLng nextKeyPointLocation = selectedTour!.getNextKeyPointLocation();
     createPolyline(currentLoc!, nextKeyPointLocation, "user", primaryColor);
@@ -246,6 +250,7 @@ class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void abandonTour() {
+    navBarController.setNavBarVisibility(true);
     selectedTour!.abandonTour();
     isTourActive = false;
     selectedTour = null;
