@@ -1,8 +1,9 @@
 import 'package:figenie/consts.dart';
+import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/map/map_controller.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
-import 'package:figenie/widgets/weather_info.dart';
+// import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -36,18 +37,18 @@ class MapView extends StatelessWidget {
                     compassEnabled: false,
                     zoomControlsEnabled: false,
                   ),
-            Padding(
-              padding: const EdgeInsets.only(top: 7.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: state.currentLoc != null
-                    ? WeatherInfo(currentLoc: state.currentLoc!)
-                    : Container(
-                        color: foregroundColor,
-                        height: 50.0,
-                      ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 7.0),
+            //   child: Align(
+            //     alignment: Alignment.topLeft,
+            //     child: state.currentLoc != null
+            //         ? WeatherInfo(currentLoc: state.currentLoc!)
+            //         : Container(
+            //             color: foregroundColor,
+            //             height: 50.0,
+            //           ),
+            //   ),
+            // ),
             state.selectedTour == null
                 ? Container()
                 : TourInfo(
@@ -76,7 +77,15 @@ class MapView extends StatelessWidget {
                       ),
                     ),
                   )
-                : Container()
+                : Container(),
+            state.selectedKeypoint == null
+                ? Container()
+                : Center(
+                    child: KeyPointInfo(
+                        keyPoint: state.selectedKeypoint!,
+                        onComplete: state.completeKeyPoint,
+                        onBack: state.goBack),
+                  )
           ],
         ),
       ),

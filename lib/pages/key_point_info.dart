@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
@@ -27,55 +24,56 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Stack(children: [
-      Column(
+    return Container(
+      color: foregroundColor,
+      child: Column(
         children: [
           _headerUI(),
-          _imagesUI(),
-          _audioPlayer(),
-          _descriptionUI(),
-          _completeButton(),
+          Expanded(
+            child: ListView(children: [
+              _imagesUI(),
+              _audioPlayer(),
+              _descriptionUI(),
+              _completeButton(),
+            ]),
+          )
         ],
       ),
-      _backButton(),
-    ]));
+    );
   }
 
   Widget _backButton() {
     return Positioned(
-      top: 1.0,
-      right: 2.0,
+      left: 2.0,
       child: IconButton(
-          icon: const Icon(Icons.close),
-          color: errorColor,
+          icon: const Icon(Icons.arrow_back),
+          color: textColor,
           onPressed: widget.onBack),
     );
   }
 
   Widget _headerUI() {
-    return Container(
-      padding: const EdgeInsets.all(5.0),
-      width: double.infinity,
-      alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: backgroundColor, // Change this to the desired background color
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10.0), // Adjust the radius value as needed
-          topRight: Radius.circular(10.0), // Adjust the radius value as needed
+    return Stack(children: [
+      Container(
+        padding: const EdgeInsets.all(5.0),
+        width: double.infinity,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          color: backgroundColor,
+        ),
+        child: DefaultTextStyle(
+          style: const TextStyle(
+            color: textColor,
+            fontSize: 35,
+            fontWeight: FontWeight.bold,
+          ),
+          softWrap: true,
+          overflow: TextOverflow.clip,
+          child: Text(widget.keyPoint.name),
         ),
       ),
-      child: Text(
-        widget.keyPoint.name,
-        style: const TextStyle(
-          color: textColor,
-          fontSize: 35,
-          fontWeight: FontWeight.bold,
-        ),
-        softWrap: true,
-        overflow: TextOverflow.clip,
-      ),
-    );
+      _backButton(),
+    ]);
   }
 
   Widget _imagesUI() {
@@ -191,20 +189,19 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Column(
-        // mainAxisAlignment:
-        //     MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
             "assets/mascot_2.png",
             width: 80,
             height: 80,
           ),
-          const Text(
-            "Not implemented yet...",
+          const DefaultTextStyle(
             style: TextStyle(
               color: textLighterColor,
               fontWeight: FontWeight.bold,
             ),
+            child: Text("Not implemented yet..."),
           ),
         ],
       ),
@@ -218,21 +215,21 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Description:',
+            const DefaultTextStyle(
               style: TextStyle(
                 color: textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
+              child: Text("Description"),
             ),
             const SizedBox(height: 10),
-            Text(
-              widget.keyPoint.description,
+            DefaultTextStyle(
               style: const TextStyle(
                 color: textColor,
                 fontSize: 16,
               ),
+              child: Text(widget.keyPoint.description),
             ),
           ],
         ),
