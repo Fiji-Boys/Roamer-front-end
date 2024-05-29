@@ -1,4 +1,5 @@
 import 'package:figenie/consts.dart';
+import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/map/map_controller.dart';
 import 'package:figenie/widgets/loading.dart';
 import 'package:figenie/widgets/tour_info.dart';
@@ -76,7 +77,15 @@ class MapView extends StatelessWidget {
                       ),
                     ),
                   )
-                : Container()
+                : Container(),
+            state.selectedKeypoint == null
+                ? Container()
+                : Center(
+                    child: KeyPointInfo(
+                        keyPoint: state.selectedKeypoint!,
+                        onComplete: state.completeKeyPoint,
+                        onBack: state.goBack),
+                  )
           ],
         ),
       ),

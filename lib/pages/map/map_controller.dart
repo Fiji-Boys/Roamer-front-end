@@ -9,7 +9,7 @@ import 'package:figenie/services/tour_service.dart';
 import 'package:location/location.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
-import 'package:figenie/widgets/key_point_modal.dart';
+// import 'package:figenie/widgets/key_point_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -41,6 +41,7 @@ class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   List<Tour> tours = <Tour>[];
   Tour? selectedTour;
+  KeyPoint? selectedKeypoint;
   late bool isTourActive = false;
   late bool hasStarted = false;
   late bool hasReachedKeyPoint = false;
@@ -332,6 +333,14 @@ class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
           zIndex: 2);
       setNextKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint]);
     }
+
+    selectedKeypoint = null;
+  }
+
+  void goBack() {
+    setState(() {
+      selectedKeypoint = null;
+    });
   }
 
   void keypointCheck() {
@@ -345,21 +354,9 @@ class MapController extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   void showKeyPoint(KeyPoint keyPoint) {
-    showDialog(
-      context: context,
-      builder: (_) => KeyPointModal(
-        keyPoint: keyPoint,
-        onComplete: completeKeyPoint,
-      ),
-    ).then(
-      (value) {
-        if (selectedTour!.isCompleted) {
-          Future.delayed(const Duration(milliseconds: 500), () {
-            completeTour();
-          });
-        }
-      },
-    );
+    setState(() {
+      selectedKeypoint = keyPoint;
+    });
   }
 
   void vibrate() async {
