@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:geocoding/geocoding.dart';
 
 import 'package:figenie/consts.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:weather/weather.dart';
 
 class WeatherInfo extends StatefulWidget {
