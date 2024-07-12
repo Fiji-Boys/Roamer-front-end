@@ -1,4 +1,5 @@
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/pages/osmap/osmap_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -27,6 +28,21 @@ class OSMapController extends State<OSMapPage>
   bool isLoading = false;
   List<LatLng> route = <LatLng>[];
   List<Marker> markers = [];
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return OSMapView(this);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // getUserIcon();
+    // getLocationUpdates();
+    // getTours();
+    // valueNotifier = ValueNotifier(0.0);
+  }
 
   Future<void> getRoute(LatLng start, LatLng end) async {
     setState(() {
