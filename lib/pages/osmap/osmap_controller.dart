@@ -3,6 +3,7 @@ import 'package:figenie/pages/osmap/osmap_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:open_route_service/open_route_service.dart';
@@ -21,13 +22,21 @@ class OSMapController extends State<OSMapPage>
   @override
   bool get wantKeepAlive => true;
 
+  final Location locationController = Location();
   final MapController mapController = MapController();
 
-  LatLng startLoc = const LatLng(45.262501, 19.839263);
+  LatLng currentLoc = const LatLng(45.262501, 19.839263);
+
+  List<Tour> tours = <Tour>[];
+  Tour? selectedTour;
+  late bool isTourActive = false;
+  late bool hasStarted = false;
+  late bool hasReachedKeyPoint = false;
 
   bool isLoading = false;
-  List<LatLng> route = <LatLng>[];
-  List<Marker> markers = [];
+  Image userIcon = const Image(image: AssetImage("assets/user_marker.png"));
+  Map<String, Polyline> currentPolylines = {};
+  Map<String, AnimatedMarker> markers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +47,61 @@ class OSMapController extends State<OSMapPage>
   @override
   void initState() {
     super.initState();
-    // getUserIcon();
-    // getLocationUpdates();
+    getLocationUpdates();
     // getTours();
     // valueNotifier = ValueNotifier(0.0);
+  }
+
+  Future<void> getLocationUpdates() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+
+    serviceEnabled = await locationController.serviceEnabled();
+    if (serviceEnabled) {
+      serviceEnabled = await locationController.requestService();
+    } else {
+      return;
+    }
+
+    permissionGranted = await locationController.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await locationController.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    locationController.onLocationChanged.listen(
+      (LocationData currentLocation) {
+        if (currentLocation.latitude != null &&
+            currentLocation.longitude != null) {
+          final newLoc =
+              LatLng(currentLocation.latitude!, currentLocation.longitude!);
+          if (currentLoc != newLoc) {
+            setState(
+              () {
+                currentLoc = newLoc;
+                if (isTourActive && selectedTour != null) {
+                  // keypointCheck();
+
+                  if (selectedTour!.type == TourType.secret &&
+                      selectedTour!.nextKeyPoint != 0) {
+                    return;
+                  }
+
+                  // createPolyline(
+                  //     currentLoc!,
+                  //     selectedTour!.getNextKeyPointLocation(),
+                  //     "user",
+                  //     primaryColor,
+                  //     zIndex: 2);
+                }
+              },
+            );
+          }
+        }
+      },
+    );
   }
 
   Future<void> getRoute(LatLng start, LatLng end) async {
@@ -66,7 +126,7 @@ class OSMapController extends State<OSMapPage>
         .toList();
 
     setState(() {
-      route = routePoints;
+      // route = routePoints;
       isLoading = false;
     });
   }
