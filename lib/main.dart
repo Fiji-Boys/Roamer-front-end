@@ -72,6 +72,7 @@ class MainApp extends StatelessWidget {
 
 class NavigationBarController extends GetxController {
   final RxInt selectedIndex = 2.obs;
+  final RxBool isNavBarVisible = true.obs;
 
   late final List<Widget> screens;
 
@@ -83,5 +84,9 @@ class NavigationBarController extends GetxController {
       const roamer_placeholder.Placeholder(),
       const roamer_placeholder.Placeholder()
     ];
+  }
+
+  void setNavBarVisibility(bool isVisible) {
+    isNavBarVisible.value = isVisible;
   }
 }

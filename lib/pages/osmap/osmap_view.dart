@@ -1,3 +1,5 @@
+import 'package:figenie/pages/key_point_info.dart';
+import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -17,33 +19,76 @@ class OSMapView extends StatelessWidget {
         state.resetMap();
         return false;
       },
-      child: Stack(
-        children: [
-          FlutterMap(
-            mapController: state.mapController,
-            options: const MapOptions(
-                initialZoom: 16, initialCenter: LatLng(45.262501, 19.839263)),
-            children: [
-              TileLayer(
-                urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      child: Scaffold(
+        body: Stack(
+          children: [
+            FlutterMap(
+              mapController: state.mapController.mapController,
+              options: const MapOptions(
+                initialZoom: 16,
+                initialCenter: LatLng(45.262501, 19.839263),
+                interactionOptions: InteractionOptions(
+                    flags: InteractiveFlag.drag | InteractiveFlag.pinchZoom),
               ),
-              MarkerLayer(markers: [
-                Marker(
-                    point: state.currentLoc,
-                    width: 40,
-                    height: 40,
-                    child: state.userIcon)
-              ]),
-              AnimatedMarkerLayer(
-                markers: state.markers.values.toList(),
-              ),
-              PolylineLayer(
-                polylines: state.currentPolylines.values.toList(),
-              )
-            ],
-          )
-        ],
+              children: [
+                TileLayer(
+                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                ),
+                PolylineLayer(
+                  polylines: state.currentPolylines.values.toList(),
+                ),
+                MarkerLayer(markers: [
+                  Marker(
+                      point: state.currentLoc,
+                      width: 40,
+                      height: 40,
+                      child: state.userIcon)
+                ]),
+                AnimatedMarkerLayer(
+                  markers: state.markers.values.toList(),
+                ),
+              ],
+            ),
+            state.selectedTour == null
+                ? Container()
+                : TourInfo(
+                    onStartTour: state.startTour,
+                    tour: state.selectedTour!,
+                    valueNotifier: state.valueNotifier,
+                    isTourActive: state.isTourActive,
+                  ),
+            state.selectedTour != null
+                ? Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10, top: 10),
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(),
+                        backgroundColor: foregroundColor,
+                        foregroundColor: textColor,
+                        onPressed: () {
+                          if (state.isTourActive) {
+                            state.showAbandonModal();
+                          } else {
+                            state.resetMap();
+                          }
+                        },
+                        child: const Icon(Icons.close),
+                      ),
+                    ),
+                  )
+                : Container(),
+            state.selectedKeypoint == null
+                ? Container()
+                : Center(
+                    child: KeyPointInfo(
+                        keyPoint: state.selectedKeypoint!,
+                        onComplete: state.completeKeyPoint,
+                        onBack: state.goBack),
+                  )
+          ],
+        ),
       ),
     );
   }
