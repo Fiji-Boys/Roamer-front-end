@@ -443,6 +443,7 @@ class OSMapController extends State<OSMapPage>
       point: point,
       width: 60,
       height: 60,
+      duration: const Duration(milliseconds: 600),
       builder: (_, animation) {
         final size = 60.0 * animation.value;
         return GestureDetector(

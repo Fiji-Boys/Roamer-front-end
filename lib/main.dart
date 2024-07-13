@@ -20,6 +20,12 @@ class MainApp extends StatelessWidget {
 
   void _onNavigate(int index) {
     pageController.jumpToPage(index);
+    if (index == 2) {
+      // Map Page
+      controller.setNavBarVisibility(true);
+    } else {
+      controller.setNavBarVisibility(false);
+    }
   }
 
   @override
@@ -27,34 +33,38 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.black,
-        bottomNavigationBar: Obx(() => NavigationMenu(
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.tour),
-                    label: 'Tours',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.people),
-                    label: 'Encounters',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.map),
-                    label: 'Map',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.qr_code),
-                    label: 'QR',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                ],
-                selectedIndex: controller.selectedIndex.value,
-                onDestinationSelected: (index) => {
-                      _onNavigate(index),
-                      controller.selectedIndex.value = index
-                    })),
+        bottomNavigationBar: Obx(() {
+          return controller.isNavBarVisible.value
+              ? NavigationMenu(
+                  destinations: const [
+                      NavigationDestination(
+                        icon: Icon(Icons.tour),
+                        label: 'Tours',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.people),
+                        label: 'Encounters',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.map),
+                        label: 'Map',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.qr_code),
+                        label: 'QR',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.person),
+                        label: 'Profile',
+                      ),
+                    ],
+                  selectedIndex: controller.selectedIndex.value,
+                  onDestinationSelected: (index) => {
+                        _onNavigate(index),
+                        controller.selectedIndex.value = index
+                      })
+              : const SizedBox.shrink();
+        }),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0),
