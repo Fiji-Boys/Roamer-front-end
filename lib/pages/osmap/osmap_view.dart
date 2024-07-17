@@ -16,7 +16,11 @@ class OSMapView extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        state.resetMap();
+        if (state.isTourActive) {
+          state.showAbandonModal();
+        } else {
+          state.resetMap();
+        }
         return false;
       },
       child: Scaffold(
