@@ -1,5 +1,6 @@
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/widgets/tour_info.dart';
+import 'package:figenie/widgets/tour_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -54,6 +55,18 @@ class OSMapView extends StatelessWidget {
                 ),
               ],
             ),
+            state.isTourActive == true && state.selectedTour != null
+                ? Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      alignment: Alignment.topCenter,
+                      child: TourProgressWidget(tour: state.selectedTour!),
+                    ),
+                  )
+                : Container(),
             state.selectedTour == null
                 ? Container()
                 : TourInfo(
@@ -62,7 +75,7 @@ class OSMapView extends StatelessWidget {
                     valueNotifier: state.valueNotifier,
                     isTourActive: state.isTourActive,
                   ),
-            state.selectedTour != null
+            state.isTourActive == false && state.selectedTour != null
                 ? Align(
                     alignment: Alignment.topRight,
                     child: Padding(

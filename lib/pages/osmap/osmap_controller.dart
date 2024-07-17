@@ -365,7 +365,7 @@ class OSMapController extends State<OSMapPage>
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: foregroundColor,
+        backgroundColor: backgroundColor,
         contentTextStyle: const TextStyle(color: textLightColor, fontSize: 16),
         title: const Text(
           'Abandon Tour',
