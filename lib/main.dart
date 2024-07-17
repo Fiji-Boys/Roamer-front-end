@@ -20,12 +20,7 @@ class MainApp extends StatelessWidget {
 
   void _onNavigate(int index) {
     pageController.jumpToPage(index);
-    if (index == 2) {
-      // Map Page
-      controller.setNavBarVisibility(true);
-    } else {
-      controller.setNavBarVisibility(false);
-    }
+    controller.setNavBarVisibility(true);
   }
 
   @override
