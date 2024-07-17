@@ -327,6 +327,9 @@ class OSMapController extends State<OSMapPage>
     }
 
     selectedKeypoint = null;
+    if (selectedTour!.isCompleted) {
+      completeTour();
+    }
   }
 
   void goBack() {
