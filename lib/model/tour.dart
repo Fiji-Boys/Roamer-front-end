@@ -29,6 +29,7 @@ class Tour {
 
   void startTour() {
     isStarted = true;
+    isCompleted = false;
   }
 
   void abandonTour() {
@@ -38,6 +39,7 @@ class Tour {
 
   void completeTour() {
     isCompleted = true;
+    nextKeyPoint = 0;
   }
 
   void completeKeyPoint() {

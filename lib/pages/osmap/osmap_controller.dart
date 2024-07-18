@@ -46,7 +46,6 @@ class OSMapController extends State<OSMapPage>
   Tour? selectedTour;
   KeyPoint? selectedKeypoint;
   late bool isTourActive = false;
-  late bool hasStarted = false;
   late bool hasReachedKeyPoint = false;
 
   bool isLoading = false;
@@ -318,8 +317,10 @@ class OSMapController extends State<OSMapPage>
     deleteKeyPoint(selectedTour!.keyPoints[selectedTour!.nextKeyPoint].name);
     selectedTour!.completeKeyPoint();
     hasReachedKeyPoint = false;
+
     valueNotifier.value =
         selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+
     if (selectedTour!.type != TourType.secret && !selectedTour!.isCompleted) {
       createPolyline(currentLoc, selectedTour!.getNextKeyPointLocation(),
           "user", primaryColor);
