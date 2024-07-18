@@ -2,6 +2,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ToursView extends StatelessWidget {
   final ToursController state;
@@ -26,8 +27,6 @@ class ToursView extends StatelessWidget {
       color: backgroundColor,
       margin: const EdgeInsets.all(8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -35,29 +34,34 @@ class ToursView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
                 tour.keyPoints[0].images[0],
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 fit: BoxFit.cover,
               ),
             ),
           ),
           Expanded(
+              child: SizedBox(
+            height: 110,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    tour.name,
-                    style: const TextStyle(
-                      color: secondaryColor,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      tour.name,
+                      style: const TextStyle(
+                        color: secondaryColor,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4.0),
                   Text(
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
                     tour.description,
                     style: const TextStyle(
                       color: textColor,
@@ -66,6 +70,14 @@ class ToursView extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          )),
+          const Align(
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.keyboard_arrow_right,
+              color: textColor,
+              size: 30.0,
             ),
           ),
         ],
