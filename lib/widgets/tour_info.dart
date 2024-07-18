@@ -316,7 +316,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
 
   void onChanged() {
     final currentSize = controller.size;
-    if (currentSize <= 0.05) collapse();
+    if (currentSize < 0.03) collapse();
   }
 
   void collapse() => animateSheet(getSheet.snapSizes!.first);
@@ -330,7 +330,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
   void animateSheet(double size) {
     controller.animateTo(
       size,
-      duration: const Duration(milliseconds: 50),
+      duration: const Duration(milliseconds: 70),
       curve: Curves.easeInOut,
     );
   }
@@ -349,14 +349,14 @@ class _DraggableSheetState extends State<DraggableSheet> {
     return LayoutBuilder(builder: (context, constraints) {
       return DraggableScrollableSheet(
         key: sheet,
-        initialChildSize: 0.15,
-        maxChildSize: 0.9,
-        minChildSize: 0.03,
+        initialChildSize: 0.17,
+        maxChildSize: 0.85,
+        minChildSize: 0.04,
         expand: true,
         snap: true,
         snapSizes: [
-          120 / constraints.maxHeight,
-          0.5,
+          140 / constraints.maxHeight,
+          0.53,
         ],
         controller: controller,
         builder: (BuildContext context, ScrollController scrollController) {
