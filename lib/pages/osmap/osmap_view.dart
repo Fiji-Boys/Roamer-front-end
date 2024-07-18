@@ -1,28 +1,54 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: library_private_types_in_public_api, deprecated_member_use
 
 import 'package:figenie/pages/key_point_info.dart';
+import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/widgets/tour_info.dart';
-import 'package:figenie/widgets/tour_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:figenie/consts.dart';
+import 'package:figenie/model/tour.dart';
+import 'package:figenie/widgets/tour_progress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
+import 'package:latlong2/latlong.dart'; // Import your modified TourProgressWidget
 
-import 'package:figenie/consts.dart';
-import 'package:figenie/pages/osmap/osmap_controller.dart';
-import 'package:latlong2/latlong.dart';
-
-class OSMapView extends StatelessWidget {
+class OSMapView extends StatefulWidget {
   final OSMapController state;
+
   const OSMapView(this.state, {super.key});
+
+  @override
+  _OSMapViewState createState() => _OSMapViewState();
+}
+
+class _OSMapViewState extends State<OSMapView> {
+  final ValueNotifier<int> _nextKeyPointIndexNotifier = ValueNotifier<int>(0);
+
+  @override
+  void initState() {
+    super.initState();
+    _updateNextKeyPointIndex(widget.state.selectedTour?.nextKeyPoint ?? 0);
+  }
+
+  @override
+  void didUpdateWidget(covariant OSMapView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.selectedTour != oldWidget.state.selectedTour) {
+      _updateNextKeyPointIndex(widget.state.selectedTour?.nextKeyPoint ?? 0);
+    }
+  }
+
+  void _updateNextKeyPointIndex(int nextKeyPointIndex) {
+    _nextKeyPointIndexNotifier.value = nextKeyPointIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (state.isTourActive) {
-          state.showAbandonModal();
+        if (widget.state.isTourActive) {
+          widget.state.showAbandonModal();
         } else {
-          state.resetMap();
+          widget.state.resetMap();
         }
         return false;
       },
@@ -30,7 +56,7 @@ class OSMapView extends StatelessWidget {
         body: Stack(
           children: [
             FlutterMap(
-              mapController: state.mapController.mapController,
+              mapController: widget.state.mapController.mapController,
               options: const MapOptions(
                 initialZoom: 16,
                 initialCenter: LatLng(45.262501, 19.839263),
@@ -43,21 +69,22 @@ class OSMapView extends StatelessWidget {
                   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                 ),
                 PolylineLayer(
-                  polylines: state.currentPolylines.values.toList(),
+                  polylines: widget.state.currentPolylines.values.toList(),
                 ),
                 MarkerLayer(markers: [
                   Marker(
-                      point: state.currentLoc,
+                      point: widget.state.currentLoc,
                       width: 40,
                       height: 40,
-                      child: state.userIcon)
+                      child: widget.state.userIcon)
                 ]),
                 AnimatedMarkerLayer(
-                  markers: state.markers.values.toList(),
+                  markers: widget.state.markers.values.toList(),
                 ),
               ],
             ),
-            state.isTourActive == true && state.selectedTour != null
+            widget.state.isTourActive == true &&
+                    widget.state.selectedTour != null
                 ? Positioned(
                     top: 0,
                     left: 0,
@@ -65,19 +92,24 @@ class OSMapView extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.only(top: 16.0),
                       alignment: Alignment.topCenter,
-                      child: TourProgressWidget(tour: state.selectedTour!),
+                      child: TourProgressWidget(
+                        tour: widget.state.selectedTour!,
+                        nextKeyPointIndex:
+                            widget.state.selectedTour!.nextKeyPoint,
+                      ),
                     ),
                   )
                 : Container(),
-            state.selectedTour == null
+            widget.state.selectedTour == null
                 ? Container()
                 : TourInfo(
-                    onStartTour: state.startTour,
-                    tour: state.selectedTour!,
-                    valueNotifier: state.valueNotifier,
-                    isTourActive: state.isTourActive,
+                    onStartTour: widget.state.startTour,
+                    tour: widget.state.selectedTour!,
+                    valueNotifier: widget.state.valueNotifier,
+                    isTourActive: widget.state.isTourActive,
                   ),
-            state.isTourActive == false && state.selectedTour != null
+            widget.state.isTourActive == false &&
+                    widget.state.selectedTour != null
                 ? Align(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -87,10 +119,10 @@ class OSMapView extends StatelessWidget {
                         backgroundColor: foregroundColor,
                         foregroundColor: textColor,
                         onPressed: () {
-                          if (state.isTourActive) {
-                            state.showAbandonModal();
+                          if (widget.state.isTourActive) {
+                            widget.state.showAbandonModal();
                           } else {
-                            state.resetMap();
+                            widget.state.resetMap();
                           }
                         },
                         child: const Icon(Icons.close),
@@ -98,13 +130,13 @@ class OSMapView extends StatelessWidget {
                     ),
                   )
                 : Container(),
-            state.selectedKeypoint == null
+            widget.state.selectedKeypoint == null
                 ? Container()
                 : Center(
                     child: KeyPointInfo(
-                        keyPoint: state.selectedKeypoint!,
-                        onComplete: state.completeKeyPoint,
-                        onBack: state.goBack),
+                        keyPoint: widget.state.selectedKeypoint!,
+                        onComplete: widget.state.completeKeyPoint,
+                        onBack: widget.state.goBack),
                   )
           ],
         ),
