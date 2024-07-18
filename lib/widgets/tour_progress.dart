@@ -47,36 +47,24 @@ class TourProgressWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Tour Progress',
+                    'Next Key Point',
                     style: TextStyle(
-                      color: textColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: textColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      const Text(
-                        'Next Key Point:',
-                        style: TextStyle(
-                          color: textLighterColor,
-                          fontSize: 16,
-                        ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      nextKeyPoint.name,
+                      style: const TextStyle(
+                        color: secondaryColor,
+                        fontSize: 18,
                       ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          nextKeyPoint.name,
-                          style: const TextStyle(
-                            color: secondaryColor,
-                            fontSize: 16,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2, // Adjust max lines as needed
-                        ),
-                      ),
-                    ],
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2, // Adjust max lines as needed
+                    ),
                   ),
                 ],
               ),
