@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:figenie/pages/osmap/osmap_controller.dart';
+import 'package:figenie/pages/tours/tours_controller.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -83,7 +84,7 @@ class NavigationBarController extends GetxController {
 
   NavigationBarController() {
     screens = [
-      const roamer_placeholder.Placeholder(),
+      const ToursPage(),
       const roamer_placeholder.Placeholder(),
       const OSMapPage(),
       const roamer_placeholder.Placeholder(),
