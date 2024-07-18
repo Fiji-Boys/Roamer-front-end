@@ -1,9 +1,10 @@
-import 'package:figenie/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 
 class TourProgressWidget extends StatelessWidget {
   final Tour tour;
+
   const TourProgressWidget({
     super.key,
     required this.tour,
@@ -28,36 +29,41 @@ class TourProgressWidget extends StatelessWidget {
           ],
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Tour Progress',
-              style: TextStyle(
-                color: textColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Current Key Point',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    tour.keyPoints[0].name,
+                    style: const TextStyle(
+                      color: secondaryColor,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Text(
-                  'Current Key Point:',
-                  style: TextStyle(
-                    color: textLighterColor,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  tour.keyPoints[0].name,
-                  style: const TextStyle(
-                    color: secondaryColor,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            CircleAvatar(
+              radius: 32.0,
+              backgroundColor: secondaryColor,
+              child: CircleAvatar(
+                radius: 30.0,
+                backgroundImage: NetworkImage(tour.keyPoints[0].images[0]),
+                backgroundColor: primaryColor,
+              ),
             ),
           ],
         ),
