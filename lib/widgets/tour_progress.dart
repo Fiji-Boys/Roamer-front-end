@@ -1,7 +1,6 @@
 import 'package:figenie/consts.dart';
-import 'package:figenie/model/key_point.dart';
 import 'package:flutter/material.dart';
-import 'package:figenie/model/tour.dart'; // Import your Tour and KeyPoint models
+import 'package:figenie/model/tour.dart';
 
 class TourProgressWidget extends StatelessWidget {
   final Tour tour;

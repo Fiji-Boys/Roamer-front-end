@@ -359,6 +359,7 @@ class OSMapController extends State<OSMapPage>
         selectedTour = null;
         hasReachedKeyPoint = false;
         resetMap();
+        navBarController.setNavBarVisibility(true);
       });
       valueNotifier.value = 0;
     });

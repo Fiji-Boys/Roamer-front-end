@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:figenie/widgets/tour_progress.dart';
