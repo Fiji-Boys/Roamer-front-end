@@ -2,25 +2,64 @@ import 'package:figenie/model/key_point.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:latlong2/latlong.dart';
 
-class TourProgressWidget extends StatelessWidget {
+class TourProgressWidget extends StatefulWidget {
   final Tour tour;
   final int nextKeyPointIndex;
+  final LatLng currentLocation;
 
   const TourProgressWidget({
     super.key,
     required this.tour,
     required this.nextKeyPointIndex,
+    required this.currentLocation,
   });
 
   @override
-  Widget build(BuildContext context) {
-    if (nextKeyPointIndex < 0 || nextKeyPointIndex >= tour.keyPoints.length) {
-      return Container();
+  // ignore: library_private_types_in_public_api
+  _TourProgressWidgetState createState() => _TourProgressWidgetState();
+}
+
+class _TourProgressWidgetState extends State<TourProgressWidget> {
+  String distanceText = '';
+
+  @override
+  void didUpdateWidget(covariant TourProgressWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentLocation != oldWidget.currentLocation) {
+      updateDistance();
+    }
+  }
+
+  void updateDistance() {
+    if (widget.nextKeyPointIndex < 0 ||
+        widget.nextKeyPointIndex >= widget.tour.keyPoints.length) {
+      setState(() {
+        distanceText = '';
+      });
+      return;
     }
 
-    KeyPoint nextKeyPoint = tour.keyPoints[nextKeyPointIndex];
+    KeyPoint nextKeyPoint = widget.tour.keyPoints[widget.nextKeyPointIndex];
+    LatLng keyPointLocation = widget.tour.getNextKeyPointLocation();
+    double distanceInMeters =
+        distance(widget.currentLocation, keyPointLocation);
 
+    if (distanceInMeters >= 1000) {
+      double distanceInKm = distanceInMeters / 1000;
+      setState(() {
+        distanceText = '${distanceInKm.toStringAsFixed(1)} km';
+      });
+    } else {
+      setState(() {
+        distanceText = '${distanceInMeters.toStringAsFixed(0)} m';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Container(
         width: 380,
@@ -46,37 +85,37 @@ class TourProgressWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Next Key Point',
-                    style: TextStyle(
-                        color: textColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                  Text(
+                    'Next Key Point in $distanceText',
+                    style: const TextStyle(
+                      color: textColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      nextKeyPoint.name,
-                      style: const TextStyle(
-                        color: secondaryColor,
-                        fontSize: 18,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2, // Adjust max lines as needed
+                  const SizedBox(height: 5),
+                  Text(
+                    widget.tour.keyPoints[widget.nextKeyPointIndex].name,
+                    style: const TextStyle(
+                      color: secondaryColor,
+                      fontSize: 18,
                     ),
                   ),
                 ],
               ),
             ),
             CircleAvatar(
-              radius: 32.0, // Adjust the size of the outer CircleAvatar
+              radius: 32.0,
               backgroundColor: secondaryColor,
               child: CircleAvatar(
-                radius: 30.0, // Adjust the size of the inner CircleAvatar
-                backgroundImage: NetworkImage(nextKeyPoint.images.isNotEmpty
-                    ? nextKeyPoint.images[0]
-                    : ''),
+                radius: 30.0,
+                backgroundImage: NetworkImage(
+                  widget.tour.keyPoints[widget.nextKeyPointIndex].images
+                          .isNotEmpty
+                      ? widget
+                          .tour.keyPoints[widget.nextKeyPointIndex].images[0]
+                      : '',
+                ),
                 backgroundColor: primaryColor,
               ),
             ),
@@ -84,5 +123,9 @@ class TourProgressWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double distance(LatLng from, LatLng to) {
+    return const Distance().as(LengthUnit.Meter, from, to);
   }
 }

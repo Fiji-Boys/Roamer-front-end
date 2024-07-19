@@ -9,7 +9,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/widgets/tour_progress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
-import 'package:latlong2/latlong.dart'; // Import your modified TourProgressWidget
+import 'package:latlong2/latlong.dart';
 
 class OSMapView extends StatefulWidget {
   final OSMapController state;
@@ -97,6 +97,7 @@ class _OSMapViewState extends State<OSMapView> {
                         tour: widget.state.selectedTour!,
                         nextKeyPointIndex:
                             widget.state.selectedTour!.nextKeyPoint,
+                        currentLocation: widget.state.currentLoc,
                       ),
                     ),
                   )
