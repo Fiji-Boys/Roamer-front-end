@@ -92,8 +92,8 @@ class _OSMapViewState extends State<OSMapView> {
                 ? Container()
                 : Positioned(
                     top: 20,
-                    left: 20,
-                    right: 20,
+                    left: 10,
+                    right: 10,
                     child: search.SearchBar(
                       controller: _searchController,
                       onSearch: () {
@@ -105,8 +105,8 @@ class _OSMapViewState extends State<OSMapView> {
                 ? Container()
                 : Positioned(
                     bottom: 5,
-                    left: 6,
-                    right: 270,
+                    left: 10,
+                    right: 290,
                     child: WeatherInfo(currentLoc: widget.state.currentLoc)),
             widget.state.isTourActive == true &&
                     widget.state.selectedTour != null &&

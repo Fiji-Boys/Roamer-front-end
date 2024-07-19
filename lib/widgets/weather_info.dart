@@ -51,6 +51,14 @@ class _WeatherInfo extends State<WeatherInfo> {
                 bottomRight: Radius.circular(15),
                 bottomLeft: Radius.circular(15),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  blurRadius: 5,
+                  spreadRadius: 0.1,
+                  offset: Offset(0, 1),
+                ),
+              ],
               color: foregroundColor),
           padding: const EdgeInsets.all(10),
           child: const Center(
@@ -69,6 +77,14 @@ class _WeatherInfo extends State<WeatherInfo> {
             bottomRight: Radius.circular(15),
             bottomLeft: Radius.circular(15),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 5,
+              spreadRadius: 0.1,
+              offset: Offset(0, 1),
+            ),
+          ],
           color: foregroundColor),
       padding: const EdgeInsets.all(10),
       child: Row(
@@ -109,8 +125,8 @@ class _WeatherInfo extends State<WeatherInfo> {
     return Positioned(
       child: Image.network(
         iconUrl,
-        width: MediaQuery.of(context).size.height * 0.05,
-        height: MediaQuery.of(context).size.height * 0.05,
+        width: MediaQuery.of(context).size.height * 0.04,
+        height: MediaQuery.of(context).size.height * 0.04,
         fit: BoxFit.contain,
       ),
     );
@@ -121,7 +137,7 @@ class _WeatherInfo extends State<WeatherInfo> {
       "${_weather?.temperature?.celsius?.toStringAsFixed(0)}° C",
       style: const TextStyle(
         color: textColor,
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: FontWeight.w600,
         shadows: <Shadow>[
           Shadow(
