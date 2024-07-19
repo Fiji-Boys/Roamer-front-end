@@ -6,6 +6,7 @@ import 'package:figenie/model/tour.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class TourInfo extends StatefulWidget {
+  final int nextKeyPointIndex;
   final Tour tour;
   final VoidCallback onStartTour;
   final ValueNotifier<double> valueNotifier;
@@ -13,6 +14,7 @@ class TourInfo extends StatefulWidget {
 
   const TourInfo({
     super.key,
+    required this.nextKeyPointIndex,
     required this.tour,
     required this.onStartTour,
     required this.valueNotifier,
@@ -26,12 +28,32 @@ class TourInfo extends StatefulWidget {
 class _TourInfoState extends State<TourInfo> {
   final GlobalKey<_DraggableSheetState> sheetKey =
       GlobalKey<_DraggableSheetState>();
+  late Map<int, bool> visitedKeyPoints = {
+    for (var keyPoint in widget.tour.keyPoints)
+      widget.tour.keyPoints.indexOf(keyPoint): false
+  };
 
   int _currentCarouselIndex = 0;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant TourInfo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.nextKeyPointIndex != oldWidget.nextKeyPointIndex) {
+      _markAsVisited(widget.nextKeyPointIndex);
+    }
+  }
+
+  void _markAsVisited(int visitedIndex) {
+    setState(() {
+      if (visitedIndex != 0) {
+        visitedKeyPoints[visitedIndex - 1] = true;
+      }
+    });
   }
 
   @override
@@ -227,6 +249,7 @@ class _TourInfoState extends State<TourInfo> {
               children: widget.tour.keyPoints.asMap().entries.map((entry) {
                 final index = entry.key;
                 final keyPoint = entry.value;
+                bool visited = visitedKeyPoints[index] ?? false;
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -242,40 +265,57 @@ class _TourInfoState extends State<TourInfo> {
                         radius: 32.0,
                         backgroundColor: secondaryColor,
                         child: CircleAvatar(
-                            radius: 30.0,
-                            backgroundImage: NetworkImage(
-                                widget.tour.type == TourType.secret &&
-                                        index != 0
-                                    ? "https://i.imgur.com/jibccQd.png"
-                                    : keyPoint.images[0]),
-                            backgroundColor: foregroundColor,
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: primaryColor,
-                                child: Text("${index + 1}",
-                                    style: const TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
+                          radius: 30.0,
+                          backgroundImage: NetworkImage(
+                            widget.tour.type == TourType.secret && index != 0
+                                ? "https://i.imgur.com/jibccQd.png"
+                                : keyPoint.images[0],
+                          ),
+                          backgroundColor: foregroundColor,
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            child: CircleAvatar(
+                              radius: 10,
+                              backgroundColor: primaryColor,
+                              child: Text(
+                                "${index + 1}",
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       ),
-
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.tour.type == TourType.secret && index != 0
-                                  ? "Secret"
-                                  : keyPoint.name,
-                              style: const TextStyle(
-                                color: textColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  widget.tour.type == TourType.secret &&
+                                          index != 0
+                                      ? "Secret"
+                                      : keyPoint.name,
+                                  style: const TextStyle(
+                                    color: textColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                if (visited)
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Icon(
+                                      Icons.done,
+                                      color: secondaryColor,
+                                      size: 20,
+                                    ),
+                                  ),
+                              ],
                             ),
                             Text(
                               widget.tour.type == TourType.secret && index != 0
@@ -289,12 +329,6 @@ class _TourInfoState extends State<TourInfo> {
                           ],
                         ),
                       ),
-                      // Spacer(),
-                      // const Icon(
-                      //   Icons.location_pin,
-                      //   size: 40,
-                      //   color: primaryColor,
-                      // ),
                     ],
                   ),
                 );

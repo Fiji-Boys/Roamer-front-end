@@ -104,6 +104,7 @@ class _OSMapViewState extends State<OSMapView> {
             widget.state.selectedTour == null
                 ? Container()
                 : TourInfo(
+                    nextKeyPointIndex: widget.state.selectedTour!.nextKeyPoint,
                     onStartTour: widget.state.startTour,
                     tour: widget.state.selectedTour!,
                     valueNotifier: widget.state.valueNotifier,
