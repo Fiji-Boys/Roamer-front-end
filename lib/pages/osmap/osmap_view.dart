@@ -4,6 +4,7 @@ import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/widgets/tour_info.dart';
+import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/widgets/tour_progress.dart';
@@ -100,6 +101,13 @@ class _OSMapViewState extends State<OSMapView> {
                       },
                     ),
                   ),
+            widget.state.selectedTour != null
+                ? Container()
+                : Positioned(
+                    bottom: 5,
+                    left: 6,
+                    right: 270,
+                    child: WeatherInfo(currentLoc: widget.state.currentLoc)),
             widget.state.isTourActive == true &&
                     widget.state.selectedTour != null &&
                     widget.state.selectedTour?.type != TourType.secret
