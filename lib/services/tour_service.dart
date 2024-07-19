@@ -116,7 +116,8 @@ Dok šetamo Dunavskim kejom, osećamo duh slobode koji nosi Dunav, reka koja spa
     ];
     Tour tour1 = Tour(
         name: "Tura kroz Novi Sad",
-        description: "Šetnja kroz srce Vojvodine",
+        description:
+            "Otkrijte šarm Novog Sada na našoj turi koja vas vodi kroz živopisne ulice grada, prožete bogatom istorijom i kulturom.",
         keyPoints: kp1,
         type: TourType.informational);
 
