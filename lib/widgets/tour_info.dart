@@ -144,7 +144,9 @@ class _TourInfoState extends State<TourInfo> {
                             decoration:
                                 const BoxDecoration(color: backgroundColor),
                             child: Image.network(
-                              widget.tour.type == TourType.secret && index != 0
+                              widget.tour.type == TourType.secret &&
+                                      (index >= widget.tour.nextKeyPoint &&
+                                          index != 0)
                                   ? "https://i.imgur.com/jibccQd.png"
                                   : keyPoint.images[0],
                               fit: BoxFit.cover,
@@ -245,7 +247,8 @@ class _TourInfoState extends State<TourInfo> {
                             radius: 30.0,
                             backgroundImage: NetworkImage(
                                 widget.tour.type == TourType.secret &&
-                                        index != 0
+                                        (index >= widget.tour.nextKeyPoint &&
+                                            index != 0)
                                     ? "https://i.imgur.com/jibccQd.png"
                                     : keyPoint.images[0]),
                             backgroundColor: foregroundColor,
@@ -268,7 +271,9 @@ class _TourInfoState extends State<TourInfo> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.tour.type == TourType.secret && index != 0
+                              widget.tour.type == TourType.secret &&
+                                      (index >= widget.tour.nextKeyPoint &&
+                                          index != 0)
                                   ? "Secret"
                                   : keyPoint.name,
                               style: const TextStyle(
@@ -278,7 +283,9 @@ class _TourInfoState extends State<TourInfo> {
                               ),
                             ),
                             Text(
-                              widget.tour.type == TourType.secret && index != 0
+                              widget.tour.type == TourType.secret &&
+                                      (index >= widget.tour.nextKeyPoint &&
+                                          index != 0)
                                   ? "Find out the location to learn more about this keypoint."
                                   : keyPoint.description,
                               style: const TextStyle(
