@@ -7,9 +7,11 @@ import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/widgets/tour_progress.dart';
+import 'package:figenie/widgets/search_bar.dart' as search;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
-import 'package:latlong2/latlong.dart'; // Import your modified TourProgressWidget
+import 'package:latlong2/latlong.dart';
 
 class OSMapView extends StatefulWidget {
   final OSMapController state;
@@ -22,10 +24,12 @@ class OSMapView extends StatefulWidget {
 
 class _OSMapViewState extends State<OSMapView> {
   final ValueNotifier<int> _nextKeyPointIndexNotifier = ValueNotifier<int>(0);
+  late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     _updateNextKeyPointIndex(widget.state.selectedTour?.nextKeyPoint ?? 0);
   }
 
@@ -83,6 +87,19 @@ class _OSMapViewState extends State<OSMapView> {
                 ),
               ],
             ),
+            widget.state.selectedTour != null
+                ? Container()
+                : Positioned(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                    child: search.SearchBar(
+                      controller: _searchController,
+                      onSearch: () {
+                        String searchText = _searchController.text;
+                      },
+                    ),
+                  ),
             widget.state.isTourActive == true &&
                     widget.state.selectedTour != null &&
                     widget.state.selectedTour?.type != TourType.secret
@@ -97,6 +114,7 @@ class _OSMapViewState extends State<OSMapView> {
                         tour: widget.state.selectedTour!,
                         nextKeyPointIndex:
                             widget.state.selectedTour!.nextKeyPoint,
+                        currentLocation: widget.state.currentLoc,
                       ),
                     ),
                   )
@@ -104,6 +122,7 @@ class _OSMapViewState extends State<OSMapView> {
             widget.state.selectedTour == null
                 ? Container()
                 : TourInfo(
+                    nextKeyPointIndex: widget.state.selectedTour!.nextKeyPoint,
                     onStartTour: widget.state.startTour,
                     tour: widget.state.selectedTour!,
                     valueNotifier: widget.state.valueNotifier,

@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:figenie/consts.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
 import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
@@ -27,6 +28,14 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: secondaryColor,
+          selectionColor: secondaryColor.withOpacity(0.4),
+          selectionHandleColor: secondaryColor,
+        ),
+        primaryColor: primaryColor,
+      ),
       home: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: Obx(() {
