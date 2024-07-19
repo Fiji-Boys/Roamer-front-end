@@ -20,14 +20,17 @@ class TourDetailsView extends StatelessWidget {
           padding: const EdgeInsets.only(top: 32.0),
           child: Stack(
             children: [
-              // Container for the image
+              // Positioned image with opacity
               Positioned.fill(
-                child: Image.network(
-                  tour.keyPoints[0].images[0],
-                  fit: BoxFit.cover,
-                  opacity: const AlwaysStoppedAnimation(.7),
+                child: Opacity(
+                  opacity: 0.7,
+                  child: Image.network(
+                    tour.keyPoints[0].images[0],
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
+              // Centered text with tour name
               Center(
                 child: Text(
                   tour.name,
@@ -37,6 +40,32 @@ class TourDetailsView extends StatelessWidget {
                     color: textColor,
                   ),
                   textAlign: TextAlign.center,
+                ),
+              ),
+              // Positioned location logo and keypoints info at the bottom left
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      // Location icon
+                      const Icon(
+                        Icons.location_on,
+                        color: textColor,
+                        size: 12.0,
+                      ),
+                      const SizedBox(width: 8.0),
+                      // Number of keypoints text
+                      Text(
+                        'Number of keypoints: ${tour.keyPoints.length}',
+                        style: const TextStyle(
+                          color: textColor,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
