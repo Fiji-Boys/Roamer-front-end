@@ -131,7 +131,9 @@ class _TourInfoState extends State<TourInfo> {
             Stack(
               children: [
                 CarouselSlider(
-                  items: widget.tour.keyPoints.map((keyPoint) {
+                  items: widget.tour.keyPoints.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final keyPoint = entry.value;
                     return Builder(
                       builder: (BuildContext context) {
                         return ClipRRect(
@@ -142,7 +144,9 @@ class _TourInfoState extends State<TourInfo> {
                             decoration:
                                 const BoxDecoration(color: backgroundColor),
                             child: Image.network(
-                              keyPoint.images[0],
+                              widget.tour.type == TourType.secret && index != 0
+                                  ? "https://i.imgur.com/jibccQd.png"
+                                  : keyPoint.images[0],
                               fit: BoxFit.cover,
                               errorBuilder: (BuildContext context, Object error,
                                   StackTrace? stackTrace) {
@@ -239,8 +243,12 @@ class _TourInfoState extends State<TourInfo> {
                         backgroundColor: secondaryColor,
                         child: CircleAvatar(
                             radius: 30.0,
-                            backgroundImage: NetworkImage(keyPoint.images[0]),
-                            backgroundColor: primaryColor,
+                            backgroundImage: NetworkImage(
+                                widget.tour.type == TourType.secret &&
+                                        index != 0
+                                    ? "https://i.imgur.com/jibccQd.png"
+                                    : keyPoint.images[0]),
+                            backgroundColor: foregroundColor,
                             child: Container(
                               alignment: Alignment.topLeft,
                               child: CircleAvatar(
@@ -260,7 +268,9 @@ class _TourInfoState extends State<TourInfo> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              keyPoint.name,
+                              widget.tour.type == TourType.secret && index != 0
+                                  ? "Secret"
+                                  : keyPoint.name,
                               style: const TextStyle(
                                 color: textColor,
                                 fontWeight: FontWeight.bold,
@@ -268,7 +278,9 @@ class _TourInfoState extends State<TourInfo> {
                               ),
                             ),
                             Text(
-                              keyPoint.description,
+                              widget.tour.type == TourType.secret && index != 0
+                                  ? "Find out the location to learn more about this keypoint."
+                                  : keyPoint.description,
                               style: const TextStyle(
                                 color: textLighterColor,
                                 fontSize: 16,

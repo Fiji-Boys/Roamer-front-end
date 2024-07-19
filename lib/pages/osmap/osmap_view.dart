@@ -1,11 +1,11 @@
 // ignore_for_file: library_private_types_in_public_api, deprecated_member_use
 
+import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
-import 'package:figenie/model/tour.dart';
 import 'package:figenie/widgets/tour_progress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -84,7 +84,8 @@ class _OSMapViewState extends State<OSMapView> {
               ],
             ),
             widget.state.isTourActive == true &&
-                    widget.state.selectedTour != null
+                    widget.state.selectedTour != null &&
+                    widget.state.selectedTour?.type != TourType.secret
                 ? Positioned(
                     top: 0,
                     left: 0,

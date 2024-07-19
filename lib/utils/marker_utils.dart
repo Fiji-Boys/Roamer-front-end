@@ -1,9 +1,3 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:figenie/model/key_point.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 
 class MarkerUtils {
   // Function to create custom marker icon with a number
