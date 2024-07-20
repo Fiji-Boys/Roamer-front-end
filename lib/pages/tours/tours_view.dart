@@ -2,7 +2,6 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ToursView extends StatelessWidget {
   final ToursController state;
