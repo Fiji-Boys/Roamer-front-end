@@ -95,6 +95,7 @@ class _OSMapViewState extends State<OSMapView> {
                     right: 10,
                     child: search.SearchBar(
                       controller: _searchController,
+                      // tourService: service,
                       onSearch: () {
                         String searchText = _searchController.text;
                       },
