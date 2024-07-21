@@ -3,6 +3,7 @@
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
+import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,10 @@ class _OSMapViewState extends State<OSMapView> {
 
   void _updateNextKeyPointIndex(int nextKeyPointIndex) {
     _nextKeyPointIndexNotifier.value = nextKeyPointIndex;
+  }
+
+  void _handleTourTap(Tour tappedTour) {
+    widget.state.selectedTour = tappedTour;
   }
 
   @override
@@ -95,10 +100,8 @@ class _OSMapViewState extends State<OSMapView> {
                     right: 10,
                     child: search.SearchBar(
                       controller: _searchController,
-                      // tourService: service,
-                      onSearch: () {
-                        String searchText = _searchController.text;
-                      },
+                      tours: widget.state.tours,
+                      onTourTap: _handleTourTap,
                     ),
                   ),
             widget.state.selectedTour != null

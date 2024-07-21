@@ -1,29 +1,38 @@
+import 'dart:math';
+
 import 'package:figenie/consts.dart';
+import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback? onSearch;
+  final List<Tour> tours;
+  final void Function(Tour) onTourTap;
 
   const SearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     this.onSearch,
-  }) : super(key: key);
+    required this.tours,
+    required this.onTourTap,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _SearchBarState createState() => _SearchBarState();
 }
 
 class _SearchBarState extends State<SearchBar> {
   bool showClearButton = false;
-  List<String> dummyLabels = [];
+  List<Tour> filteredTours = [];
   double shape = 50;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_updateClearButtonVisibility);
+    filteredTours = [];
   }
 
   @override
@@ -35,11 +44,6 @@ class _SearchBarState extends State<SearchBar> {
   void _updateClearButtonVisibility() {
     setState(() {
       showClearButton = widget.controller.text.isNotEmpty;
-      dummyLabels = [
-        'Tour 1',
-        'Tour 2',
-        'Tour 3',
-      ];
     });
     setState(() {
       shape = widget.controller.text.isEmpty ? 50 : 10;
@@ -50,10 +54,23 @@ class _SearchBarState extends State<SearchBar> {
     widget.controller.clear();
     setState(() {
       showClearButton = false;
-      dummyLabels.clear();
+      filteredTours = [];
       shape = 50;
     });
     FocusScope.of(context).unfocus();
+  }
+
+  void _performSearch(String searchText) {
+    setState(() {
+      if (searchText.isEmpty) {
+        filteredTours = [];
+      } else {
+        filteredTours = widget.tours
+            .where((tour) =>
+                tour.name.toLowerCase().contains(searchText.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -96,7 +113,9 @@ class _SearchBarState extends State<SearchBar> {
                     setState(() {
                       showClearButton = value.isNotEmpty;
                       if (value.isEmpty) {
-                        dummyLabels.clear();
+                        filteredTours = [];
+                      } else {
+                        _performSearch(value);
                       }
                     });
                   },
@@ -112,19 +131,21 @@ class _SearchBarState extends State<SearchBar> {
           // const SizedBox(height: 8.0),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: dummyLabels.length,
+            itemCount: filteredTours.length,
             itemBuilder: (context, index) {
               return InkWell(
                 child: ListTile(
                   title: Text(
-                    dummyLabels[index],
+                    filteredTours[index].name,
                     style: const TextStyle(
                       fontSize: 16.0,
                       color: textLightColor,
                     ),
                   ),
                   onTap: () {
+                    widget.onTourTap(filteredTours[index]);
                     _clearText();
+                    filteredTours = [];
                   },
                 ),
               );
