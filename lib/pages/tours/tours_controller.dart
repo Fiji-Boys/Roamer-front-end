@@ -12,13 +12,14 @@ class ToursPage extends StatefulWidget {
 
 final TourService service = TourService();
 
-class ToursController extends State<ToursPage> {
+class ToursController extends State<ToursPage>
+    with AutomaticKeepAliveClientMixin {
   late final TextEditingController searchController;
-  List<Tour> tours = []; // Initialize with your tour data
+  List<Tour> tours = [];
   List<Tour> filteredTours = [];
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ToursView(this);
   }
 
@@ -29,9 +30,12 @@ class ToursController extends State<ToursPage> {
     getTours();
   }
 
-  void getTours() {
-    tours = service.getAll();
-    filteredTours = tours;
+  void getTours() async {
+    final tourList = await service.getAll();
+    setState(() {
+      tours = tourList;
+      filteredTours = tours;
+    });
   }
 
   void setTours(tourList) {
@@ -40,23 +44,6 @@ class ToursController extends State<ToursPage> {
     });
   }
 
-  // void filterTours(String query) {
-  //   if (query.isEmpty) {
-  //     setState(() {
-  //       filteredTours = [];
-  //     });
-  //   } else {
-  //     setState(() {
-  //       filteredTours = tours
-  //           .where(
-  //               (tour) => tour.name.toLowerCase().contains(query.toLowerCase()))
-  //           .toList();
-  //     });
-  //   }
-  // }
-
-  // void clearSearch() {
-  //   searchController.clear();
-  //   filteredTours = [];
-  // }
+  @override
+  bool get wantKeepAlive => true;
 }
