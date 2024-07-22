@@ -16,6 +16,7 @@ class ToursController extends State<ToursPage>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ToursView(this);
   }
 
