@@ -1,12 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:figenie/model/entity.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'key_point.dart';
 
 enum TourType { informational, story, secret, adventure }
 
-class Tour {
+class Tour implements Entity {
   String name;
   String description;
   bool isStarted = false;
@@ -20,6 +21,14 @@ class Tour {
       required this.description,
       required this.keyPoints,
       required this.type});
+
+  Tour.fromJson(Map<String, Object?> json)
+      : this(
+          name: json["name"]! as String,
+          description: json["description"]! as String,
+          type: TourType.values.byName(json["type"]! as String),
+          keyPoints: [],
+        );
 
   LatLng getNextKeyPointLocation() {
     if (nextKeyPoint >= keyPoints.length) return keyPoints.last.getLocation();
@@ -51,5 +60,14 @@ class Tour {
 
   LatLng getLocation() {
     return keyPoints.first.getLocation();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'type': type.toString().split('.').last,
+    };
   }
 }

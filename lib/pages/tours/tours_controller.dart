@@ -12,7 +12,8 @@ class ToursPage extends StatefulWidget {
 
 final TourService service = TourService();
 
-class ToursController extends State<ToursPage> {
+class ToursController extends State<ToursPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return ToursView(this);
@@ -26,7 +27,13 @@ class ToursController extends State<ToursPage> {
 
   List<Tour> tours = <Tour>[];
 
-  void getTours() {
-    tours = service.getAll();
+  void getTours() async {
+    final tourList = await service.getAll();
+    setState(() {
+      tours = tourList;
+    });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

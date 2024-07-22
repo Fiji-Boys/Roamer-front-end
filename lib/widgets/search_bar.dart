@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:flutter/material.dart';

@@ -3,7 +3,6 @@
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
-import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/tour_info.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';

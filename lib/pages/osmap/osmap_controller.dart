@@ -73,9 +73,12 @@ class OSMapController extends State<OSMapPage>
     valueNotifier = ValueNotifier(0.0);
   }
 
-  void getTours() {
-    tours = service.getAll();
-    getTourMarkers();
+  void getTours() async {
+    final tourList = await service.getAll();
+    setState(() {
+      tours = tourList;
+      getTourMarkers();
+    });
   }
 
   Future<void> getTourMarkers() async {
