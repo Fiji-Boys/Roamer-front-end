@@ -13,10 +13,23 @@ class ProfileController extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? user;
-
   @override
   Widget build(BuildContext context) {
     return ProfileView(this);
+  }
+
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  Future<void> reloadUser() async {
+    if (user != null) {
+      await user!.reload();
+      user = _auth.currentUser;
+    }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    user = null;
   }
 
   @override
@@ -27,9 +40,5 @@ class ProfileController extends State<ProfilePage> {
         user = event;
       });
     });
-  }
-
-  void signOut() {
-    _auth.signOut();
   }
 }
