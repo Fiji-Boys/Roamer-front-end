@@ -139,7 +139,7 @@ class TourDetailsView extends StatelessWidget {
                         maxLines: 1,
                         keyPoint.name,
                         style: const TextStyle(
-                          color: secondaryColor,
+                          color: textColor,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -150,7 +150,7 @@ class TourDetailsView extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                         style: const TextStyle(
-                          color: textColor,
+                          color: textLightColor,
                           fontSize: 14.0,
                         ),
                       ),

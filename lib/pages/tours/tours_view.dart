@@ -11,16 +11,51 @@ class ToursView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: foregroundColor,
-      child: ListView.builder(
-        itemCount: state.tours.length,
-        itemBuilder: (context, index) {
-          final tour = state.tours[index];
-          return cardUI(context, tour);
-        },
-      ),
+    return Scaffold(
+      body: Container(
+          color: foregroundColor,
+          child: Column(children: [
+            searchBarUI(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: state.tours.length,
+                itemBuilder: (context, index) {
+                  final tour = state.tours[index];
+                  return cardUI(context, tour);
+                },
+              ),
+            )
+          ])),
     );
+  }
+
+  Widget searchBarUI() {
+    return const Placeholder();
+    // return Padding(
+    //   padding: const EdgeInsets.all(16.0),
+    //   child: Container(
+    //     decoration: BoxDecoration(
+    //       color: backgroundColor, // Use your desired background color
+    //       borderRadius: BorderRadius.circular(8.0), // Set the border radius
+    //     ),
+    //     child: const Padding(
+    //       padding: EdgeInsets.symmetric(horizontal: 16.0),
+    //       child: TextField(
+    //         decoration: InputDecoration(
+    //           hintText: 'Search',
+    //           border: InputBorder.none,
+    //           icon: Icon(
+    //             Icons.search,
+    //             color: textColor, // Use your desired icon color
+    //           ),
+    //         ),
+    //         style: TextStyle(
+    //           color: textColor, // Use your desired text color
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   Widget cardUI(BuildContext context, Tour tour) {
@@ -61,7 +96,7 @@ class ToursView extends StatelessWidget {
                       Text(
                         tour.name,
                         style: const TextStyle(
-                          color: secondaryColor,
+                          color: textColor,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -72,7 +107,7 @@ class ToursView extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                         style: const TextStyle(
-                          color: textColor,
+                          color: textLightColor,
                           fontSize: 14.0,
                         ),
                       ),
