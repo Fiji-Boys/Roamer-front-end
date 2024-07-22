@@ -43,51 +43,53 @@ class _WeatherInfo extends State<WeatherInfo> {
 
   Widget _buildUI() {
     if (_weather == null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: secondaryColor,
-        ),
-      );
+      return Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15),
+                topLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+                bottomLeft: Radius.circular(15),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  blurRadius: 5,
+                  spreadRadius: 0.1,
+                  offset: Offset(0, 1),
+                ),
+              ],
+              color: foregroundColor),
+          padding: const EdgeInsets.all(10),
+          child: const Center(
+            child: CircularProgressIndicator(
+              color: secondaryColor,
+            ),
+          ));
     }
 
     // Container takes up the full width of the screen
     return Container(
-      // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(10.0),
-      // ),
       decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(15),
-          bottomRight: Radius.circular(15),
-        ),
-        // color: primaryContentColor.withOpacity(0.5),
-      ),
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(15),
+            topLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
+            bottomLeft: Radius.circular(15),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 5,
+              spreadRadius: 0.1,
+              offset: Offset(0, 1),
+            ),
+          ],
+          color: foregroundColor),
+      padding: const EdgeInsets.all(10),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.location_on,
-                color: textColor,
-                size: 20,
-                shadows: <Shadow>[
-                  Shadow(
-                    blurRadius: 9.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ],
-              ),
-              _locationHeader(),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [_weatherIcon(), _currentTemp()],
-          ),
-        ],
+        children: [_weatherIcon(), _currentTemp()],
       ),
     );
   }
@@ -120,34 +122,13 @@ class _WeatherInfo extends State<WeatherInfo> {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      children: [
-        SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                child: Image.network(
-                  iconUrl,
-                  width: MediaQuery.of(context).size.height * 0.055,
-                  height: MediaQuery.of(context).size.height * 0.055,
-                  color: Colors.black.withOpacity(0.3),
-                  fit: BoxFit.contain,
-                  filterQuality: FilterQuality.high,
-                ),
-              ),
-              Positioned(
-                child: Image.network(
-                  iconUrl,
-                  width: MediaQuery.of(context).size.height * 0.05,
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return Positioned(
+      child: Image.network(
+        iconUrl,
+        width: MediaQuery.of(context).size.height * 0.04,
+        height: MediaQuery.of(context).size.height * 0.04,
+        fit: BoxFit.contain,
+      ),
     );
   }
 
@@ -156,7 +137,7 @@ class _WeatherInfo extends State<WeatherInfo> {
       "${_weather?.temperature?.celsius?.toStringAsFixed(0)}° C",
       style: const TextStyle(
         color: textColor,
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: FontWeight.w600,
         shadows: <Shadow>[
           Shadow(

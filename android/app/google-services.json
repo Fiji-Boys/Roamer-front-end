@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "894070539185",
+    "project_id": "explorer-b3606",
+    "storage_bucket": "explorer-b3606.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894070539185:android:ef0e0e98d848c7ded77390",
+        "android_client_info": {
+          "package_name": "com.example.figenie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894070539185-i0iprlii5ora3hapogudeh2c7bhkfutt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4WrQWRqdbIsP2viBfMJQuxOHd7GKrR-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894070539185-i0iprlii5ora3hapogudeh2c7bhkfutt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "894070539185-vc3q1tigkn9147k94lett3385jhu6ucr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.figenie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
