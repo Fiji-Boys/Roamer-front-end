@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -73,9 +74,12 @@ class OSMapController extends State<OSMapPage>
     valueNotifier = ValueNotifier(0.0);
   }
 
-  void getTours() {
-    tours = service.getAll();
-    getTourMarkers();
+  void getTours() async {
+    final tourList = await service.getAll();
+    setState(() {
+      tours = tourList;
+      getTourMarkers();
+    });
   }
 
   Future<void> getTourMarkers() async {

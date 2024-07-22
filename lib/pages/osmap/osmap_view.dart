@@ -100,13 +100,13 @@ class _OSMapViewState extends State<OSMapView> {
                       },
                     ),
                   ),
-            widget.state.selectedTour != null
-                ? Container()
-                : Positioned(
-                    bottom: 5,
-                    left: 10,
-                    right: 290,
-                    child: WeatherInfo(currentLoc: widget.state.currentLoc)),
+            // widget.state.selectedTour != null
+            //     ? Container()
+            //     : Positioned(
+            //         bottom: 5,
+            //         left: 10,
+            //         right: 290,
+            //         child: WeatherInfo(currentLoc: widget.state.currentLoc)),
             widget.state.isTourActive == true &&
                     widget.state.selectedTour != null &&
                     widget.state.selectedTour?.type != TourType.secret
