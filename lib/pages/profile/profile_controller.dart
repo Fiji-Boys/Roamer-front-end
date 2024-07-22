@@ -1,4 +1,6 @@
+import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/profile/profile_view.dart';
+import 'package:figenie/services/tour_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -9,13 +11,24 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => ProfileController();
 }
 
+final TourService service = TourService();
+
 class ProfileController extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  List<Tour> tours = <Tour>[];
 
   User? user;
   @override
   Widget build(BuildContext context) {
     return ProfileView(this);
+  }
+
+  void getTours() async {
+    final tourList = await service.getAll();
+    setState(() {
+      tours = tourList;
+    });
   }
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -40,5 +53,6 @@ class ProfileController extends State<ProfilePage> {
         user = event;
       });
     });
+    getTours();
   }
 }
