@@ -13,6 +13,10 @@ class ToursPage extends StatefulWidget {
 final TourService service = TourService();
 
 class ToursController extends State<ToursPage> {
+  late final TextEditingController searchController;
+  List<Tour> tours = []; // Initialize with your tour data
+  List<Tour> filteredTours = [];
+
   @override
   Widget build(BuildContext context) {
     return ToursView(this);
@@ -21,12 +25,38 @@ class ToursController extends State<ToursPage> {
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     getTours();
   }
 
-  List<Tour> tours = <Tour>[];
-
   void getTours() {
     tours = service.getAll();
+    filteredTours = tours;
   }
+
+  void setTours(tourList) {
+    setState(() {
+      filteredTours = tourList;
+    });
+  }
+
+  // void filterTours(String query) {
+  //   if (query.isEmpty) {
+  //     setState(() {
+  //       filteredTours = [];
+  //     });
+  //   } else {
+  //     setState(() {
+  //       filteredTours = tours
+  //           .where(
+  //               (tour) => tour.name.toLowerCase().contains(query.toLowerCase()))
+  //           .toList();
+  //     });
+  //   }
+  // }
+
+  // void clearSearch() {
+  //   searchController.clear();
+  //   filteredTours = [];
+  // }
 }

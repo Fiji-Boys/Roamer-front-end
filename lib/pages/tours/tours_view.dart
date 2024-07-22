@@ -1,8 +1,9 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
+import 'package:flutter/material.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:figenie/widgets/search_bar.dart' as search;
 
 class ToursView extends StatelessWidget {
   final ToursController state;
@@ -12,49 +13,41 @@ class ToursView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          color: foregroundColor,
-          child: Column(children: [
-            searchBarUI(),
+        color: foregroundColor,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: search.SearchBar(
+                controller: state.searchController,
+                tours: state.tours,
+                updateTours: state.setTours,
+                onTourTap: (tour) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TourDetailsPage(tour: tour),
+                    ),
+                  );
+                },
+                isMap: false,
+                // onSearchChanged: state.filterTours,
+              ),
+            ),
             Expanded(
+              // This makes the ListView take the remaining space
               child: ListView.builder(
-                itemCount: state.tours.length,
+                itemCount: state.filteredTours.length,
                 itemBuilder: (context, index) {
-                  final tour = state.tours[index];
+                  final tour = state.filteredTours[index];
                   return cardUI(context, tour);
                 },
               ),
             )
-          ])),
+          ],
+        ),
+      ),
     );
-  }
-
-  Widget searchBarUI() {
-    return const Placeholder();
-    // return Padding(
-    //   padding: const EdgeInsets.all(16.0),
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //       color: backgroundColor, // Use your desired background color
-    //       borderRadius: BorderRadius.circular(8.0), // Set the border radius
-    //     ),
-    //     child: const Padding(
-    //       padding: EdgeInsets.symmetric(horizontal: 16.0),
-    //       child: TextField(
-    //         decoration: InputDecoration(
-    //           hintText: 'Search',
-    //           border: InputBorder.none,
-    //           icon: Icon(
-    //             Icons.search,
-    //             color: textColor, // Use your desired icon color
-    //           ),
-    //         ),
-    //         style: TextStyle(
-    //           color: textColor, // Use your desired text color
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 
   Widget cardUI(BuildContext context, Tour tour) {

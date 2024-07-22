@@ -1,14 +1,15 @@
-import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
-import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback? onSearch;
   final List<Tour> tours;
+  final bool isMap;
   final void Function(Tour) onTourTap;
+  final void Function(List<Tour>) updateTours;
+  // final void Function(String) onSearchChanged;
 
   const SearchBar({
     super.key,
@@ -16,10 +17,12 @@ class SearchBar extends StatefulWidget {
     this.onSearch,
     required this.tours,
     required this.onTourTap,
+    required this.isMap,
+    required this.updateTours,
+    // required this.onSearchChanged,
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _SearchBarState createState() => _SearchBarState();
 }
 
@@ -44,14 +47,13 @@ class _SearchBarState extends State<SearchBar> {
   void _updateClearButtonVisibility() {
     setState(() {
       showClearButton = widget.controller.text.isNotEmpty;
-    });
-    setState(() {
       shape = widget.controller.text.isEmpty ? 50 : 10;
     });
   }
 
   void _clearText() {
     widget.controller.clear();
+    // widget.onSearchChanged('');
     setState(() {
       showClearButton = false;
       filteredTours = [];
@@ -63,13 +65,18 @@ class _SearchBarState extends State<SearchBar> {
   void _performSearch(String searchText) {
     setState(() {
       if (searchText.isEmpty) {
-        filteredTours = [];
+        if (widget.isMap) {
+          filteredTours = [];
+        } else {
+          filteredTours = widget.tours;
+        }
       } else {
         filteredTours = widget.tours
             .where((tour) =>
                 tour.name.toLowerCase().contains(searchText.toLowerCase()))
             .toList();
       }
+      widget.updateTours(filteredTours);
     });
   }
 
@@ -78,7 +85,7 @@ class _SearchBarState extends State<SearchBar> {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: foregroundColor,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(shape),
         boxShadow: const [
           BoxShadow(
@@ -109,16 +116,7 @@ class _SearchBarState extends State<SearchBar> {
                     hintStyle: TextStyle(color: textLightColor),
                     border: InputBorder.none,
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      showClearButton = value.isNotEmpty;
-                      if (value.isEmpty) {
-                        filteredTours = [];
-                      } else {
-                        _performSearch(value);
-                      }
-                    });
-                  },
+                  onChanged: _performSearch,
                 ),
               ),
               if (showClearButton)
@@ -128,29 +126,29 @@ class _SearchBarState extends State<SearchBar> {
                 ),
             ],
           ),
-          // const SizedBox(height: 8.0),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: filteredTours.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                child: ListTile(
-                  title: Text(
-                    filteredTours[index].name,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      color: textLightColor,
-                    ),
-                  ),
-                  onTap: () {
-                    widget.onTourTap(filteredTours[index]);
-                    _clearText();
-                    filteredTours = [];
+          widget.isMap
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: filteredTours.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      child: ListTile(
+                        title: Text(
+                          filteredTours[index].name,
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            color: textLightColor,
+                          ),
+                        ),
+                        onTap: () {
+                          widget.onTourTap(filteredTours[index]);
+                          _clearText();
+                        },
+                      ),
+                    );
                   },
-                ),
-              );
-            },
-          ),
+                )
+              : Container(),
         ],
       ),
     );
