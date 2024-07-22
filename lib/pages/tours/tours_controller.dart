@@ -14,6 +14,9 @@ final TourService service = TourService();
 
 class ToursController extends State<ToursPage>
     with AutomaticKeepAliveClientMixin {
+  late final TextEditingController searchController;
+  List<Tour> tours = [];
+  List<Tour> filteredTours = [];
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -23,15 +26,21 @@ class ToursController extends State<ToursPage>
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     getTours();
   }
-
-  List<Tour> tours = <Tour>[];
 
   void getTours() async {
     final tourList = await service.getAll();
     setState(() {
       tours = tourList;
+      filteredTours = tours;
+    });
+  }
+
+  void setTours(tourList) {
+    setState(() {
+      filteredTours = tourList;
     });
   }
 
