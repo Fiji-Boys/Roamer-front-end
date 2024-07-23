@@ -120,11 +120,15 @@ class OSMapController extends State<OSMapPage>
   }
 
   void clearMarkers() {
-    markers.clear();
+    setState(() {
+      markers.clear();
+    });
   }
 
   void clearPolylines() {
-    currentPolylines.clear();
+    setState(() {
+      currentPolylines.clear();
+    });
   }
 
   Future<AnimatedMarker> createKeyPointMarker(
