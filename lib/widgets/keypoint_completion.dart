@@ -22,33 +22,23 @@ class _CompletedKeypointModalState extends State<CompletedKeypointModal> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.transparent, // Make the background transparent
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Container(
+        width: 200,
+        height: 200,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: Colors.transparent, // Transparent container
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Keypoint Completed",
-              style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor),
-            ),
-            const SizedBox(height: 16.0),
-            Lottie.asset(
-              'assets/checkmark.json',
-              width: 100,
-              height: 100,
-              fit: BoxFit.fill,
-            ),
-          ],
+        child: Lottie.asset(
+          'assets/checkmark.json',
+          width: 100,
+          height: 100,
+          fit: BoxFit.fill,
         ),
       ),
     );
