@@ -47,6 +47,7 @@ class _OSMapViewState extends State<OSMapView> {
 
   void _handleTourTap(Tour tappedTour) {
     widget.state.selectedTour = tappedTour;
+    widget.state.showTour(tappedTour);
   }
 
   @override

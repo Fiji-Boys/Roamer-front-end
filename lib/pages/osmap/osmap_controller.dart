@@ -90,7 +90,7 @@ class OSMapController extends State<OSMapPage>
 
   void showTour(Tour tour) {
     showKeypoints(tour);
-    if (tour.type != TourType.secret) centerMapToBounds(tour.keyPoints);
+    centerMapToBounds(tour);
   }
 
   Future<void> showKeypoints(Tour tour) async {
@@ -135,13 +135,20 @@ class OSMapController extends State<OSMapPage>
         order == 0 ? blueMarker : orangeMarker);
   }
 
-  void centerMapToBounds(List<KeyPoint> keyPoints) {
+  void centerMapToBounds(Tour tour) {
+    List<KeyPoint> keyPoints = tour.keyPoints;
     if (keyPoints.isEmpty) return;
 
     double minLat = keyPoints.first.latitude;
     double maxLat = keyPoints.first.latitude;
     double minLng = keyPoints.first.longitude;
     double maxLng = keyPoints.first.longitude;
+
+    if (tour.type == TourType.secret) {
+      LatLng firstKeyPointLocation = keyPoints.first.getLocation();
+      mapController.centerOnPoint(firstKeyPointLocation, zoom: 16.0);
+      return;
+    }
 
     for (final keyPoint in keyPoints) {
       minLat = min(minLat, keyPoint.latitude);
@@ -156,8 +163,9 @@ class OSMapController extends State<OSMapPage>
     final bounds = LatLngBounds(southWest, northEast);
 
     mapController.animatedFitCamera(
-        cameraFit: CameraFit.bounds(
-            bounds: bounds, padding: const EdgeInsets.all(24)));
+      cameraFit:
+          CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(24)),
+    );
   }
 
   Future<void> getLocationUpdates() async {
