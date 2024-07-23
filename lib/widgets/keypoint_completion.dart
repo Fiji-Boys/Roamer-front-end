@@ -27,18 +27,30 @@ class _CompletedKeypointModalState extends State<CompletedKeypointModal> {
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Container(
-        width: 200,
-        height: 200,
+        width: 240,
+        height: 240,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.transparent, // Transparent container
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: Lottie.asset(
-          'assets/checkmark.json',
-          width: 100,
-          height: 100,
-          fit: BoxFit.fill,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Keypoint Completed!",
+              style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: textColor),
+            ),
+            const SizedBox(height: 16.0),
+            Lottie.asset(
+              'assets/checkmark.json',
+              width: 150,
+              height: 150,
+            ),
+          ],
         ),
       ),
     );
