@@ -1,6 +1,7 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
+import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 
 class TourDetailsView extends StatelessWidget {
@@ -128,76 +129,12 @@ class TourDetailsView extends StatelessWidget {
   }
 
   Widget cardUI(BuildContext context, KeyPoint keyPoint) {
-    return InkWell(
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => TourDetailsPage(ke: tour),
-        //   ),
-        // );
-      },
-      child: Card(
-        color: backgroundColor,
-        margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  keyPoint.images[0],
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                height: 110,
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        keyPoint.name,
-                        style: const TextStyle(
-                          color: textColor,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        keyPoint.description,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                        style: const TextStyle(
-                          color: textLightColor,
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.keyboard_arrow_right,
-                color: textColor,
-                size: 30.0,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomCard(
+      name: keyPoint.name,
+      description: keyPoint.description,
+      image: keyPoint.images[0],
+      onTap: () {},
+      showArrow: false,
     );
   }
 }
