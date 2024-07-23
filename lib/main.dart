@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:figenie/pages/profile/profile_controller.dart';
+import 'package:figenie/pages/profile_setup/profile_setup_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,11 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     _auth.authStateChanges().listen((event) {
+      setState(() {
+        _user = event;
+      });
+    });
+    _auth.userChanges().listen((event) {
       setState(() {
         _user = event;
       });
@@ -107,51 +113,53 @@ class _MainAppState extends State<MainApp> {
                 ],
               ),
             )
-          : Scaffold(
-              backgroundColor: Colors.black,
-              bottomNavigationBar: Obx(() {
-                return controller.isNavBarVisible.value
-                    ? NavigationMenu(
-                        destinations: const [
-                            NavigationDestination(
-                              icon: Icon(Icons.tour),
-                              label: 'Tours',
-                            ),
-                            NavigationDestination(
-                              icon: Icon(Icons.people),
-                              label: 'Encounters',
-                            ),
-                            NavigationDestination(
-                              icon: Icon(Icons.map),
-                              label: 'Map',
-                            ),
-                            NavigationDestination(
-                              icon: Icon(Icons.qr_code),
-                              label: 'QR',
-                            ),
-                            NavigationDestination(
-                              icon: Icon(Icons.person),
-                              label: 'Profile',
-                            ),
-                          ],
-                        selectedIndex: controller.selectedIndex.value,
-                        onDestinationSelected: (index) => {
-                              _onNavigate(index),
-                              controller.selectedIndex.value = index
-                            })
-                    : const SizedBox.shrink();
-              }),
-              body: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: PageView(
-                    controller: pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: controller.screens,
+          : _user!.displayName == null || _user!.displayName == ""
+              ? const ProfileSetupPage()
+              : Scaffold(
+                  backgroundColor: Colors.black,
+                  bottomNavigationBar: Obx(() {
+                    return controller.isNavBarVisible.value
+                        ? NavigationMenu(
+                            destinations: const [
+                                NavigationDestination(
+                                  icon: Icon(Icons.tour),
+                                  label: 'Tours',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.people),
+                                  label: 'Encounters',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.map),
+                                  label: 'Map',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.qr_code),
+                                  label: 'QR',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.person),
+                                  label: 'Profile',
+                                ),
+                              ],
+                            selectedIndex: controller.selectedIndex.value,
+                            onDestinationSelected: (index) => {
+                                  _onNavigate(index),
+                                  controller.selectedIndex.value = index
+                                })
+                        : const SizedBox.shrink();
+                  }),
+                  body: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: PageView(
+                        controller: pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: controller.screens,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
     );
   }
 }

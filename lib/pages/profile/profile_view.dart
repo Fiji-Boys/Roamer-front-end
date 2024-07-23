@@ -123,37 +123,37 @@ class _ProfileViewState extends State<ProfileView> {
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  height: 470,
-                  width: 400,
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Completed Tours',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
-                        ),
-                        Column(
-                          children: widget.state.tours
-                              .map((tour) => TourCard(tour: tour))
-                              .toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: backgroundColor,
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   height: 470,
+                //   width: 400,
+                //   margin: const EdgeInsets.all(10),
+                //   padding: const EdgeInsets.all(16.0),
+                //   child: SingleChildScrollView(
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.center,
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         const Text(
+                //           'Completed Tours',
+                //           style: TextStyle(
+                //             fontSize: 22,
+                //             fontWeight: FontWeight.bold,
+                //             color: textColor,
+                //           ),
+                //         ),
+                //         Column(
+                //           children: widget.state.tours
+                //               .map((tour) => TourCard(tour: tour))
+                //               .toList(),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
