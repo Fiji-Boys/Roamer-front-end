@@ -15,11 +15,12 @@ class TourDetailsView extends StatelessWidget {
         child: Column(
           children: [
             headerUI(context),
+            descriptionUI(),
             Expanded(
               child: ListView.builder(
+                padding: const EdgeInsets.only(top: 8),
                 itemCount: state.tour.keyPoints.length,
                 itemBuilder: (context, index) {
-                  print(state.tour.keyPoints.length);
                   final keyPoint = state.tour.keyPoints[index];
                   return cardUI(context, keyPoint);
                 },
@@ -99,6 +100,33 @@ class TourDetailsView extends StatelessWidget {
     );
   }
 
+  Widget descriptionUI() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Description:",
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color: secondaryColor,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            state.tour.description,
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget cardUI(BuildContext context, KeyPoint keyPoint) {
     return InkWell(
       onTap: () {
@@ -111,7 +139,7 @@ class TourDetailsView extends StatelessWidget {
       },
       child: Card(
         color: backgroundColor,
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         child: Row(
           children: [
             Padding(
