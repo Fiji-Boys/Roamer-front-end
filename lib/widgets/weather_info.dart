@@ -1,7 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-// import 'package:geocoding/geocoding.dart';
-
 import 'package:figenie/consts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:weather/weather.dart';
@@ -19,14 +16,10 @@ class _WeatherInfo extends State<WeatherInfo> {
   final WeatherFactory _weatherFactory = WeatherFactory(weatherApiKey);
 
   Weather? _weather;
-  // late String _city;
 
   @override
   void initState() {
     super.initState();
-    // fetchCity(widget.currentLoc).then((city) => setState(() {
-    //       _city = city;
-    //     }));
     _weatherFactory
         .currentWeatherByCityName("Novi Sad")
         .then((weather) => setState(() {
@@ -37,91 +30,37 @@ class _WeatherInfo extends State<WeatherInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _buildUI(),
-    );
-  }
-
-  Widget _buildUI() {
-    if (_weather == null) {
-      return Container(
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-                bottomLeft: Radius.circular(15),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 5,
-                  spreadRadius: 0.1,
-                  offset: Offset(0, 1),
-                ),
-              ],
-              color: foregroundColor),
-          padding: const EdgeInsets.all(10),
-          child: const Center(
-            child: CircularProgressIndicator(
-              color: secondaryColor,
-            ),
-          ));
-    }
-
-    // Container takes up the full width of the screen
-    return Container(
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(15),
-            topLeft: Radius.circular(15),
-            bottomRight: Radius.circular(15),
-            bottomLeft: Radius.circular(15),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: foregroundColor,
+        borderRadius: BorderRadius.circular(20.0),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 5,
-              spreadRadius: 0.1,
-              offset: Offset(0, 1),
-            ),
-          ],
-          color: foregroundColor),
-      padding: const EdgeInsets.all(10),
+        ],
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [_weatherIcon(), _currentTemp()],
-      ),
-    );
-  }
-
-  Widget _locationHeader() {
-    return Text(
-      _weather?.areaName ?? "",
-      style: const TextStyle(
-        color: textColor,
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        shadows: <Shadow>[
-          Shadow(
-            blurRadius: 7.0,
-            color: Color.fromARGB(255, 0, 0, 0),
-          ),
+        children: [
+          _weatherIcon(),
+          const SizedBox(width: 8.0),
+          _currentTemp(),
         ],
       ),
     );
   }
 
   Widget _weatherIcon() {
-    // Ensure that _weather is not null and has a valid weatherIcon value
     final iconUrl = _weather?.weatherIcon != null
         ? "http://openweathermap.org/img/wn/${_weather!.weatherIcon}@4x.png"
         : null;
-
-    // If there is no valid icon URL, we don't want to display the container
     if (iconUrl == null) {
       return const SizedBox.shrink();
     }
-
     return Positioned(
       child: Image.network(
         iconUrl,
@@ -139,19 +78,7 @@ class _WeatherInfo extends State<WeatherInfo> {
         color: textColor,
         fontSize: 18,
         fontWeight: FontWeight.w600,
-        shadows: <Shadow>[
-          Shadow(
-            blurRadius: 8.0,
-            color: Color.fromARGB(255, 0, 0, 0),
-          ),
-        ],
       ),
     );
   }
 }
-
-// Future<String> fetchCity(LatLng currentLoc) async {
-//   List<Placemark> placemarks = await placemarkFromCoordinates(
-//       currentLoc.latitude, currentLoc.longitude);
-//   return placemarks[0].locality!;
-// }

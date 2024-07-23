@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:figenie/pages/profile/profile_controller.dart';
 import 'package:figenie/pages/profile_setup/profile_setup_controller.dart';
@@ -93,7 +95,7 @@ class _MainAppState extends State<MainApp> {
                         final googleProvider = GoogleAuthProvider();
                         await _auth.signInWithProvider(googleProvider);
                       } catch (e) {
-                        print('Google sign-in failed: $e');
+                        log('Google sign-in failed: $e');
                       }
                     },
                   ),
@@ -106,7 +108,7 @@ class _MainAppState extends State<MainApp> {
                         final githubProvider = GithubAuthProvider();
                         await _auth.signInWithProvider(githubProvider);
                       } catch (e) {
-                        print('GitHub sign-in failed: $e');
+                        log('GitHub sign-in failed: $e');
                       }
                     },
                   ),
