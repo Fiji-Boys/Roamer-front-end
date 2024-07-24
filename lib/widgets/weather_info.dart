@@ -43,14 +43,23 @@ class _WeatherInfo extends State<WeatherInfo> {
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _weatherIcon(),
-          const SizedBox(width: 8.0),
-          _currentTemp(),
-        ],
-      ),
+      child: _weather == null
+          ? const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: secondaryColor,
+                ),
+              ],
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _weatherIcon(),
+                const SizedBox(width: 8.0),
+                _currentTemp(),
+              ],
+            ),
     );
   }
 
