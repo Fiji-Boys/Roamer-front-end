@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:figenie/model/tour.dart';
 import 'package:figenie/model/user.dart';
 
 class UserService {
@@ -29,5 +30,25 @@ class UserService {
     } catch (e) {
       throw Exception('Error checking if user exists: $e');
     }
+  }
+
+  Future<User> getById(String id) async {
+    final DocumentSnapshot<User> doc = await _users.doc(id).get();
+    QuerySnapshot toursSnapshot = await doc.reference
+        .collection('completedTours')
+        .withConverter(
+          fromFirestore: (snapshots, _) => Tour.fromJson(snapshots.data()!),
+          toFirestore: (tour, _) => tour.toJson(),
+        )
+        .get();
+    List<Tour> tours =
+        toursSnapshot.docs.map((tourDoc) => tourDoc.data() as Tour).toList();
+
+    User user = doc.data() as User;
+    user.completedTours = tours;
+
+    print(user.username);
+
+    return user;
   }
 }

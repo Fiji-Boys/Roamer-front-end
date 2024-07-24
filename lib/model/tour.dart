@@ -14,21 +14,23 @@ class Tour implements Entity {
   bool isCompleted = false;
   List<KeyPoint> keyPoints;
   int nextKeyPoint = 0;
+  int points;
   TourType type;
 
   Tour(
       {required this.name,
       required this.description,
       required this.keyPoints,
-      required this.type});
+      required this.type,
+      required this.points});
 
   Tour.fromJson(Map<String, Object?> json)
       : this(
-          name: json["name"]! as String,
-          description: json["description"]! as String,
-          type: TourType.values.byName(json["type"]! as String),
-          keyPoints: [],
-        );
+            name: json["name"]! as String,
+            description: json["description"]! as String,
+            type: TourType.values.byName(json["type"]! as String),
+            points: json["points"]! as int,
+            keyPoints: []);
 
   LatLng getNextKeyPointLocation() {
     if (nextKeyPoint >= keyPoints.length) return keyPoints.last.getLocation();
@@ -67,6 +69,7 @@ class Tour implements Entity {
     return {
       'name': name,
       'description': description,
+      'points': points,
       'type': type.toString().split('.').last,
     };
   }

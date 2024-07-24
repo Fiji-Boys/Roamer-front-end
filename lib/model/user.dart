@@ -26,7 +26,7 @@ class User implements Entity {
             points: json["points"] as int,
             profilePicture: json["profilePicture"]! as String,
             username: json["username"]! as String,
-            completedTours: json["completedTours"]! as List<Tour>);
+            completedTours: []);
 
   @override
   Map<String, dynamic> toJson() {

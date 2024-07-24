@@ -71,6 +71,17 @@ class _MainAppState extends State<MainApp> {
     _auth.userChanges().listen((event) {
       setState(() {
         _firebaseUser = event;
+        if (event != null) {
+          _user = model_user.User(
+              id: event.uid,
+              email: event.email ?? '',
+              username: event.displayName ?? '',
+              points: 0,
+              profilePicture: event.photoURL ?? '',
+              completedTours: List.empty());
+
+          _saveUser(_user);
+        }
       });
     });
   }
@@ -78,7 +89,6 @@ class _MainAppState extends State<MainApp> {
   Future<void> _saveUser(model_user.User user) async {
     try {
       await userService.saveUser(user);
-      log('User saved successfully');
     } catch (e) {
       log('Failed to save user: $e');
     }
