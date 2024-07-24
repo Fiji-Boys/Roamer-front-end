@@ -3,7 +3,7 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 
 class TourTypes extends StatefulWidget {
-  final void Function(TourType) onTourTypeSelected;
+  final void Function(TourType, bool) onTourTypeSelected;
 
   const TourTypes({Key? key, required this.onTourTypeSelected})
       : super(key: key);
@@ -15,6 +15,8 @@ class TourTypes extends StatefulWidget {
 class _TourTypesState extends State<TourTypes> {
   TourType? selectedTourType;
 
+  bool shouldReset = false;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -25,9 +27,16 @@ class _TourTypesState extends State<TourTypes> {
         return GestureDetector(
           onTap: () {
             setState(() {
-              selectedTourType = type;
+              if (isSelected) {
+                selectedTourType = null;
+                shouldReset = true;
+                widget.onTourTypeSelected(type, shouldReset);
+              } else {
+                selectedTourType = type;
+                shouldReset = false;
+                widget.onTourTypeSelected(type, shouldReset);
+              }
             });
-            widget.onTourTypeSelected(type);
           },
           child: Card(
             color: isSelected ? secondaryColor : foregroundColor,

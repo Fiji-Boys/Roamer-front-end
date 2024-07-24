@@ -81,10 +81,14 @@ class OSMapController extends State<OSMapPage>
     valueNotifier = ValueNotifier(0.0);
   }
 
-  void handleTourTypeSelected(TourType selectedType) {
+  void handleTourTypeSelected(TourType selectedType, bool shouldReset) {
     setState(() {
       selectedTourType = selectedType;
     });
+    if (shouldReset) {
+      resetMap();
+      return;
+    }
     filterTours(selectedType);
   }
 
