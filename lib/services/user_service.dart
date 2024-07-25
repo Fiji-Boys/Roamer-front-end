@@ -17,6 +17,11 @@ class UserService {
       bool exists = await _checkUserExists(user.id);
       if (!exists) {
         await _users.doc(user.id).set(user);
+      } else {
+        User existingUser = await getById(user.id);
+        existingUser.username = user.username;
+        existingUser.profilePicture = user.profilePicture;
+        await _users.doc(user.id).set(existingUser);
       }
     } catch (e) {
       throw Exception('Error saving user: $e');
@@ -50,5 +55,16 @@ class UserService {
     print(user.username);
 
     return user;
+  }
+
+  Future<void> completeTour(User currentUser, Tour selectedTour) async {
+    currentUser.completedTours.add(selectedTour);
+    currentUser.points += selectedTour.points;
+
+    await _firestore.collection('users').doc(currentUser.id).update({
+      'completedTours':
+          currentUser.completedTours.map((tour) => tour.toJson()).toList(),
+      'points': currentUser.points
+    });
   }
 }

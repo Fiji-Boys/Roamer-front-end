@@ -8,6 +8,7 @@ import 'key_point.dart';
 enum TourType { informational, story, secret, adventure }
 
 class Tour implements Entity {
+  String id;
   String name;
   String description;
   bool isStarted = false;
@@ -18,7 +19,8 @@ class Tour implements Entity {
   TourType type;
 
   Tour(
-      {required this.name,
+      {required this.id,
+      required this.name,
       required this.description,
       required this.keyPoints,
       required this.type,
@@ -26,6 +28,7 @@ class Tour implements Entity {
 
   Tour.fromJson(Map<String, Object?> json)
       : this(
+            id: json["id"]! as String,
             name: json["name"]! as String,
             description: json["description"]! as String,
             type: TourType.values.byName(json["type"]! as String),
@@ -67,6 +70,7 @@ class Tour implements Entity {
   @override
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'description': description,
       'points': points,

@@ -84,7 +84,7 @@ class OSMapController extends State<OSMapPage>
 
   Future<void> setUser() async {
     if (_auth.currentUser != null) {
-      _user = (await userService.getById(_auth.currentUser!.uid))!;
+      _user = (await userService.getById(_auth.currentUser!.uid));
     }
   }
 
@@ -361,6 +361,9 @@ class OSMapController extends State<OSMapPage>
 
     selectedKeypoint = null;
     if (selectedTour!.isCompleted) {
+      if (!_user.completedTours.any((tour) => tour.id == selectedTour!.id)) {
+        userService.completeTour(_user, selectedTour!);
+      }
       completeTour();
     }
   }
