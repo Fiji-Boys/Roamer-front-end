@@ -55,17 +55,6 @@ class _MainAppState extends State<MainApp> {
     _auth.authStateChanges().listen((event) {
       setState(() {
         _firebaseUser = event;
-        if (event != null) {
-          _user = model_user.User(
-              id: event.uid,
-              email: event.email ?? '',
-              username: event.displayName ?? '',
-              points: 0,
-              profilePicture: event.photoURL ?? '',
-              completedTours: List.empty());
-
-          _saveUser(_user);
-        }
       });
     });
     _auth.userChanges().listen((event) {
@@ -74,12 +63,11 @@ class _MainAppState extends State<MainApp> {
         if (event != null) {
           _user = model_user.User(
               id: event.uid,
-              email: event.email ?? '',
-              username: event.displayName ?? '',
+              email: event.email!,
+              username: event.displayName!,
               points: 0,
-              profilePicture: event.photoURL ?? '',
-              completedTours: List.empty());
-
+              profilePicture: event.photoURL!,
+              completedTours: []);
           _saveUser(_user);
         }
       });

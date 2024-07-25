@@ -36,7 +36,6 @@ class User implements Entity {
       'email': email,
       'points': points,
       'profilePicture': profilePicture,
-      'completedTours': completedTours
     };
   }
 }

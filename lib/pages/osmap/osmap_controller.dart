@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:figenie/model/user.dart' as model_user;
@@ -82,9 +83,18 @@ class OSMapController extends State<OSMapPage>
     valueNotifier = ValueNotifier(0.0);
   }
 
+  @override
+  void setState(fn) {
+    if (mounted) super.setState(fn);
+  }
+
   Future<void> setUser() async {
     if (_auth.currentUser != null) {
-      _user = (await userService.getById(_auth.currentUser!.uid));
+      try {
+        _user = await userService.getCurrentUser();
+      } catch (e) {
+        dev.log(e.toString(), name: "GetCurrentUser");
+      }
     }
   }
 
