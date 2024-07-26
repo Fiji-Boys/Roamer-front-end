@@ -4,6 +4,7 @@ import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/widgets/tour_info.dart';
+import 'package:figenie/widgets/tour_types.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
@@ -95,15 +96,32 @@ class _OSMapViewState extends State<OSMapView> {
             widget.state.selectedTour != null
                 ? Container()
                 : Positioned(
-                    top: 20,
-                    left: 10,
-                    right: 10,
-                    child: search.SearchBar(
-                      controller: _searchController,
-                      tours: widget.state.tours,
-                      onTourTap: _handleTourTap,
-                      isMap: true,
-                      updateTours: (p0) {},
+                    top: 70,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: const EdgeInsets.all(10.0),
+                      child: TourTypes(
+                        onTourTypeSelected: widget.state.handleTourTypeSelected,
+                      ),
+                    ),
+                  ),
+            widget.state.selectedTour != null
+                ? Container()
+                : Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: const EdgeInsets.all(10.0),
+                      alignment: Alignment.topCenter,
+                      child: search.SearchBar(
+                        controller: _searchController,
+                        tours: widget.state.tours,
+                        onTourTap: _handleTourTap,
+                        isMap: true,
+                        updateTours: (p0) {},
+                      ),
                     ),
                   ),
             widget.state.selectedTour != null

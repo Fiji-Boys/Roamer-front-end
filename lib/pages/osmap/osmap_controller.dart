@@ -36,6 +36,7 @@ class OSMapController extends State<OSMapPage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
+  TourType? selectedTourType;
 
   final Location locationController = Location();
   late final AnimatedMapController mapController = AnimatedMapController(
@@ -52,6 +53,7 @@ class OSMapController extends State<OSMapPage>
   LatLng currentLoc = const LatLng(45.262501, 19.839263);
 
   List<Tour> tours = <Tour>[];
+  List<Tour> filteredTours = <Tour>[];
   Tour? selectedTour;
   KeyPoint? selectedKeypoint;
   late bool isTourActive = false;
@@ -78,6 +80,7 @@ class OSMapController extends State<OSMapPage>
   void initState() {
     super.initState();
     getLocationUpdates();
+    initializeData();
     getTours();
     setUser();
     valueNotifier = ValueNotifier(0.0);
@@ -98,15 +101,47 @@ class OSMapController extends State<OSMapPage>
     }
   }
 
-  void getTours() async {
+  Future<void> initializeData() async {
+    await getTours();
+    getTourMarkers(tours);
+    valueNotifier = ValueNotifier(0.0);
+  }
+
+  void handleTourTypeSelected(TourType selectedType, bool shouldReset) {
+    setState(() {
+      selectedTourType = selectedType;
+    });
+    if (shouldReset) {
+      resetMap();
+      return;
+    }
+    filterTours(selectedType);
+  }
+
+  void filterTours(TourType selectedType) {
+    getTours();
+
+    List<Tour> filteredTours =
+        tours.where((tour) => tour.type == selectedType).toList();
+
+    if (filteredTours.isNotEmpty) {
+      tours = filteredTours;
+      markers.clear();
+      getTourMarkers(filteredTours);
+    } else {
+      clearMarkers();
+    }
+  }
+
+  Future<void> getTours() async {
     final tourList = await service.getAll();
     setState(() {
       tours = tourList;
-      getTourMarkers();
+      filteredTours = tourList;
     });
   }
 
-  Future<void> getTourMarkers() async {
+  Future<void> getTourMarkers(List<Tour> tours) async {
     for (var tour in tours) {
       markers[tour.name] =
           createMarker(tour.getLocation(), () => showTour(tour), orangeMarker);
@@ -496,7 +531,8 @@ class OSMapController extends State<OSMapPage>
     });
     clearMarkers();
     clearPolylines();
-    getTourMarkers();
+    // getTours();
+    getTourMarkers(tours);
   }
 
   AnimatedMarker createMarker(
