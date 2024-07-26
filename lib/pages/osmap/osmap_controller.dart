@@ -1,6 +1,10 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:figenie/model/user.dart' as model_user;
+import 'package:figenie/services/user_service.dart';
 import 'package:figenie/widgets/keypoint_completion.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -40,6 +44,10 @@ class OSMapController extends State<OSMapPage>
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut);
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late model_user.User _user;
+  final UserService userService = UserService();
+
   late ValueNotifier<double> valueNotifier;
 
   LatLng currentLoc = const LatLng(45.262501, 19.839263);
@@ -73,6 +81,24 @@ class OSMapController extends State<OSMapPage>
     super.initState();
     getLocationUpdates();
     initializeData();
+    getTours();
+    setUser();
+    valueNotifier = ValueNotifier(0.0);
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) super.setState(fn);
+  }
+
+  Future<void> setUser() async {
+    if (_auth.currentUser != null) {
+      try {
+        _user = await userService.getCurrentUser();
+      } catch (e) {
+        dev.log(e.toString(), name: "GetCurrentUser");
+      }
+    }
   }
 
   Future<void> initializeData() async {
@@ -380,6 +406,9 @@ class OSMapController extends State<OSMapPage>
 
     selectedKeypoint = null;
     if (selectedTour!.isCompleted) {
+      if (!_user.completedTours.any((tour) => tour.id == selectedTour!.id)) {
+        userService.completeTour(_user, selectedTour!);
+      }
       completeTour();
     }
   }

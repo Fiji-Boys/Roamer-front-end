@@ -78,7 +78,7 @@ class ProfileSetupView extends StatelessWidget {
                     foregroundColor:
                         MaterialStateProperty.all<Color>(textColor),
                   ),
-                  onPressed: state.handleNextImage,
+                  onPressed: state.handleSkip,
                   child: const Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),

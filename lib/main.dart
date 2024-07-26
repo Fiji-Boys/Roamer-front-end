@@ -3,13 +3,16 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:figenie/model/user.dart' as model_user;
 import 'package:figenie/pages/profile/profile_controller.dart';
 import 'package:figenie/pages/profile_setup/profile_setup_controller.dart';
+import 'package:figenie/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sign_in_button/sign_in_button.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 import 'package:figenie/consts.dart';
 import 'package:figenie/firebase_options.dart';
@@ -42,21 +45,41 @@ class _MainAppState extends State<MainApp> {
   final PageController pageController =
       PageController(initialPage: controller.selectedIndex.value);
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
+  firebase_auth.User? _firebaseUser;
+  late model_user.User _user;
+  final UserService userService = UserService();
 
   @override
   void initState() {
     super.initState();
     _auth.authStateChanges().listen((event) {
       setState(() {
-        _user = event;
+        _firebaseUser = event;
       });
     });
     _auth.userChanges().listen((event) {
       setState(() {
-        _user = event;
+        _firebaseUser = event;
+        if (event != null) {
+          _user = model_user.User(
+              id: event.uid,
+              email: event.email!,
+              username: event.displayName!,
+              points: 0,
+              profilePicture: event.photoURL!,
+              completedTours: []);
+          _saveUser(_user);
+        }
       });
     });
+  }
+
+  Future<void> _saveUser(model_user.User user) async {
+    try {
+      await userService.saveUser(user);
+    } catch (e) {
+      log('Failed to save user: $e');
+    }
   }
 
   void _onNavigate(int index) {
@@ -75,7 +98,7 @@ class _MainAppState extends State<MainApp> {
         ),
         primaryColor: primaryColor,
       ),
-      home: _user == null
+      home: _firebaseUser == null
           ? Container(
               color: backgroundColor,
               child: Column(
@@ -115,7 +138,8 @@ class _MainAppState extends State<MainApp> {
                 ],
               ),
             )
-          : _user!.displayName == null || _user!.displayName == ""
+          : _firebaseUser!.displayName == null ||
+                  _firebaseUser!.displayName == ""
               ? const ProfileSetupPage()
               : Scaffold(
                   backgroundColor: Colors.black,
