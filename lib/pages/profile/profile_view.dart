@@ -2,8 +2,8 @@ import 'package:figenie/model/tour.dart';
 import 'package:figenie/widgets/tour_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:figenie/consts.dart'; // Import your constants like foregroundColor, secondaryColor
-import 'package:figenie/pages/profile/profile_controller.dart'; // Import your profile controller
+import 'package:figenie/consts.dart';
+import 'package:figenie/pages/profile/profile_controller.dart';
 
 class ProfileView extends StatefulWidget {
   final ProfileController state;
@@ -11,7 +11,6 @@ class ProfileView extends StatefulWidget {
   const ProfileView(this.state, {super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfileViewState createState() => _ProfileViewState();
 }
 
@@ -46,42 +45,53 @@ class _ProfileViewState extends State<ProfileView> {
 
             return Column(
               children: [
+                const SizedBox(height: 16.0),
+                const Text(
+                  'Profile information',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: backgroundColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   margin: const EdgeInsets.all(10),
-                  height: 205,
+                  height: 290,
                   width: 400,
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.all(16.0),
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 CircleAvatar(
-                                  radius: 83,
+                                  radius: 72,
                                   backgroundColor: secondaryColor,
                                   child: CircleAvatar(
-                                    radius: 80,
+                                    radius: 70,
                                     backgroundImage:
                                         NetworkImage(user!.photoURL ?? ''),
                                   ),
                                 ),
                                 const SizedBox(width: 16.0),
                                 Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      'Username',
-                                      style: TextStyle(
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      user.displayName ?? '',
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: textColor,
@@ -96,22 +106,26 @@ class _ProfileViewState extends State<ProfileView> {
                                       ),
                                     ),
                                     const SizedBox(height: 8.0),
-                                    const Text(
-                                      "Rank",
-                                      style: TextStyle(
-                                        color: secondaryColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    const Text(
-                                      "Points",
-                                      style: TextStyle(
-                                        color: secondaryColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    const Row(
+                                      children: [
+                                        Text(
+                                          "Rank: X",
+                                          style: TextStyle(
+                                            color: secondaryColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          "Points: Y",
+                                          style: TextStyle(
+                                            color: primaryColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -123,37 +137,55 @@ class _ProfileViewState extends State<ProfileView> {
                     ],
                   ),
                 ),
-                // Container(
-                //   decoration: BoxDecoration(
-                //     color: backgroundColor,
-                //     borderRadius: BorderRadius.circular(10),
-                //   ),
-                //   height: 470,
-                //   width: 400,
-                //   margin: const EdgeInsets.all(10),
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: SingleChildScrollView(
-                //     child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.center,
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         const Text(
-                //           'Completed Tours',
-                //           style: TextStyle(
-                //             fontSize: 22,
-                //             fontWeight: FontWeight.bold,
-                //             color: textColor,
-                //           ),
-                //         ),
-                //         Column(
-                //           children: widget.state.tours
-                //               .map((tour) => TourCard(tour: tour))
-                //               .toList(),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
+                const Text(
+                  'Completed Tours',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  height: 290,
+                  width: 400,
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (widget.state.tours.isEmpty)
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset("assets/mascot_2.png",
+                                    width: 196, height: 196),
+                                const SizedBox(height: 16.0),
+                                const Text(
+                                  "You haven't completed any tour yet...",
+                                  style: TextStyle(
+                                      color: textLighterColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          Column(
+                            children: widget.state.tours
+                                .map((tour) => TourCard(tour: tour))
+                                .toList(),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:

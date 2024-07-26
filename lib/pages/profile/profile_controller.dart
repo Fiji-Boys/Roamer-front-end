@@ -1,6 +1,8 @@
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/model/user.dart' as fiji_user;
 import 'package:figenie/pages/profile/profile_view.dart';
 import 'package:figenie/services/tour_service.dart';
+import 'package:figenie/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,23 +14,28 @@ class ProfilePage extends StatefulWidget {
 }
 
 final TourService service = TourService();
+final UserService user_service = UserService();
 
 class ProfileController extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  List<Tour> tours = <Tour>[];
-
+  late List<Tour> tours = <Tour>[];
   User? user;
+  String? username;
   @override
   Widget build(BuildContext context) {
     return ProfileView(this);
   }
 
-  void getTours() async {
-    final tourList = await service.getAll();
-    setState(() {
-      tours = tourList;
-    });
+  Future<void> getCompletedTours(String uid) async {
+    try {
+      List<Tour> completedTours = await user_service.getCompletedTours(uid);
+      setState(() {
+        tours = completedTours;
+      });
+    } catch (e) {
+      print('Error fetching completed tours: $e');
+    }
   }
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -48,11 +55,13 @@ class ProfileController extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+
     _auth.authStateChanges().listen((event) {
       setState(() {
         user = event;
+        getCompletedTours(user!.uid);
       });
     });
-    getTours();
+    // getTours();
   }
 }
