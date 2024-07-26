@@ -153,15 +153,15 @@ class _MainAppState extends State<MainApp> {
                                 ),
                                 NavigationDestination(
                                   icon: Icon(Icons.people),
-                                  label: 'Encounters',
+                                  label: 'Events',
                                 ),
                                 NavigationDestination(
                                   icon: Icon(Icons.map),
                                   label: 'Map',
                                 ),
                                 NavigationDestination(
-                                  icon: Icon(Icons.qr_code),
-                                  label: 'QR',
+                                  icon: Icon(Icons.leaderboard),
+                                  label: 'Leaderboard',
                                 ),
                                 NavigationDestination(
                                   icon: Icon(Icons.person),
