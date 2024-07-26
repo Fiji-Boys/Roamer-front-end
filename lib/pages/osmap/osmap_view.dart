@@ -160,29 +160,14 @@ class _OSMapViewState extends State<OSMapView> {
                     tour: widget.state.selectedTour!,
                     valueNotifier: widget.state.valueNotifier,
                     isTourActive: widget.state.isTourActive,
+                    close: () {
+                      if (widget.state.isTourActive) {
+                        widget.state.showAbandonModal();
+                      } else {
+                        widget.state.closeTourInfo();
+                      }
+                    },
                   ),
-            widget.state.isTourActive == false &&
-                    widget.state.selectedTour != null
-                ? Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10, top: 10),
-                      child: FloatingActionButton(
-                        shape: const CircleBorder(),
-                        backgroundColor: foregroundColor,
-                        foregroundColor: textColor,
-                        onPressed: () {
-                          if (widget.state.isTourActive) {
-                            widget.state.showAbandonModal();
-                          } else {
-                            widget.state.resetMap();
-                          }
-                        },
-                        child: const Icon(Icons.close),
-                      ),
-                    ),
-                  )
-                : Container(),
             widget.state.selectedKeypoint == null
                 ? Container()
                 : Center(

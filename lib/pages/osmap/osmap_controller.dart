@@ -112,7 +112,7 @@ class OSMapController extends State<OSMapPage>
       selectedTourType = selectedType;
     });
     if (shouldReset) {
-      resetMap();
+      closeTourInfo();
       return;
     }
     filterTours(selectedType);
@@ -262,18 +262,20 @@ class OSMapController extends State<OSMapPage>
               () {
                 currentLoc = newLoc;
                 if (isTourActive && selectedTour != null) {
-                  keypointCheck();
+                  if (!selectedTour!.isCompleted) {
+                    keypointCheck();
 
-                  if (selectedTour!.type == TourType.secret &&
-                      selectedTour!.nextKeyPoint != 0) {
-                    return;
+                    if (selectedTour!.type == TourType.secret &&
+                        selectedTour!.nextKeyPoint != 0) {
+                      return;
+                    }
+
+                    createPolyline(
+                        currentLoc,
+                        selectedTour!.getNextKeyPointLocation(),
+                        "user",
+                        primaryColor);
                   }
-
-                  createPolyline(
-                      currentLoc,
-                      selectedTour!.getNextKeyPointLocation(),
-                      "user",
-                      primaryColor);
                 }
               },
             );
@@ -395,8 +397,9 @@ class OSMapController extends State<OSMapPage>
     selectedTour!.completeKeyPoint();
     hasReachedKeyPoint = false;
 
-    valueNotifier.value =
-        selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
+    valueNotifier.value = selectedTour!.isCompleted
+        ? 100
+        : selectedTour!.nextKeyPoint * 100 / selectedTour!.keyPoints.length;
 
     if (selectedTour!.type != TourType.secret && !selectedTour!.isCompleted) {
       createPolyline(currentLoc, selectedTour!.getNextKeyPointLocation(),
@@ -409,6 +412,7 @@ class OSMapController extends State<OSMapPage>
       if (!_user.completedTours.any((tour) => tour.id == selectedTour!.id)) {
         userService.completeTour(_user, selectedTour!);
       }
+      deleteRoute("user");
       completeTour();
     }
   }
@@ -445,17 +449,24 @@ class OSMapController extends State<OSMapPage>
   void completeTour() {
     showDialog(
       context: context,
-      builder: (context) => const CongratulationsModal(),
-    ).then((value) {
-      setState(() {
-        isTourActive = false;
-        selectedTour = null;
-        hasReachedKeyPoint = false;
-        resetMap();
-        navBarController.setNavBarVisibility(true);
-      });
-      valueNotifier.value = 0;
+      barrierDismissible: false,
+      builder: (context) => CongratulationsModal(
+        onAnimationCompleted: () {
+          Navigator.of(context).pop(); // Close the dialog
+        },
+      ),
+    );
+  }
+
+  closeTourInfo() {
+    setState(() {
+      isTourActive = false;
+      selectedTour = null;
+      hasReachedKeyPoint = false;
+      resetMap();
+      navBarController.setNavBarVisibility(true);
     });
+    valueNotifier.value = 0;
   }
 
   void showAbandonModal() async {
