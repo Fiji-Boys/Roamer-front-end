@@ -3,6 +3,7 @@ import 'package:figenie/model/key_point.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class TourDetailsView extends StatelessWidget {
   final TourDetailController state;
@@ -69,21 +70,18 @@ class TourDetailsView extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            // Positioned location logo and keypoints info at the bottom left
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Row(
                   children: [
-                    // Location icon
                     const Icon(
                       Icons.location_on,
                       color: textColor,
                       size: 12.0,
                     ),
                     const SizedBox(width: 8.0),
-                    // Number of keypoints text
                     Text(
                       'Number of keypoints: ${state.tour.keyPoints.length}',
                       style: const TextStyle(
@@ -95,6 +93,19 @@ class TourDetailsView extends StatelessWidget {
                 ),
               ),
             ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  'Points: ${state.tour.points}',
+                  style: const TextStyle(
+                    color: secondaryDarkColor,
+                    fontSize: 13.0,
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

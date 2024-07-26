@@ -5,7 +5,6 @@ import 'package:figenie/model/key_point.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/model/user.dart' as fiji_user;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:path/path.dart';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -93,7 +92,7 @@ class UserService {
   }
 
   Future<List<Tour>> getCompletedTours(String id) async {
-    CollectionReference _tours = _firestore
+    CollectionReference tours0 = _firestore
         .collection("users")
         .doc(id)
         .collection("completedTours")
@@ -101,7 +100,7 @@ class UserService {
             fromFirestore: (snapshots, _) => Tour.fromJson(snapshots.data()!),
             toFirestore: (tour, _) => tour.toJson());
 
-    QuerySnapshot querySnapshot = await _tours.get();
+    QuerySnapshot querySnapshot = await tours0.get();
     final List<Tour> tours = [];
 
     for (var doc in querySnapshot.docs) {
