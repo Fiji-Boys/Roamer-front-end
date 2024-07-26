@@ -22,20 +22,31 @@ class TourCard extends StatelessWidget {
           ),
         );
       },
-      child: Card(
-        color: foregroundColor,
+      child: Container(
+        // color: foregroundColor,
         margin: const EdgeInsets.all(4),
-        shadowColor: Colors.black,
+        decoration: BoxDecoration(
+          color: foregroundColorLighter,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromARGB(190, 0, 0, 0),
+              blurRadius: 5,
+              spreadRadius: 0.1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
                   tour.keyPoints[0].images[0],
-                  width: 70,
-                  height: 70,
+                  width: 80,
+                  height: 80,
                   fit: BoxFit.cover,
                 ),
               ),

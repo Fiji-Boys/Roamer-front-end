@@ -15,6 +15,7 @@ const Color secondaryLightColor = Color(0xfff6b26e);
 const Color secondaryDarkColor = Color(0xffef800f);
 
 const Color foregroundColor = Color(0xff192634);
+const Color foregroundColorLighter = Color.fromARGB(255, 32, 49, 66);
 const Color backgroundColor = Color(0xff111922);
 const Color borderColor = Color(0xff294056);
 const Color textColor = Color(0xfffafbfd);
