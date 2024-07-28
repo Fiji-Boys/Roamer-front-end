@@ -125,4 +125,13 @@ class UserService {
 
     return tours;
   }
+
+  Future<List<fiji_user.User>> getAllUsers() async {
+    try {
+      QuerySnapshot<fiji_user.User> querySnapshot = await _users.get();
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      throw Exception('Error fetching all users: $e');
+    }
+  }
 }
