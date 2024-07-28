@@ -41,19 +41,19 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           Container(color: backgroundColor),
           Column(
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
               const Text(
                 "Leaderboard",
                 style: TextStyle(color: textColor, fontSize: 28),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               ThreeBlocksRow(topUsers: topUsers),
             ],
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: MediaQuery.of(context).size.height / 2.20,
+              height: MediaQuery.of(context).size.height / 1.8,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 color: foregroundColor,
@@ -76,7 +76,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                         final item = _userItems[index];
                         return Padding(
                           padding: const EdgeInsets.only(
-                              top: 16, left: 16, right: 16, bottom: 16),
+                              top: 14, left: 22, right: 22, bottom: 14),
                           child: Row(
                             children: [
                               Text(
@@ -92,7 +92,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                                 radius: 26,
                                 backgroundColor: secondaryColor,
                                 child: CircleAvatar(
-                                  radius: 25,
+                                  radius: 24,
                                   backgroundImage:
                                       NetworkImage(item.profilePicture),
                                 ),
@@ -181,7 +181,7 @@ class ThreeBlocksRow extends StatelessWidget {
                 height: 5,
               ),
               CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 180, 180, 180),
+                backgroundColor: silverColor,
                 radius: 35,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(topUsers[1].profilePicture),
@@ -193,7 +193,7 @@ class ThreeBlocksRow extends StatelessWidget {
               ),
               Text(
                 topUsers[1].username,
-                style: const TextStyle(color: textLighterColor, fontSize: 12),
+                style: const TextStyle(color: silverColor, fontSize: 14),
               ),
             ],
           ),
@@ -223,7 +223,7 @@ class ThreeBlocksRow extends StatelessWidget {
                 height: 6,
               ),
               CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 255, 193, 59),
+                backgroundColor: goldColor,
                 radius: 50,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(topUsers[0].profilePicture),
@@ -235,7 +235,7 @@ class ThreeBlocksRow extends StatelessWidget {
               ),
               Text(
                 topUsers[0].username,
-                style: const TextStyle(color: textLightColor, fontSize: 16),
+                style: const TextStyle(color: goldColor, fontSize: 16),
               ),
             ],
           ),
@@ -265,7 +265,7 @@ class ThreeBlocksRow extends StatelessWidget {
                 height: 5,
               ),
               CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 163, 119, 90),
+                backgroundColor: bronzeColor,
                 radius: 35,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(topUsers[2].profilePicture),
@@ -277,7 +277,7 @@ class ThreeBlocksRow extends StatelessWidget {
               ),
               Text(
                 topUsers[2].username,
-                style: const TextStyle(color: textLighterColor, fontSize: 12),
+                style: const TextStyle(color: bronzeColor, fontSize: 14),
               ),
             ],
           ),

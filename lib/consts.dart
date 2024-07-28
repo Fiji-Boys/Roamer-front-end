@@ -28,3 +28,7 @@ const Color warningColor = Color(0xfff3f33e);
 const Color warningContentColor = Color(0xff032f03);
 const Color errorColor = Color(0xfff33e3e);
 const Color errorContentColor = Color(0xffffffff);
+
+const Color silverColor = Color.fromARGB(255, 180, 180, 180);
+const Color goldColor = Color.fromARGB(255, 255, 193, 59);
+const Color bronzeColor = Color.fromARGB(255, 163, 119, 90);
