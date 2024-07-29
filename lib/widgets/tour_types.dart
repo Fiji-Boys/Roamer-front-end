@@ -5,8 +5,7 @@ import 'package:figenie/model/tour.dart';
 class TourTypes extends StatefulWidget {
   final void Function(TourType, bool) onTourTypeSelected;
 
-  const TourTypes({Key? key, required this.onTourTypeSelected})
-      : super(key: key);
+  const TourTypes({super.key, required this.onTourTypeSelected});
 
   @override
   _TourTypesState createState() => _TourTypesState();
@@ -46,7 +45,7 @@ class _TourTypesState extends State<TourTypes> {
               child: Text(
                 type.toString().split('.').last,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: isSelected ? foregroundColor : textLightColor,
                 ),
