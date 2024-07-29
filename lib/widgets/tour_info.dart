@@ -63,47 +63,49 @@ class _TourInfoState extends State<TourInfo> {
   Widget build(BuildContext context) {
     return DraggableSheet(
       key: sheetKey,
-      child: Container(
-        padding: const EdgeInsets.only(
-            left: 16.0, top: 10.0, right: 16.0, bottom: 16.0),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    basicTourInfoUI(),
-                    completionMeter(),
-                  ],
-                ),
-                const SizedBox(height: 26),
-                Stack(
-                  children: [
-                    imagesUI(),
-                    imageSliderUI(),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                cardUI()
-              ],
-            ),
-            Positioned(
-              top: -17,
-              right: -17,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                color: textColor,
-                onPressed: () {
-                  widget.close();
-                },
+      child: Stack(children: [
+        Container(
+          padding: const EdgeInsets.only(
+              left: 16.0, top: 10.0, right: 16.0, bottom: 16.0),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      basicTourInfoUI(),
+                      completionMeter(),
+                    ],
+                  ),
+                  const SizedBox(height: 26),
+                  Stack(
+                    children: [
+                      imagesUI(),
+                      imageSliderUI(),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  cardUI()
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: const Icon(Icons.close),
+            color: textColor,
+            onPressed: () {
+              widget.close();
+            },
+          ),
+        ),
+      ]),
     );
   }
 
