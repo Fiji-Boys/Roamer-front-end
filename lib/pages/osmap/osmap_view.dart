@@ -7,7 +7,6 @@ import 'package:figenie/widgets/tour_info.dart';
 import 'package:figenie/widgets/tour_types.dart';
 import 'package:figenie/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
-import 'package:figenie/consts.dart';
 import 'package:figenie/widgets/tour_progress.dart';
 import 'package:figenie/widgets/search_bar.dart' as search;
 import 'package:flutter_map/flutter_map.dart';

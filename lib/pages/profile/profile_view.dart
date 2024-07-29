@@ -1,4 +1,3 @@
-import 'package:figenie/model/tour.dart';
 import 'package:figenie/widgets/tour_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ class ProfileView extends StatefulWidget {
   const ProfileView(this.state, {super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileViewState createState() => _ProfileViewState();
 }
 

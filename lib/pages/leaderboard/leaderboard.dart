@@ -28,7 +28,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
         _userItems = users;
       });
     } catch (e) {
-      print('Error fetching users: $e');
+      // print('Error fetching users: $e');
     }
   }
 

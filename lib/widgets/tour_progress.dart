@@ -1,4 +1,3 @@
-import 'package:figenie/model/key_point.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
@@ -41,7 +40,6 @@ class _TourProgressWidgetState extends State<TourProgressWidget> {
       return;
     }
 
-    KeyPoint nextKeyPoint = widget.tour.keyPoints[widget.nextKeyPointIndex];
     LatLng keyPointLocation = widget.tour.getNextKeyPointLocation();
     double distanceInMeters =
         distance(widget.currentLocation, keyPointLocation);

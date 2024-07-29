@@ -8,6 +8,7 @@ class TourTypes extends StatefulWidget {
   const TourTypes({super.key, required this.onTourTypeSelected});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TourTypesState createState() => _TourTypesState();
 }
 

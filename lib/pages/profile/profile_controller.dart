@@ -1,5 +1,4 @@
 import 'package:figenie/model/tour.dart';
-import 'package:figenie/model/user.dart' as fiji_user;
 import 'package:figenie/pages/profile/profile_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/services/user_service.dart';
@@ -14,6 +13,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 final TourService service = TourService();
+// ignore: non_constant_identifier_names
 final UserService user_service = UserService();
 
 class ProfileController extends State<ProfilePage> {
@@ -34,7 +34,7 @@ class ProfileController extends State<ProfilePage> {
         tours = completedTours;
       });
     } catch (e) {
-      print('Error fetching completed tours: $e');
+      // print('Error fetching completed tours: $e');
     }
   }
 
