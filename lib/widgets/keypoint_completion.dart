@@ -16,7 +16,7 @@ class _CompletedKeypointModalState extends State<CompletedKeypointModal> {
   void initState() {
     super.initState();
     Future.delayed(
-        const Duration(milliseconds: 1800), widget.onAnimationCompleted);
+        const Duration(milliseconds: 2500), widget.onAnimationCompleted);
   }
 
   @override
