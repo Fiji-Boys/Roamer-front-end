@@ -64,130 +64,156 @@ class _TourInfoState extends State<TourInfo> {
     return DraggableSheet(
       key: sheetKey,
       child: Stack(children: [
-        Container(
-          padding: const EdgeInsets.only(
-              left: 16.0, top: 10.0, right: 16.0, bottom: 16.0),
-          child: Stack(
-            children: [
-              Column(
+        Stack(
+          children: [
+            Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      basicTourInfoUI(),
-                      completionMeter(),
-                    ],
-                  ),
-                  const SizedBox(height: 26),
                   Stack(
                     children: [
-                      imagesUI(),
-                      imageSliderUI(),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: closeButtonUI(),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: headerUI(),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: widget.isTourActive
+                              ? progressBar()
+                              : startTourButtonUI(),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  cardUI()
-                ],
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: const Icon(Icons.close),
-            color: textColor,
-            onPressed: () {
-              widget.close();
-            },
-          ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                        left: 16.0, top: 10.0, right: 16.0, bottom: 16.0),
+                    child: Column(children: [
+                      descriptionUI(),
+                      const SizedBox(height: 26),
+                      Stack(
+                        children: [
+                          imagesUI(),
+                          imageSliderUI(),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      cardUI()
+                    ]),
+                  )
+                ]),
+          ],
         ),
       ]),
     );
   }
 
-  Widget basicTourInfoUI() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 200,
-          child: Text(
-            widget.tour.name,
-            style: const TextStyle(
-              color: textColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            softWrap: true,
-            overflow: TextOverflow.clip,
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        SizedBox(
-          width: 210,
-          child: Text(
-            widget.tour.description,
-            style: const TextStyle(fontSize: 16, color: textLighterColor),
-            softWrap: true,
-            overflow: TextOverflow.clip,
-          ),
-        )
-      ],
+  Widget closeButtonUI() {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: backgroundColor,
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.close),
+        color: secondaryColor,
+        onPressed: () {
+          widget.close();
+        },
+      ),
     );
   }
 
-  Widget completionMeter() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: widget.isTourActive
-          ? SimpleCircularProgressBar(
-              backColor: backgroundColor,
-              progressColors: const [
-                secondaryLightColor,
-                secondaryColor,
-                secondaryDarkColor,
-                // primaryLightColor,
-                // primaryColor,
-                // primaryDarkColor,
-              ],
-              size: 70,
-              progressStrokeWidth: 10,
-              backStrokeWidth: 10,
-              valueNotifier: widget.valueNotifier,
-              mergeMode: true,
-              onGetText: (double value) {
-                TextStyle centerTextStyle = const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
-                );
+  Widget headerUI() {
+    return SizedBox(
+      width: 180,
+      child: Center(
+        child: Text(
+          widget.tour.name,
+          style: const TextStyle(
+            color: textColor,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center, // Center the text
+          softWrap: true,
+          overflow: TextOverflow.clip,
+        ),
+      ),
+    );
+  }
 
-                return Text(
-                  '${value.toInt()}%',
-                  style: centerTextStyle,
-                );
-              },
-            )
-          : ElevatedButton(
-              onPressed: () {
-                widget.onStartTour();
-                sheetKey.currentState?.hide();
-              },
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(secondaryColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(backgroundColor),
-              ),
-              child: const Text('Start Tour'),
-            ),
+  Widget startTourButtonUI() {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: backgroundColor,
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.play_arrow),
+        color: primaryColor,
+        onPressed: () {
+          widget.onStartTour();
+          sheetKey.currentState?.hide();
+        },
+      ),
+    );
+  }
+
+  Widget progressBar() {
+    return SizedBox(
+      width: 50, // Adjust width
+      height: 50, // Adjust height
+      child: SimpleCircularProgressBar(
+        backColor: backgroundColor,
+        progressColors: const [
+          primaryLightColor,
+          primaryColor,
+          primaryDarkColor,
+        ],
+        progressStrokeWidth: 8, // Adjust stroke width to be proportionate
+        backStrokeWidth: 8, // Adjust stroke width to be proportionate
+        valueNotifier: widget.valueNotifier,
+        mergeMode: true,
+        onGetText: (double value) {
+          TextStyle centerTextStyle = const TextStyle(
+            fontSize:
+                14, // Adjust text size to fit within the smaller progress bar
+            fontWeight: FontWeight.bold,
+            color: primaryColor,
+          );
+
+          return Text(
+            '${value.toInt()}%',
+            style: centerTextStyle,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget descriptionUI() {
+    return SizedBox(
+      child: Text(
+        widget.tour.description,
+        style: const TextStyle(
+          color: textLightColor,
+          fontSize: 16,
+        ),
+        softWrap: true,
+        overflow: TextOverflow.clip,
+      ),
     );
   }
 
