@@ -1,4 +1,3 @@
-import 'package:figenie/services/user_service.dart';
 import 'package:figenie/widgets/tour_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  final UserService _userService = UserService();
   late Stream<User?> _userStream;
 
   @override

@@ -158,7 +158,7 @@ class ThreeBlocksRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (topUsers.length > 0)
+        if (topUsers.isNotEmpty)
           Container(
             width: 110,
             height: 180,
