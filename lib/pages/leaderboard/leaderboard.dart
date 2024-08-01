@@ -1,6 +1,6 @@
 import 'package:figenie/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:figenie/model/user.dart' as fiji_user;
+import 'package:figenie/model/user.dart';
 import 'package:figenie/services/user_service.dart';
 
 class LeaderboardPage extends StatefulWidget {
@@ -12,7 +12,8 @@ class LeaderboardPage extends StatefulWidget {
 
 class _LeaderboardPageState extends State<LeaderboardPage> {
   final UserService _userService = UserService();
-  List<fiji_user.User> _userItems = [];
+  List<User> _userItems = [];
+  List<User> otherUsers = [];
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
       users.sort((a, b) => b.points.compareTo(a.points));
       setState(() {
         _userItems = users;
+        otherUsers = users.length > 3 ? users.sublist(3) : [];
       });
     } catch (e) {
       // print('Error fetching users: $e');
@@ -41,19 +43,19 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           Container(color: backgroundColor),
           Column(
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               const Text(
                 "Leaderboard",
                 style: TextStyle(color: textColor, fontSize: 28),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               ThreeBlocksRow(topUsers: topUsers),
             ],
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: MediaQuery.of(context).size.height / 1.8,
+              height: MediaQuery.of(context).size.height / 2.0,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 color: foregroundColor,
@@ -71,16 +73,16 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: _userItems.length,
+                      itemCount: otherUsers.length,
                       itemBuilder: (context, index) {
-                        final item = _userItems[index];
+                        final item = otherUsers[index];
                         return Padding(
                           padding: const EdgeInsets.only(
                               top: 14, left: 22, right: 22, bottom: 14),
                           child: Row(
                             children: [
                               Text(
-                                '${index + 1}',
+                                '${index + 4}',
                                 style: const TextStyle(
                                   color: textColor,
                                   fontSize: 16,
@@ -146,7 +148,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 }
 
 class ThreeBlocksRow extends StatelessWidget {
-  final List<fiji_user.User> topUsers;
+  final List<User> topUsers;
 
   const ThreeBlocksRow({super.key, required this.topUsers});
 
@@ -156,132 +158,182 @@ class ThreeBlocksRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: 110,
-          height: 145,
-          decoration: const BoxDecoration(
-              color: foregroundColor,
+        if (topUsers.length > 0)
+          Container(
+            width: 110,
+            height: 180,
+            decoration: const BoxDecoration(
+                color: foregroundColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15))),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    'assets/crownSilver.png',
+                    width: 35,
+                    height: 35,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                CircleAvatar(
+                  backgroundColor: silverColor,
+                  radius: 35,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(topUsers[1].profilePicture),
+                    radius: 33,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  topUsers[1].username,
+                  style: const TextStyle(
+                    color: silverColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Container(
+                  width: 65,
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(
+                    child: Text(
+                      topUsers[1].points.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: silverColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (topUsers.length > 1)
+          Container(
+            width: 140,
+            height: 240,
+            decoration: const BoxDecoration(
+              color: foregroundColorLighter,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  bottomLeft: Radius.circular(15))),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Image.asset(
-                  'assets/crownSilver.png',
-                  width: 35,
-                  height: 35,
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    'assets/crown.png',
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              CircleAvatar(
-                backgroundColor: silverColor,
-                radius: 35,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(topUsers[1].profilePicture),
-                  radius: 33,
+                const SizedBox(height: 6),
+                CircleAvatar(
+                  backgroundColor: goldColor,
+                  radius: 50,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(topUsers[0].profilePicture),
+                    radius: 47,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Text(
-                topUsers[1].username,
-                style: const TextStyle(color: silverColor, fontSize: 14),
-              ),
-            ],
+                const SizedBox(height: 5),
+                Text(
+                  topUsers[0].username,
+                  style: const TextStyle(
+                    color: goldColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Container(
+                  width: 65,
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(
+                    child: Text(
+                      topUsers[0].points.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        color: goldColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          width: 140,
-          height: 200,
-          decoration: const BoxDecoration(
-            color: foregroundColorLighter,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+        if (topUsers.length > 2)
+          Container(
+            width: 110,
+            height: 180,
+            decoration: const BoxDecoration(
+                color: foregroundColor,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    bottomRight: Radius.circular(15))),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    'assets/crownBronze.png',
+                    width: 35,
+                    height: 35,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                CircleAvatar(
+                  backgroundColor: bronzeColor,
+                  radius: 35,
+                  child: CircleAvatar(
+                      backgroundImage: NetworkImage(topUsers[2].profilePicture),
+                      radius: 33),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  topUsers[2].username,
+                  style: const TextStyle(
+                    color: bronzeColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Container(
+                  width: 65,
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(
+                    child: Text(
+                      topUsers[2].points.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: bronzeColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Image.asset(
-                  'assets/crown.png',
-                  width: 50,
-                  height: 50,
-                ),
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              CircleAvatar(
-                backgroundColor: goldColor,
-                radius: 50,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(topUsers[0].profilePicture),
-                  radius: 47,
-                ),
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Text(
-                topUsers[0].username,
-                style: const TextStyle(color: goldColor, fontSize: 16),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: 110,
-          height: 145,
-          decoration: const BoxDecoration(
-              color: foregroundColor,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(15),
-                  bottomRight: Radius.circular(15))),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Image.asset(
-                  'assets/crownBronze.png',
-                  width: 35,
-                  height: 35,
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              CircleAvatar(
-                backgroundColor: bronzeColor,
-                radius: 35,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(topUsers[2].profilePicture),
-                  radius: 33,
-                ),
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Text(
-                topUsers[2].username,
-                style: const TextStyle(color: bronzeColor, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
