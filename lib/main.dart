@@ -7,6 +7,7 @@ import 'package:figenie/model/user.dart' as model_user;
 import 'package:figenie/pages/leaderboard/leaderboard.dart';
 import 'package:figenie/pages/profile/profile_controller.dart';
 import 'package:figenie/pages/profile_setup/profile_setup_controller.dart';
+import 'package:figenie/services/event_service.dart';
 import 'package:figenie/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -49,6 +50,7 @@ class _MainAppState extends State<MainApp> {
   firebase_auth.User? _firebaseUser;
   late model_user.User _user;
   final UserService userService = UserService();
+  final EventService eventService = EventService();
 
   @override
   void initState() {
