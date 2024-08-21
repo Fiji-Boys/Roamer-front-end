@@ -18,8 +18,9 @@ class TourCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TourDetailsPage(tour: tour),
-          ),
+              builder: (context) => TourDetailsPage(
+                    tour: tour,
+                  )),
         );
       },
       child: Container(

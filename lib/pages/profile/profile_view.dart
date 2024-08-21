@@ -45,14 +45,10 @@ class _ProfileViewState extends State<ProfileView> {
 
             return Column(
               children: [
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 16),
                 const Text(
-                  'Profile information',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  "Profile",
+                  style: TextStyle(color: textColor, fontSize: 28),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -60,7 +56,7 @@ class _ProfileViewState extends State<ProfileView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   margin: const EdgeInsets.all(10),
-                  height: 290,
+                  // height: 290,
                   width: 400,
                   child: Column(
                     children: [
@@ -106,27 +102,6 @@ class _ProfileViewState extends State<ProfileView> {
                                       ),
                                     ),
                                     const SizedBox(height: 8.0),
-                                    const Row(
-                                      children: [
-                                        Text(
-                                          "Rank: X",
-                                          style: TextStyle(
-                                            color: secondaryColor,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8.0),
-                                        Text(
-                                          "Points: Y",
-                                          style: TextStyle(
-                                            color: primaryColor,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ],
@@ -137,20 +112,17 @@ class _ProfileViewState extends State<ProfileView> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 8.0),
                 const Text(
-                  'Completed Tours',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  "Completed Tours",
+                  style: TextStyle(color: textColor, fontSize: 28),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     color: backgroundColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  height: 290,
+                  height: 270,
                   width: 400,
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.all(16.0),
@@ -186,6 +158,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:

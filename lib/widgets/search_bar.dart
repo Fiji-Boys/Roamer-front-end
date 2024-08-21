@@ -9,8 +9,7 @@ class SearchBar extends StatefulWidget {
   final bool isMap;
   final void Function(Tour) onTourTap;
   final void Function(List<Tour>) updateTours;
-  // final void Function(String) onSearchChanged;
-
+  
   const SearchBar({
     super.key,
     required this.controller,

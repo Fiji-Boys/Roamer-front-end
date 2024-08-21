@@ -17,6 +17,7 @@ class ToursController extends State<ToursPage>
   late final TextEditingController searchController;
   List<Tour> tours = [];
   List<Tour> filteredTours = [];
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
