@@ -4,7 +4,8 @@ import 'package:figenie/services/tour_service.dart';
 import 'package:flutter/material.dart';
 
 class ToursPage extends StatefulWidget {
-  const ToursPage({super.key});
+  final void Function(String) showOnMap;
+  const ToursPage({super.key, required this.showOnMap});
 
   @override
   State<ToursPage> createState() => ToursController();
@@ -17,6 +18,7 @@ class ToursController extends State<ToursPage>
   late final TextEditingController searchController;
   List<Tour> tours = [];
   List<Tour> filteredTours = [];
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -36,6 +38,10 @@ class ToursController extends State<ToursPage>
       tours = tourList;
       filteredTours = tours;
     });
+  }
+
+  void onShowOnMap(String tourName) {
+    widget.showOnMap(tourName);
   }
 
   void setTours(tourList) {

@@ -23,7 +23,9 @@ import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/tour_completion.dart';
 
 class OSMapPage extends StatefulWidget {
-  const OSMapPage({super.key});
+  const OSMapPage({
+    super.key,
+  });
 
   @override
   State<OSMapPage> createState() => OSMapController();

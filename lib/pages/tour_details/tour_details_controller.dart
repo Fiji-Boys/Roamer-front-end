@@ -4,23 +4,31 @@ import 'package:flutter/material.dart';
 
 class TourDetailsPage extends StatefulWidget {
   final Tour tour;
-  const TourDetailsPage({super.key, required this.tour});
+  final void Function(String) showOnMap;
+
+  const TourDetailsPage(
+      {super.key, required this.tour, required this.showOnMap});
 
   @override
   State<TourDetailsPage> createState() => TourDetailController();
 }
 
 class TourDetailController extends State<TourDetailsPage> {
-  @override
-  Widget build(BuildContext context) {
-    return TourDetailsView(this);
-  }
-
   late final Tour tour;
 
   @override
   void initState() {
     super.initState();
     tour = widget.tour;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TourDetailsView(this);
+  }
+
+  void onShowOnMap() {
+    Navigator.pop(context);
+    widget.showOnMap(tour.name);
   }
 }

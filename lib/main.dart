@@ -199,7 +199,9 @@ class NavigationBarController extends GetxController {
 
   NavigationBarController() {
     screens = [
-      const ToursPage(),
+      ToursPage(
+        showOnMap: (value) => {},
+      ),
       const roamer_placeholder.Placeholder(),
       const OSMapPage(),
       const LeaderboardPage(),

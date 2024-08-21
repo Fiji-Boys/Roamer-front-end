@@ -19,15 +19,25 @@ class ToursView extends StatelessWidget {
           children: [
             searchBarUI(context),
             Expanded(
-              // This makes the ListView take the remaining space
-              child: ListView.builder(
-                itemCount: state.filteredTours.length,
-                itemBuilder: (context, index) {
-                  final tour = state.filteredTours[index];
-                  return cardUI(context, tour);
-                },
-              ),
-            )
+              child: state.filteredTours.isEmpty
+                  ? const Center(
+                      child: SizedBox(
+                        width: 50.0,
+                        height: 50.0,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(secondaryColor),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: state.filteredTours.length,
+                      itemBuilder: (context, index) {
+                        final tour = state.filteredTours[index];
+                        return cardUI(context, tour);
+                      },
+                    ),
+            ),
           ],
         ),
       ),
@@ -43,7 +53,6 @@ class ToursView extends StatelessWidget {
         updateTours: state.setTours,
         onTourTap: (p0) {},
         isMap: false,
-        // onSearchChanged: state.filterTours,
       ),
     );
   }
@@ -57,7 +66,8 @@ class ToursView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TourDetailsPage(tour: tour),
+              builder: (context) =>
+                  TourDetailsPage(tour: tour, showOnMap: state.onShowOnMap),
             ));
       },
       showArrow: true,
