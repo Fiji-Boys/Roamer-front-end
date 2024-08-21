@@ -66,8 +66,7 @@ class ToursView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  TourDetailsPage(tour: tour, showOnMap: state.onShowOnMap),
+              builder: (context) => TourDetailsPage(tour: tour),
             ));
       },
       showArrow: true,

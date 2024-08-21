@@ -131,7 +131,11 @@ class TourDetailsView extends StatelessWidget {
   Widget showOnMapButton() {
     return OutlinedButton(
       onPressed: () {
-        state.onShowOnMap();
+        final controller = Get.find<NavigationBarController>();
+        controller.setNavBarVisibility(true);
+        controller.selectedIndex.value = 2;
+
+        Get.toNamed('/map', arguments: state.tour.name);
       },
       style: OutlinedButton.styleFrom(
         foregroundColor: secondaryColor,

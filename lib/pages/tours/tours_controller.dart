@@ -4,8 +4,7 @@ import 'package:figenie/services/tour_service.dart';
 import 'package:flutter/material.dart';
 
 class ToursPage extends StatefulWidget {
-  final void Function(String) showOnMap;
-  const ToursPage({super.key, required this.showOnMap});
+  const ToursPage({super.key});
 
   @override
   State<ToursPage> createState() => ToursController();
@@ -38,10 +37,6 @@ class ToursController extends State<ToursPage>
       tours = tourList;
       filteredTours = tours;
     });
-  }
-
-  void onShowOnMap(String tourName) {
-    widget.showOnMap(tourName);
   }
 
   void setTours(tourList) {

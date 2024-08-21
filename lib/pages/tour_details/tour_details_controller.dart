@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 
 class TourDetailsPage extends StatefulWidget {
   final Tour tour;
-  final void Function(String) showOnMap;
 
-  const TourDetailsPage(
-      {super.key, required this.tour, required this.showOnMap});
+  const TourDetailsPage({
+    super.key,
+    required this.tour,
+  });
 
   @override
   State<TourDetailsPage> createState() => TourDetailController();
@@ -25,10 +26,5 @@ class TourDetailController extends State<TourDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return TourDetailsView(this);
-  }
-
-  void onShowOnMap() {
-    Navigator.pop(context);
-    widget.showOnMap(tour.name);
   }
 }
