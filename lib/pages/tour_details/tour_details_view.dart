@@ -83,7 +83,7 @@ class TourDetailsView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8.0),
-                showOnMapButton()
+                // showOnMapButton(context)
               ],
             ),
           ),
@@ -128,14 +128,11 @@ class TourDetailsView extends StatelessWidget {
     );
   }
 
-  Widget showOnMapButton() {
+  Widget showOnMapButton(BuildContext context) {
     return OutlinedButton(
       onPressed: () {
-        final controller = Get.find<NavigationBarController>();
-        controller.setNavBarVisibility(true);
-        controller.selectedIndex.value = 2;
-
-        Get.toNamed('/map', arguments: state.tour.name);
+        Navigator.pop(context);
+        // state.onShowOnMap();
       },
       style: OutlinedButton.styleFrom(
         foregroundColor: secondaryColor,

@@ -99,95 +99,98 @@ class _MainAppState extends State<MainApp> {
         ),
         primaryColor: primaryColor,
       ),
-      home: _firebaseUser == null
-          ? Container(
-              color: backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/roamer_logo.png',
-                    height: 200,
-                    width: 200,
-                  ),
-                  const SizedBox(height: 40),
-                  SignInButton(
-                    Buttons.google,
-                    text: "Sign in with Google",
-                    onPressed: () async {
-                      try {
-                        final googleProvider = GoogleAuthProvider();
-                        await _auth.signInWithProvider(googleProvider);
-                      } catch (e) {
-                        log('Google sign-in failed: $e');
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  SignInButton(
-                    Buttons.gitHub,
-                    text: "Sign in with GitHub",
-                    onPressed: () async {
-                      try {
-                        final githubProvider = GithubAuthProvider();
-                        await _auth.signInWithProvider(githubProvider);
-                      } catch (e) {
-                        log('GitHub sign-in failed: $e');
-                      }
-                    },
-                  ),
-                ],
-              ),
-            )
-          : _firebaseUser!.displayName == null ||
-                  _firebaseUser!.displayName == ""
-              ? const ProfileSetupPage()
-              : Scaffold(
-                  backgroundColor: Colors.black,
-                  bottomNavigationBar: Obx(() {
-                    return controller.isNavBarVisible.value
-                        ? NavigationMenu(
-                            destinations: const [
-                                NavigationDestination(
-                                  icon: Icon(Icons.tour),
-                                  label: 'Tours',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.people),
-                                  label: 'Events',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.map),
-                                  label: 'Map',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.leaderboard),
-                                  label: 'Leaderboard',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.person),
-                                  label: 'Profile',
-                                ),
-                              ],
-                            selectedIndex: controller.selectedIndex.value,
-                            onDestinationSelected: (index) => {
-                                  _onNavigate(index),
-                                  controller.selectedIndex.value = index
-                                })
-                        : const SizedBox.shrink();
-                  }),
-                  body: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                      child: PageView(
-                        controller: pageController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: controller.screens,
-                      ),
+      home: homePageUI(),
+    );
+  }
+
+  Widget homePageUI() {
+    return _firebaseUser == null
+        ? Container(
+            color: backgroundColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/roamer_logo.png',
+                  height: 200,
+                  width: 200,
+                ),
+                const SizedBox(height: 40),
+                SignInButton(
+                  Buttons.google,
+                  text: "Sign in with Google",
+                  onPressed: () async {
+                    try {
+                      final googleProvider = GoogleAuthProvider();
+                      await _auth.signInWithProvider(googleProvider);
+                    } catch (e) {
+                      log('Google sign-in failed: $e');
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                SignInButton(
+                  Buttons.gitHub,
+                  text: "Sign in with GitHub",
+                  onPressed: () async {
+                    try {
+                      final githubProvider = GithubAuthProvider();
+                      await _auth.signInWithProvider(githubProvider);
+                    } catch (e) {
+                      log('GitHub sign-in failed: $e');
+                    }
+                  },
+                ),
+              ],
+            ),
+          )
+        : _firebaseUser!.displayName == null || _firebaseUser!.displayName == ""
+            ? const ProfileSetupPage()
+            : Scaffold(
+                backgroundColor: Colors.black,
+                bottomNavigationBar: Obx(() {
+                  return controller.isNavBarVisible.value
+                      ? NavigationMenu(
+                          destinations: const [
+                              NavigationDestination(
+                                icon: Icon(Icons.tour),
+                                label: 'Tours',
+                              ),
+                              NavigationDestination(
+                                icon: Icon(Icons.people),
+                                label: 'Events',
+                              ),
+                              NavigationDestination(
+                                icon: Icon(Icons.map),
+                                label: 'Map',
+                              ),
+                              NavigationDestination(
+                                icon: Icon(Icons.leaderboard),
+                                label: 'Leaderboard',
+                              ),
+                              NavigationDestination(
+                                icon: Icon(Icons.person),
+                                label: 'Profile',
+                              ),
+                            ],
+                          selectedIndex: controller.selectedIndex.value,
+                          onDestinationSelected: (index) => {
+                                _onNavigate(index),
+                                controller.selectedIndex.value = index
+                              })
+                      : const SizedBox.shrink();
+                }),
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                    child: PageView(
+                      controller: pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: controller.screens,
                     ),
                   ),
                 ),
-    );
+              );
   }
 }
 

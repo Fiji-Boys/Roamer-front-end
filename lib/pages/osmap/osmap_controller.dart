@@ -23,6 +23,7 @@ import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/tour_completion.dart';
 
 class OSMapPage extends StatefulWidget {
+  // final String? tourName;
   const OSMapPage({
     super.key,
   });

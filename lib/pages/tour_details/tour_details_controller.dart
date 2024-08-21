@@ -3,6 +3,7 @@ import 'package:figenie/pages/tour_details/tour_details_view.dart';
 import 'package:flutter/material.dart';
 
 class TourDetailsPage extends StatefulWidget {
+  // final Function(String) showOnMap;
   final Tour tour;
 
   const TourDetailsPage({
@@ -27,4 +28,10 @@ class TourDetailController extends State<TourDetailsPage> {
   Widget build(BuildContext context) {
     return TourDetailsView(this);
   }
+
+  // void onShowOnMap() {
+  //   Future.delayed(const Duration(milliseconds: 100), () {
+  //     widget.showOnMap(tour.name);
+  //   });
+  // }
 }
