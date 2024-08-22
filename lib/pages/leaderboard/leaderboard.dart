@@ -14,11 +14,24 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   final UserService _userService = UserService();
   List<User> _userItems = [];
   List<User> otherUsers = [];
+  User? _currentUser;
 
   @override
   void initState() {
     super.initState();
     _fetchUsers();
+    _fetchCurrentUser();
+  }
+
+  Future<void> _fetchCurrentUser() async {
+    try {
+      final user = await _userService.getCurrentUser();
+      setState(() {
+        _currentUser = user;
+      });
+    } catch (e) {
+      // print('Error fetching user: $e');
+    }
   }
 
   Future<void> _fetchUsers() async {
@@ -108,6 +121,15 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              if (item.id == _currentUser?.id)
+                                const Text(
+                                  " (you)",
+                                  style: TextStyle(
+                                    color: textLighterColor,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               const Spacer(),
                               Container(
                                 height: 35,
