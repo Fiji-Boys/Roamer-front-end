@@ -1,4 +1,5 @@
 import 'package:figenie/consts.dart';
+import 'package:figenie/pages/another_user_profile/another_user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/model/user.dart';
 import 'package:figenie/services/user_service.dart';
@@ -92,71 +93,83 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                       itemCount: otherUsers.length,
                       itemBuilder: (context, index) {
                         final item = otherUsers[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 14, left: 22, right: 22, bottom: 14),
-                          child: Row(
-                            children: [
-                              Text(
-                                '${index + 4}',
-                                style: const TextStyle(
-                                  color: textColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AnotherUserProfile(user: item),
                               ),
-                              const SizedBox(width: 15),
-                              CircleAvatar(
-                                radius: 26,
-                                backgroundColor: secondaryColor,
-                                child: CircleAvatar(
-                                  radius: 24,
-                                  backgroundImage:
-                                      NetworkImage(item.profilePicture),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 14, left: 22, right: 22, bottom: 14),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${index + 4}',
+                                  style: const TextStyle(
+                                    color: textColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                item.username,
-                                style: const TextStyle(
-                                  color: textLightColor,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
+                                const SizedBox(width: 15),
+                                CircleAvatar(
+                                  radius: 26,
+                                  backgroundColor: secondaryColor,
+                                  child: CircleAvatar(
+                                    radius: 24,
+                                    backgroundImage:
+                                        NetworkImage(item.profilePicture),
+                                  ),
                                 ),
-                              ),
-                              if (item.id == _currentUser?.id)
-                                const Text(
-                                  " (you)",
-                                  style: TextStyle(
-                                    color: textLighterColor,
+                                const SizedBox(width: 15),
+                                Text(
+                                  item.username,
+                                  style: const TextStyle(
+                                    color: textLightColor,
                                     fontSize: 17,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              const Spacer(),
-                              Container(
-                                height: 35,
-                                width: 35,
-                                decoration: BoxDecoration(
-                                  color: backgroundColor,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      item.points.toString(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: secondaryColor,
-                                      ),
+                                if (item.id == _currentUser?.id)
+                                  const Text(
+                                    " (you)",
+                                    style: TextStyle(
+                                      color: textLighterColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                  ],
+                                  ),
+                                const Spacer(),
+                                Container(
+                                  height: 35,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                    color: backgroundColor,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        item.points.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: secondaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
