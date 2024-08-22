@@ -62,13 +62,16 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                 style: TextStyle(color: textColor, fontSize: 28),
               ),
               const SizedBox(height: 16),
-              ThreeBlocksRow(topUsers: topUsers),
+              ThreeBlocksRow(
+                topUsers: topUsers,
+                currentUser: _currentUser,
+              ),
             ],
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: MediaQuery.of(context).size.height / 2.0,
+              height: MediaQuery.of(context).size.height / 2.1,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 color: foregroundColor,
@@ -171,8 +174,9 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 
 class ThreeBlocksRow extends StatelessWidget {
   final List<User> topUsers;
+  final User? currentUser;
 
-  const ThreeBlocksRow({super.key, required this.topUsers});
+  const ThreeBlocksRow({super.key, required this.topUsers, this.currentUser});
 
   @override
   Widget build(BuildContext context) {
@@ -183,13 +187,15 @@ class ThreeBlocksRow extends StatelessWidget {
         if (topUsers.isNotEmpty)
           Container(
             width: 110,
-            height: 180,
+            height: 190,
             decoration: const BoxDecoration(
                 color: foregroundColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(15),
                     bottomLeft: Radius.circular(15))),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 5),
                 Align(
@@ -218,6 +224,15 @@ class ThreeBlocksRow extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                if (topUsers[1].id == currentUser?.id)
+                  const Text(
+                    "(you)",
+                    style: TextStyle(
+                      color: textLighterColor,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 const SizedBox(height: 3),
                 Container(
                   width: 65,
@@ -242,13 +257,15 @@ class ThreeBlocksRow extends StatelessWidget {
         if (topUsers.length > 1)
           Container(
             width: 140,
-            height: 240,
+            height: 260,
             decoration: const BoxDecoration(
               color: foregroundColorLighter,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15), topRight: Radius.circular(15)),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 5),
                 Align(
@@ -277,6 +294,15 @@ class ThreeBlocksRow extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                if (topUsers[0].id == currentUser?.id)
+                  const Text(
+                    "(you)",
+                    style: TextStyle(
+                      color: textLighterColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 const SizedBox(height: 5),
                 Container(
                   width: 65,
@@ -301,13 +327,15 @@ class ThreeBlocksRow extends StatelessWidget {
         if (topUsers.length > 2)
           Container(
             width: 110,
-            height: 180,
+            height: 190,
             decoration: const BoxDecoration(
                 color: foregroundColor,
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(15),
                     bottomRight: Radius.circular(15))),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 5),
                 Align(
@@ -335,6 +363,15 @@ class ThreeBlocksRow extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                if (topUsers[2].id == currentUser?.id)
+                  const Text(
+                    "(you)",
+                    style: TextStyle(
+                      color: textLighterColor,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 const SizedBox(height: 3),
                 Container(
                   width: 65,
