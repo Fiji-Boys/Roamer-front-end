@@ -1,11 +1,9 @@
 import 'package:figenie/consts.dart';
-import 'package:figenie/main.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class TourDetailsView extends StatelessWidget {
   final TourDetailController state;
@@ -16,18 +14,61 @@ class TourDetailsView extends StatelessWidget {
     return Scaffold(
       body: Container(
         color: foregroundColor,
-        child: Column(
-          children: [
-            headerUI(context),
-            descriptionUI(),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 8),
-                itemCount: state.tour.keyPoints.length,
-                itemBuilder: (context, index) {
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: MediaQuery.of(context).size.height * 0.35,
+              pinned: true,
+              backgroundColor: Colors.transparent,
+              flexibleSpace: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double appBarHeight = constraints.biggest.height;
+                  final double expandedHeight =
+                      MediaQuery.of(context).size.height * 0.5;
+                  const double collapsedHeight = kToolbarHeight;
+
+                  final t = (appBarHeight - collapsedHeight) /
+                      (expandedHeight - collapsedHeight);
+                  final appBarColor =
+                      Color.lerp(backgroundColor, backgroundColor, 1 - t);
+
+                  return Container(
+                    color: appBarColor,
+                    child: FlexibleSpaceBar(
+                      centerTitle: true,
+                      title: Align(
+                        alignment: Alignment(0.0, 1 - (t * 0.7)),
+                        child: Text(
+                          state.tour.name,
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
+                        ),
+                      ),
+                      background: headerUI(context),
+                    ),
+                  );
+                },
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: textColor),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: descriptionUI(),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
                   final keyPoint = state.tour.keyPoints[index];
                   return cardUI(context, keyPoint);
                 },
+                childCount: state.tour.keyPoints.length,
               ),
             ),
           ],
@@ -42,126 +83,82 @@ class TourDetailsView extends StatelessWidget {
         ? state.tour.keyPoints[0].images[0]
         : '';
 
-    return SizedBox(
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.35,
-      child: Stack(
-        children: [
-          // Positioned image with opacity
-          if (imageUrl.isNotEmpty)
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.7,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          // Back arrow button
-          Positioned(
-            top: 25.0,
-            left: 0.0,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: textColor),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (imageUrl.isNotEmpty)
+          Opacity(
+            opacity: 0.7,
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
             ),
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // const SizedBox(height: 50.0), // Spacing for the back button
+              // Text(
+              //   state.tour.name,
+              //   style: const TextStyle(
+              //     fontSize: 24.0,
+              //     fontWeight: FontWeight.bold,
+              //     color: textColor,
+              //   ),
+              //   textAlign: TextAlign.center,
+              // ),
+              SizedBox(height: 8.0),
+              // showOnMapButton(context)
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
               children: [
-                Text(
-                  state.tour.name,
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                  textAlign: TextAlign.center,
+                const Icon(
+                  Icons.location_on,
+                  color: textColor,
+                  size: 12.0,
                 ),
-                const SizedBox(height: 8.0),
-                // showOnMapButton(context)
+                const SizedBox(width: 8.0),
+                Text(
+                  'Number of keypoints: ${state.tour.keyPoints.length}',
+                  style: const TextStyle(
+                    color: textColor,
+                    fontSize: 13.0,
+                  ),
+                ),
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: textColor,
-                    size: 12.0,
-                  ),
-                  const SizedBox(width: 8.0),
-                  Text(
-                    'Number of keypoints: ${state.tour.keyPoints.length}',
-                    style: const TextStyle(
-                      color: textColor,
-                      fontSize: 13.0,
-                    ),
-                  ),
-                ],
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              'Points: ${state.tour.points}',
+              style: const TextStyle(
+                color: secondaryDarkColor,
+                fontSize: 13.0,
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                'Points: ${state.tour.points}',
-                style: const TextStyle(
-                  color: secondaryDarkColor,
-                  fontSize: 13.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget showOnMapButton(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () {
-        Navigator.pop(context);
-        // state.onShowOnMap();
-      },
-      style: OutlinedButton.styleFrom(
-        foregroundColor: secondaryColor,
-        side: const BorderSide(
-          color: secondaryColor,
-          width: 2.0,
         ),
-        backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
-        ),
-      ),
-      child: const Text(
-        'Show on Map',
-        style: TextStyle(
-          color: secondaryColor,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      ],
     );
   }
 
   Widget descriptionUI() {
     return Container(
       padding: const EdgeInsets.all(16),
-      alignment: Alignment.centerLeft, // Ensure content is aligned to the left
+      alignment: Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align children to the start (left)
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "Description:",
