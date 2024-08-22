@@ -98,16 +98,6 @@ class TourDetailsView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // const SizedBox(height: 50.0), // Spacing for the back button
-              // Text(
-              //   state.tour.name,
-              //   style: const TextStyle(
-              //     fontSize: 24.0,
-              //     fontWeight: FontWeight.bold,
-              //     color: textColor,
-              //   ),
-              //   textAlign: TextAlign.center,
-              // ),
               SizedBox(height: 8.0),
               // showOnMapButton(context)
             ],
