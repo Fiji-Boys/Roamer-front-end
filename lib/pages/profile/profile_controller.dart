@@ -1,9 +1,11 @@
+import 'dart:developer' as dev;
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/profile/profile_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:figenie/model/user.dart' as model_user;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,7 +22,11 @@ class ProfileController extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late List<Tour> tours = <Tour>[];
-  User? user;
+
+  User? auth_user;
+  late model_user.User user;
+  final UserService userService = UserService();
+
   String? username;
   @override
   Widget build(BuildContext context) {
@@ -38,18 +44,28 @@ class ProfileController extends State<ProfilePage> {
     }
   }
 
+  Future<void> setUser() async {
+    if (_auth.currentUser != null) {
+      try {
+        user = await userService.getCurrentUser();
+      } catch (e) {
+        dev.log(e.toString(), name: "GetCurrentUser");
+      }
+    }
+  }
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<void> reloadUser() async {
-    if (user != null) {
-      await user!.reload();
-      user = _auth.currentUser;
+    if (auth_user != null) {
+      await auth_user!.reload();
+      auth_user = _auth.currentUser;
     }
   }
 
   Future<void> signOut() async {
     await _auth.signOut();
-    user = null;
+    auth_user = null;
   }
 
   @override
@@ -58,10 +74,11 @@ class ProfileController extends State<ProfilePage> {
 
     _auth.authStateChanges().listen((event) {
       setState(() {
-        user = event;
-        getCompletedTours(user!.uid);
+        auth_user = event;
+        getCompletedTours(auth_user!.uid);
       });
     });
     // getTours();
+    setUser();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
+import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
@@ -176,8 +177,19 @@ class TourDetailsView extends StatelessWidget {
       name: keyPoint.name,
       description: keyPoint.description,
       image: keyPoint.images[0],
-      onTap: () {},
-      showArrow: false,
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Center(
+                    child: KeyPointInfo(
+                        showCompleteButton: false,
+                        keyPoint: keyPoint,
+                        onBack: () => Navigator.pop(context),
+                        onComplete: (p0) => {}))));
+      },
+      showArrow: state.user.completedTours
+          .any((usersTour) => usersTour.id == state.tour.id),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:figenie/model/key_point.dart';
 import 'package:flutter/material.dart';
 
 class KeyPointInfo extends StatefulWidget {
+  final bool showCompleteButton;
   final KeyPoint keyPoint;
   final Function onComplete;
   final VoidCallback onBack;
@@ -13,6 +14,7 @@ class KeyPointInfo extends StatefulWidget {
     required this.keyPoint,
     required this.onComplete,
     required this.onBack,
+    required this.showCompleteButton,
   });
 
   @override
@@ -34,7 +36,8 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
               _imagesUI(),
               _audioPlayer(),
               _descriptionUI(),
-              _completeButton(),
+              Visibility(
+                  visible: widget.showCompleteButton, child: _completeButton()),
             ]),
           )
         ],
@@ -255,7 +258,7 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
               widget.onBack();
             },
             style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                 const EdgeInsets.all(0),
               ),
             ),
