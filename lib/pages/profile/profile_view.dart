@@ -145,12 +145,14 @@ class _ProfileViewState extends State<ProfileView> {
                                   ? Center(
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "assets/mascot_2.png",
-                                            width: 196,
-                                            height: 196,
+                                            width: 250,
+                                            height: 250,
                                           ),
                                           const SizedBox(height: 16.0),
                                           const Text(

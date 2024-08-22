@@ -144,8 +144,8 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                                   children: [
                                     Image.asset(
                                       "assets/mascot_2.png",
-                                      width: 400,
-                                      height: 400,
+                                      width: 350,
+                                      height: 350,
                                     ),
                                     const SizedBox(height: 16.0),
                                     const Text(
