@@ -255,7 +255,7 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
               widget.onBack();
             },
             style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                 const EdgeInsets.all(0),
               ),
             ),

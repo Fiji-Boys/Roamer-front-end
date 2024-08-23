@@ -1,11 +1,8 @@
 import 'package:figenie/consts.dart';
-import 'package:figenie/main.dart';
 import 'package:figenie/model/key_point.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class TourDetailsView extends StatelessWidget {
   final TourDetailController state;
