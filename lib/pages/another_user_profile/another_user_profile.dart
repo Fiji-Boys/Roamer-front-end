@@ -97,6 +97,42 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                       ),
                     ),
                     const SizedBox(height: 12.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 35,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: foregroundColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.user.points.toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const Text(
+                        //   "points",
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     color: textLightColor,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 12.0),
                   ],
                 ),
               ),
