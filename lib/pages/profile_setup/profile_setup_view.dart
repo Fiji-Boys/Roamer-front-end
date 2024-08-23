@@ -56,9 +56,8 @@ class ProfileSetupView extends StatelessWidget {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(primaryColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(textColor),
+                        WidgetStateProperty.all<Color>(primaryColor),
+                    foregroundColor: WidgetStateProperty.all<Color>(textColor),
                   ),
                   onPressed: state.handleNextImage,
                   child: const Padding(
@@ -74,9 +73,8 @@ class ProfileSetupView extends StatelessWidget {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(secondaryColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(textColor),
+                        WidgetStateProperty.all<Color>(secondaryColor),
+                    foregroundColor: WidgetStateProperty.all<Color>(textColor),
                   ),
                   onPressed: state.handleSkip,
                   child: const Padding(
@@ -133,8 +131,8 @@ class ProfileSetupView extends StatelessWidget {
             // Next button
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(primaryColor),
-                foregroundColor: MaterialStateProperty.all<Color>(textColor),
+                backgroundColor: WidgetStateProperty.all<Color>(primaryColor),
+                foregroundColor: WidgetStateProperty.all<Color>(textColor),
               ),
               onPressed: state.handleNext,
               child: const Padding(

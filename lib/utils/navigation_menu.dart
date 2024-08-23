@@ -14,16 +14,16 @@ class NavigationMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-          (Set<MaterialState> states) => TextStyle(
-              color: states.contains(MaterialState.selected)
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+          (Set<WidgetState> states) => TextStyle(
+              color: states.contains(WidgetState.selected)
                   ? secondaryColor
                   : textLighterColor,
               fontSize: 12,
               fontWeight: FontWeight.bold),
         ),
-        iconTheme: MaterialStateProperty.resolveWith<IconThemeData>(
-          (Set<MaterialState> states) => states.contains(MaterialState.selected)
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+          (Set<WidgetState> states) => states.contains(WidgetState.selected)
               ? const IconThemeData(color: secondaryContentColor)
               : const IconThemeData(color: textLighterColor),
         ),

@@ -27,16 +27,8 @@ class TourCard extends StatelessWidget {
         // color: foregroundColor,
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: foregroundColorLighter,
+          color: foregroundColorDarker,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromARGB(190, 0, 0, 0),
-              blurRadius: 5,
-              spreadRadius: 0.1,
-              offset: Offset(0, 1),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -46,15 +38,15 @@ class TourCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
                   tour.keyPoints[0].images[0],
-                  width: 80,
-                  height: 80,
+                  width: 50,
+                  height: 50,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             Expanded(
               child: SizedBox(
-                height: 110,
+                height: 70,
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
