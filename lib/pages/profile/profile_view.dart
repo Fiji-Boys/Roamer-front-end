@@ -10,7 +10,6 @@ class ProfileView extends StatefulWidget {
   const ProfileView(this.state, {super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfileViewState createState() => _ProfileViewState();
 }
 
@@ -38,141 +37,152 @@ class _ProfileViewState extends State<ProfileView> {
             );
           } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(
-              child: Text('No user found', style: TextStyle(color: textColor)),
+              child: Text(
+                'No user found',
+                style: TextStyle(color: textColor),
+              ),
             );
           } else {
             User? user = snapshot.data;
 
-            return Column(
+            return Stack(
               children: [
-                const SizedBox(height: 16),
-                const Text(
-                  "Profile",
-                  style: TextStyle(color: textColor, fontSize: 28),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  // height: 290,
-                  width: 400,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Container(color: backgroundColor),
+                Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Profile",
+                      style: TextStyle(color: textColor, fontSize: 28),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Column(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
+                          CircleAvatar(
+                            radius: 72,
+                            backgroundColor: secondaryColor,
+                            child: CircleAvatar(
+                              radius: 70,
+                              backgroundImage:
+                                  NetworkImage(user!.photoURL ?? ''),
+                            ),
+                          ),
+                          const SizedBox(height: 16.0),
+                          Text(
+                            user.displayName ?? '',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            user.email ?? '',
+                            style: const TextStyle(
+                              color: textLightColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 12.0),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  secondaryColor),
+                              foregroundColor: WidgetStateProperty.all<Color>(
+                                  backgroundColor),
+                            ),
+                            onPressed: widget.state.signOut,
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.0,
+                              ),
+                              child: Text("Sign out"),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          color: foregroundColor,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                  radius: 72,
-                                  backgroundColor: secondaryColor,
-                                  child: CircleAvatar(
-                                    radius: 70,
-                                    backgroundImage:
-                                        NetworkImage(user!.photoURL ?? ''),
-                                  ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      user.displayName ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      user.email ?? '',
-                                      style: const TextStyle(
-                                        color: textLightColor,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                const Text(
-                  "Completed Tours",
-                  style: TextStyle(color: textColor, fontSize: 28),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  height: 270,
-                  width: 400,
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (widget.state.tours.isEmpty)
-                          Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/mascot_2.png",
-                                    width: 196, height: 196),
-                                const SizedBox(height: 16.0),
                                 const Text(
-                                  "You haven't completed any tour yet...",
+                                  "Completed Tours",
                                   style: TextStyle(
-                                      color: textLighterColor,
+                                      color: textLightColor,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                if (widget.state.tours.isNotEmpty)
+                                  Text(
+                                    " (${widget.state.tours.length})",
+                                    style: const TextStyle(
+                                        color: secondaryColor,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                               ],
                             ),
-                          )
-                        else
-                          Column(
-                            children: widget.state.tours
-                                .map((tour) => TourCard(
-                                    tour: tour, user: widget.state.user))
-                                .toList(),
-                          ),
-                      ],
+                            const SizedBox(height: 16),
+                            Expanded(
+                              child: widget.state.tours.isEmpty
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/mascot_2.png",
+                                            width: 250,
+                                            height: 250,
+                                          ),
+                                          const SizedBox(height: 16.0),
+                                          const Text(
+                                            "You haven't completed any tours yet...",
+                                            style: TextStyle(
+                                                color: textLighterColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      // physics: const BouncingScrollPhysics(),
+                                      itemCount: widget.state.tours.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: TourCard(
+                                              tour: widget.state.tours[index],
+                                              user: widget.state.user),
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(secondaryColor),
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(backgroundColor),
-                  ),
-                  onPressed: widget.state.signOut,
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
-                    child: Text("Sign out"),
-                  ),
+                  ],
                 ),
               ],
             );
