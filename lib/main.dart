@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:figenie/model/user.dart' as model_user;
+import 'package:figenie/pages/events/events_controller.dart';
 import 'package:figenie/pages/leaderboard/leaderboard.dart';
 import 'package:figenie/pages/profile/profile_controller.dart';
 import 'package:figenie/pages/profile_setup/profile_setup_controller.dart';
@@ -205,7 +206,7 @@ class NavigationBarController extends GetxController {
   NavigationBarController() {
     screens = [
       const ToursPage(),
-      const roamer_placeholder.Placeholder(),
+      const EventsPage(),
       const OSMapPage(),
       const LeaderboardPage(),
       const ProfilePage()

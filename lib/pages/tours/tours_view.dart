@@ -1,13 +1,10 @@
 import 'package:figenie/consts.dart';
-import 'package:figenie/main.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
 import 'package:figenie/widgets/search_bar.dart' as search;
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class ToursView extends StatelessWidget {
   final ToursController state;

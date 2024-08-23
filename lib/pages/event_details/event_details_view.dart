@@ -1,12 +1,12 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
-import 'package:figenie/pages/tour_details/tour_details_controller.dart';
+import 'package:figenie/pages/event_details/event_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 
-class TourDetailsView extends StatelessWidget {
-  final TourDetailController state;
-  const TourDetailsView(this.state, {super.key});
+class EventDetailsView extends StatelessWidget {
+  final EventDetailController state;
+  const EventDetailsView(this.state, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +17,6 @@ class TourDetailsView extends StatelessWidget {
           children: [
             headerUI(context),
             descriptionUI(),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 8),
-                itemCount: state.tour.keyPoints.length,
-                itemBuilder: (context, index) {
-                  final keyPoint = state.tour.keyPoints[index];
-                  return cardUI(context, keyPoint);
-                },
-              ),
-            ),
           ],
         ),
       ),
@@ -34,10 +24,8 @@ class TourDetailsView extends StatelessWidget {
   }
 
   Widget headerUI(BuildContext context) {
-    final String imageUrl = state.tour.keyPoints.isNotEmpty &&
-            state.tour.keyPoints[0].images.isNotEmpty
-        ? state.tour.keyPoints[0].images[0]
-        : '';
+    final String imageUrl =
+        state.event.image.isNotEmpty ? state.event.image : '';
 
     return SizedBox(
       width: double.infinity,
@@ -71,7 +59,7 @@ class TourDetailsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  state.tour.name,
+                  state.event.name,
                   style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -82,42 +70,6 @@ class TourDetailsView extends StatelessWidget {
                 const SizedBox(height: 8.0),
                 // showOnMapButton(context)
               ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: textColor,
-                    size: 12.0,
-                  ),
-                  const SizedBox(width: 8.0),
-                  Text(
-                    'Number of keypoints: ${state.tour.keyPoints.length}',
-                    style: const TextStyle(
-                      color: textColor,
-                      fontSize: 13.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                'Points: ${state.tour.points}',
-                style: const TextStyle(
-                  color: secondaryDarkColor,
-                  fontSize: 13.0,
-                ),
-              ),
             ),
           ),
         ],
@@ -170,7 +122,7 @@ class TourDetailsView extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-            state.tour.description,
+            state.event.description,
             style: const TextStyle(
               fontSize: 16.0,
               color: textColor,

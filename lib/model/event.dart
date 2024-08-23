@@ -13,6 +13,7 @@ class Event implements Entity {
   EventType type;
   DateTime startDate;
   DateTime endDate;
+  String image;
 
   Event(
       {required this.id,
@@ -22,6 +23,7 @@ class Event implements Entity {
       required this.latitude,
       required this.startDate,
       required this.endDate,
+      required this.image,
       required this.type});
 
   Event.fromJson(Map<String, Object?> json)
@@ -34,6 +36,7 @@ class Event implements Entity {
           latitude: json["latitude"]! as double,
           startDate: (json["startDate"]! as Timestamp).toDate(),
           endDate: (json["endDate"]! as Timestamp).toDate(),
+          image: json["image"] as String,
         );
 
   @override
@@ -46,7 +49,8 @@ class Event implements Entity {
       'longitude': longitude,
       'latitude': latitude,
       'startDate': startDate.toUtc(),
-      'endDate': endDate.toUtc()
+      'endDate': endDate.toUtc(),
+      'image': image,
     };
   }
 }
