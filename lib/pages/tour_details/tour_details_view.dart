@@ -183,6 +183,7 @@ class TourDetailsView extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => Center(
                     child: KeyPointInfo(
+                        shouldAddMargin: true,
                         showCompleteButton: false,
                         keyPoint: keyPoint,
                         onBack: () => Navigator.pop(context),

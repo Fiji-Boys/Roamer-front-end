@@ -8,6 +8,7 @@ class KeyPointInfo extends StatefulWidget {
   final KeyPoint keyPoint;
   final Function onComplete;
   final VoidCallback onBack;
+  final bool shouldAddMargin;
 
   const KeyPointInfo({
     super.key,
@@ -15,6 +16,7 @@ class KeyPointInfo extends StatefulWidget {
     required this.onComplete,
     required this.onBack,
     required this.showCompleteButton,
+    required this.shouldAddMargin,
   });
 
   @override
@@ -27,18 +29,21 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: foregroundColor,
+      color: Colors.black,
       child: Column(
         children: [
           _headerUI(),
           Expanded(
-            child: ListView(children: [
-              _imagesUI(),
-              _audioPlayer(),
-              _descriptionUI(),
-              Visibility(
-                  visible: widget.showCompleteButton, child: _completeButton()),
-            ]),
+            child: Container(
+                color: foregroundColor,
+                child: ListView(children: [
+                  _imagesUI(),
+                  _audioPlayer(),
+                  _descriptionUI(),
+                  Visibility(
+                      visible: widget.showCompleteButton,
+                      child: _completeButton()),
+                ])),
           )
         ],
       ),
@@ -48,6 +53,7 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
   Widget _backButton() {
     return Positioned(
       left: 2.0,
+      top: widget.shouldAddMargin ? 35 : 0,
       child: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: textColor,
@@ -56,27 +62,32 @@ class _KeyPointInfoState extends State<KeyPointInfo> {
   }
 
   Widget _headerUI() {
-    return Stack(children: [
-      Container(
-        padding: const EdgeInsets.all(5.0),
-        width: double.infinity,
-        alignment: Alignment.center,
-        decoration: const BoxDecoration(
-          color: backgroundColor,
-        ),
-        child: DefaultTextStyle(
-          style: const TextStyle(
-            color: textColor,
-            fontSize: 35,
-            fontWeight: FontWeight.bold,
+    return Stack(
+      children: [
+        Container(
+          margin: widget.shouldAddMargin
+              ? const EdgeInsets.only(top: 35)
+              : EdgeInsets.zero,
+          padding: const EdgeInsets.all(5.0),
+          width: double.infinity,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: backgroundColor,
           ),
-          softWrap: true,
-          overflow: TextOverflow.clip,
-          child: Text(widget.keyPoint.name),
+          child: DefaultTextStyle(
+            style: const TextStyle(
+              color: textColor,
+              fontSize: 35,
+              fontWeight: FontWeight.bold,
+            ),
+            softWrap: true,
+            overflow: TextOverflow.clip,
+            child: Text(widget.keyPoint.name),
+          ),
         ),
-      ),
-      _backButton(),
-    ]);
+        _backButton(),
+      ],
+    );
   }
 
   Widget _imagesUI() {

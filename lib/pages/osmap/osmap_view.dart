@@ -171,6 +171,7 @@ class _OSMapViewState extends State<OSMapView> {
                 ? Container()
                 : Center(
                     child: KeyPointInfo(
+                        shouldAddMargin: false,
                         showCompleteButton: true,
                         keyPoint: widget.state.selectedKeypoint!,
                         onComplete: widget.state.completeKeyPoint,
