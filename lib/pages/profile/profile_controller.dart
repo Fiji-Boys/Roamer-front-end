@@ -11,7 +11,10 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => ProfileController();
 }
 
-class ProfileController extends State<ProfilePage> {
+class ProfileController extends State<ProfilePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final UserService _userService = UserService();
   u.User? user;
