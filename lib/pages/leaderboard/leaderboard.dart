@@ -53,6 +53,7 @@ class _LeaderboardPageState extends State<LeaderboardPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final topUsers = _userItems.take(3).toList();
     return Scaffold(
       body: Stack(

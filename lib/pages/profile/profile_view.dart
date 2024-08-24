@@ -103,9 +103,9 @@ class _ProfileViewState extends State<ProfileView> {
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            WidgetStateProperty.all<Color>(secondaryColor),
+                            MaterialStateProperty.all<Color>(secondaryColor),
                         foregroundColor:
-                            WidgetStateProperty.all<Color>(backgroundColor),
+                            MaterialStateProperty.all<Color>(backgroundColor),
                       ),
                       onPressed: widget.state.signOut,
                       child: const Padding(

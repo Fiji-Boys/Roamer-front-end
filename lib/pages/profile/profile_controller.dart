@@ -21,6 +21,7 @@ class ProfileController extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ProfileView(this);
   }
 

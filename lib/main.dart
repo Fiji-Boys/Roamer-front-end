@@ -21,7 +21,6 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/firebase_options.dart';
 import 'package:figenie/pages/osmap/osmap_controller.dart';
 import 'package:figenie/pages/tours/tours_controller.dart';
-import 'package:figenie/widgets/placeholder.dart' as roamer_placeholder;
 
 import 'utils/navigation_menu.dart';
 
