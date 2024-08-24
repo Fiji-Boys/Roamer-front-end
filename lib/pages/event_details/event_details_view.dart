@@ -21,24 +21,6 @@ class EventDetailsView extends StatelessWidget {
             headerUI(context),
             const SizedBox(height: 16.0),
             descriptionUI(),
-            if (isOngoing(state.event))
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                margin: const EdgeInsets.only(top: 8.0),
-                decoration: BoxDecoration(
-                  color: backgroundColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Text(
-                  'Ongoing',
-                  style: TextStyle(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                  ),
-                ),
-              ),
             Container(
               margin: const EdgeInsets.only(top: 16.0, right: 8.0),
               width: 120,
