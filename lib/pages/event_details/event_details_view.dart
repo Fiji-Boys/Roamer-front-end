@@ -5,6 +5,8 @@ import 'package:figenie/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/event.dart';
+
 class EventDetailsView extends StatelessWidget {
   final EventDetailController state;
   const EventDetailsView(this.state, {super.key});
@@ -19,6 +21,24 @@ class EventDetailsView extends StatelessWidget {
             headerUI(context),
             const SizedBox(height: 16.0),
             descriptionUI(),
+            if (isOngoing(state.event))
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                margin: const EdgeInsets.only(top: 8.0),
+                decoration: BoxDecoration(
+                  color: backgroundColor.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  'Ongoing',
+                  style: TextStyle(
+                    color: secondaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ),
             Container(
               margin: const EdgeInsets.only(top: 16.0, right: 8.0),
               width: 120,
@@ -59,16 +79,15 @@ class EventDetailsView extends StatelessWidget {
       child: Stack(
         children: [
           if (imageUrl.isNotEmpty)
-            if (imageUrl.isNotEmpty)
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.7,
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                  ),
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.7,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
                 ),
               ),
+            ),
           // Back arrow button
           Positioned(
             top: 25.0,
@@ -78,24 +97,6 @@ class EventDetailsView extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-            ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  state.event.name,
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8.0),
-              ],
             ),
           ),
           Center(
@@ -118,7 +119,6 @@ class EventDetailsView extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8.0),
               ],
             ),
           ),
@@ -128,18 +128,26 @@ class EventDetailsView extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.timer,
-                    color: textColor,
+                    color: isOngoing(state.event) ? secondaryColor : textColor,
                     size: 12.0,
                   ),
                   const SizedBox(width: 8.0),
                   Text(
-                    DateFormat('HH:mm EEEE, dd.MM.yyyy.')
-                        .format(state.event.startDate.toLocal()),
-                    style: const TextStyle(
-                      color: textColor,
+                    getTimeUntilEvent(
+                        state.event.startDate, state.event.endDate),
+                    style: TextStyle(
+                      color:
+                          isOngoing(state.event) ? secondaryColor : textColor,
                       fontSize: 16.0,
+                      shadows: const [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1.0, 1.0),
+                          blurRadius: 4.0,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -155,8 +163,8 @@ class EventDetailsView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: backgroundColor.withOpacity(0.8), // Slightly lighter background
-        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+        color: backgroundColor.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -181,6 +189,42 @@ class EventDetailsView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool isOngoing(Event event) {
+    final now = DateTime.now();
+    return now.isAfter(event.startDate) && now.isBefore(event.endDate);
+  }
+
+  String getTimeUntilEvent(
+      DateTime eventStartDateTime, DateTime eventEndDateTime) {
+    DateTime now = DateTime.now();
+    Duration timeUntilStart = eventStartDateTime.difference(now);
+    Duration timeUntilEnd = eventEndDateTime.difference(now);
+
+    if (now.isBefore(eventStartDateTime)) {
+      if (timeUntilStart.inDays > 1) {
+        return "Event starts on ${DateFormat('dd.MM.yyyy.').format(eventStartDateTime)}";
+      } else if (timeUntilStart.inDays == 1) {
+        return "Event starts tomorrow";
+      } else if (timeUntilStart.inHours > 0) {
+        return "Starts in ${timeUntilStart.inHours} hours";
+      } else {
+        return "Starts today";
+      }
+    } else if (now.isBefore(eventEndDateTime)) {
+      if (timeUntilEnd.inDays > 1) {
+        return "Ongoing, ends in ${timeUntilEnd.inDays} days";
+      } else if (timeUntilEnd.inDays == 1) {
+        return "Ongoing, ends tomorrow";
+      } else if (timeUntilEnd.inHours > 24) {
+        return "Ongoing, ends in ${timeUntilEnd.inDays} days";
+      } else {
+        return "Ongoing, ends in ${timeUntilEnd.inHours} hours";
+      }
+    } else {
+      return "Ended on ${DateFormat('dd.MM.yyyy.').format(eventEndDateTime)}";
+    }
   }
 
   Widget cardUI(BuildContext context, KeyPoint keyPoint) {
