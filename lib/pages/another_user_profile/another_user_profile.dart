@@ -76,7 +76,7 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                       child: CircleAvatar(
                         radius: 70,
                         backgroundImage:
-                            NetworkImage(widget.user!.profilePicture ?? ''),
+                            NetworkImage(widget.user.profilePicture ?? ''),
                       ),
                     ),
                     const SizedBox(height: 16.0),
@@ -163,7 +163,8 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8),
-                                    child: TourCard(tour: tours[index]),
+                                    child: TourCard(
+                                        tour: tours[index], user: widget.user),
                                   );
                                 },
                               ),

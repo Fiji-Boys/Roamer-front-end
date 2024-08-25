@@ -48,6 +48,7 @@ class ProfileController extends State<ProfilePage> {
     if (_auth.currentUser != null) {
       try {
         user = await userService.getCurrentUser();
+        setState(() {}); // Triggers a UI rebuild
       } catch (e) {
         dev.log(e.toString(), name: "GetCurrentUser");
       }
