@@ -15,10 +15,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 final TourService service = TourService();
-// ignore: non_constant_identifier_names
 final UserService user_service = UserService();
 
-class ProfileController extends State<ProfilePage> {
+class ProfileController extends State<ProfilePage>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  @override
+  bool get wantKeepAlive => true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late List<Tour> tours = <Tour>[];
