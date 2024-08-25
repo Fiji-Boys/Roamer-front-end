@@ -11,7 +11,10 @@ class LeaderboardPage extends StatefulWidget {
   State<LeaderboardPage> createState() => _LeaderboardPageState();
 }
 
-class _LeaderboardPageState extends State<LeaderboardPage> {
+class _LeaderboardPageState extends State<LeaderboardPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final UserService _userService = UserService();
   List<User> _userItems = [];
   List<User> otherUsers = [];
@@ -50,6 +53,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final topUsers = _userItems.take(3).toList();
     return Scaffold(
       body: Stack(
@@ -226,6 +230,17 @@ class ThreeBlocksRow extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(topUsers[1].profilePicture),
                     radius: 33,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AnotherUserProfile(user: topUsers[1]),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -296,6 +311,17 @@ class ThreeBlocksRow extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(topUsers[0].profilePicture),
                     radius: 47,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AnotherUserProfile(user: topUsers[0]),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -364,8 +390,20 @@ class ThreeBlocksRow extends StatelessWidget {
                   backgroundColor: bronzeColor,
                   radius: 35,
                   child: CircleAvatar(
-                      backgroundImage: NetworkImage(topUsers[2].profilePicture),
-                      radius: 33),
+                    backgroundImage: NetworkImage(topUsers[2].profilePicture),
+                    radius: 33,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AnotherUserProfile(user: topUsers[1]),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 3),
                 Text(

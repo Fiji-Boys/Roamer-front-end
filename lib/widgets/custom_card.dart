@@ -7,6 +7,7 @@ class CustomCard extends StatefulWidget {
   final String description;
   final bool showArrow;
   final void Function() onTap;
+  final Color? statusColor; // Optional status color
 
   const CustomCard({
     super.key,
@@ -15,6 +16,7 @@ class CustomCard extends StatefulWidget {
     required this.description,
     required this.onTap,
     required this.showArrow,
+    this.statusColor, // Optional status color
   });
 
   @override
@@ -29,16 +31,42 @@ class _CardState extends State<CustomCard> {
       child: Card(
         color: backgroundColor,
         margin: const EdgeInsets.all(8),
-        child: Row(
+        shape: widget.statusColor != null && widget.statusColor != Colors.grey
+            ? RoundedRectangleBorder(
+                side: BorderSide(
+                  color: widget.statusColor!,
+                  width: 2, // Outline width
+                ),
+                borderRadius: BorderRadius.circular(8.0),
+              )
+            : null,
+        child: Stack(
           children: [
-            imageUI(),
-            Expanded(
-              child: SizedBox(
-                height: 110,
-                child: informationUI(),
-              ),
+            Row(
+              children: [
+                imageUI(),
+                Expanded(
+                  child: SizedBox(
+                    height: 110,
+                    child: informationUI(),
+                  ),
+                ),
+                Visibility(visible: widget.showArrow, child: arrowUI()),
+              ],
             ),
-            Visibility(visible: widget.showArrow, child: arrowUI()),
+            if (widget.statusColor != null)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: widget.statusColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
           ],
         ),
       ),

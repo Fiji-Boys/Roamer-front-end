@@ -76,12 +76,12 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                       child: CircleAvatar(
                         radius: 70,
                         backgroundImage:
-                            NetworkImage(widget.user.profilePicture ?? ''),
+                            NetworkImage(widget.user.profilePicture),
                       ),
                     ),
                     const SizedBox(height: 16.0),
                     Text(
-                      widget.user.username ?? '',
+                      widget.user.username,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -90,11 +90,47 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      widget.user.email ?? '',
+                      widget.user.email,
                       style: const TextStyle(
                         color: textLightColor,
                         fontSize: 16,
                       ),
+                    ),
+                    const SizedBox(height: 12.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 35,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: foregroundColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.user.points.toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const Text(
+                        //   "points",
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     color: textLightColor,
+                        //   ),
+                        // ),
+                      ],
                     ),
                     const SizedBox(height: 12.0),
                   ],
@@ -144,8 +180,8 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                                   children: [
                                     Image.asset(
                                       "assets/mascot_2.png",
-                                      width: 350,
-                                      height: 350,
+                                      width: 296,
+                                      height: 296,
                                     ),
                                     const SizedBox(height: 16.0),
                                     const Text(

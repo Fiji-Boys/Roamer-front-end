@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 import 'package:figenie/model/tour.dart';
+import 'package:figenie/model/user.dart' as u;
 import 'package:figenie/pages/profile/profile_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/services/user_service.dart';
@@ -18,21 +19,28 @@ final TourService service = TourService();
 final UserService user_service = UserService();
 
 class ProfileController extends State<ProfilePage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final UserService _userService = UserService();
+  u.User? user;
 
   late List<Tour> tours = <Tour>[];
 
   User? auth_user;
-  late model_user.User user;
-  final UserService userService = UserService();
 
   String? username;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ProfileView(this);
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    user = null;
+    setState(() {});
   }
 
   Future<void> getCompletedTours(String uid) async {
@@ -46,17 +54,6 @@ class ProfileController extends State<ProfilePage>
     }
   }
 
-  Future<void> setUser() async {
-    if (_auth.currentUser != null) {
-      try {
-        user = await userService.getCurrentUser();
-        setState(() {}); // Triggers a UI rebuild
-      } catch (e) {
-        dev.log(e.toString(), name: "GetCurrentUser");
-      }
-    }
-  }
-
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<void> reloadUser() async {
@@ -66,9 +63,12 @@ class ProfileController extends State<ProfilePage>
     }
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
-    auth_user = null;
+  Future<void> _fetchCurrentUser() async {
+    try {
+      user = await _userService.getCurrentUser();
+      setState(() {});
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   @override
@@ -81,7 +81,6 @@ class ProfileController extends State<ProfilePage>
         getCompletedTours(auth_user!.uid);
       });
     });
-    // getTours();
-    setUser();
+    _fetchCurrentUser();
   }
 }

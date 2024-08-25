@@ -13,7 +13,11 @@ class EventService {
   }
 
   Future<List<Event>> getAll() async {
-    QuerySnapshot querySnapshot = await _events.get();
+    QuerySnapshot querySnapshot = await _events
+        .where('endDate', isGreaterThanOrEqualTo: DateTime.now())
+        .orderBy('startDate')
+        .get();
+
     final List<Event> events = [];
 
     for (var doc in querySnapshot.docs) {
