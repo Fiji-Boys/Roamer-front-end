@@ -2,13 +2,16 @@ import 'package:figenie/consts.dart';
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:figenie/model/user.dart' as model_user;
 
 class TourCard extends StatelessWidget {
+  final model_user.User user;
   final Tour tour;
 
   const TourCard({
     required this.tour,
     super.key,
+    required this.user,
   });
 
   @override
@@ -18,9 +21,7 @@ class TourCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => TourDetailsPage(
-                    tour: tour,
-                  )),
+              builder: (context) => TourDetailsPage(tour: tour, user: user)),
         );
       },
       child: Container(

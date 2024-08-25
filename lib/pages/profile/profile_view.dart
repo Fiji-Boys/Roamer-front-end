@@ -103,9 +103,9 @@ class _ProfileViewState extends State<ProfileView> {
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(secondaryColor),
+                            WidgetStateProperty.all<Color>(secondaryColor),
                         foregroundColor:
-                            MaterialStateProperty.all<Color>(backgroundColor),
+                            WidgetStateProperty.all<Color>(backgroundColor),
                       ),
                       onPressed: widget.state.signOut,
                       child: const Padding(
@@ -182,14 +182,14 @@ class _ProfileViewState extends State<ProfileView> {
                                 itemBuilder: (context, index) {
                                   final tour =
                                       widget.state.user?.completedTours[index];
-                                  if (tour != null) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: TourCard(tour: tour),
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: TourCard(
+                                      tour: tour!,
+                                      user: widget.state.user!,
+                                    ),
+                                  );
                                 },
                               ),
                       ),
