@@ -178,16 +178,23 @@ class TourDetailsView extends StatelessWidget {
       description: keyPoint.description,
       image: keyPoint.images[0],
       onTap: () {
-        Navigator.push(
+        if (state.user.completedTours
+            .any((usersTour) => usersTour.id == state.tour.id)) {
+          Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Center(
-                    child: KeyPointInfo(
-                        shouldAddMargin: true,
-                        showCompleteButton: false,
-                        keyPoint: keyPoint,
-                        onBack: () => Navigator.pop(context),
-                        onComplete: (p0) => {}))));
+              builder: (context) => Center(
+                child: KeyPointInfo(
+                  shouldAddMargin: true,
+                  showCompleteButton: false,
+                  keyPoint: keyPoint,
+                  onBack: () => Navigator.pop(context),
+                  onComplete: (p0) => {},
+                ),
+              ),
+            ),
+          );
+        }
       },
       showArrow: state.user.completedTours
           .any((usersTour) => usersTour.id == state.tour.id),
