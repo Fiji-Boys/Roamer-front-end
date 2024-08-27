@@ -483,7 +483,9 @@ class OSMapController extends State<OSMapPage>
           style: TextStyle(
               fontWeight: FontWeight.bold, color: textColor, fontSize: 20),
         ),
-        content: const Text('Are you sure you want to abandon the tour?'),
+        content: selectedTour!.isCompleted
+            ? const Text('Are you sure you want to close the tour?')
+            : const Text('Are you sure you want to abandon the tour?'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
