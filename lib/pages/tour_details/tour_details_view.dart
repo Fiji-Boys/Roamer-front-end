@@ -1,5 +1,6 @@
 import 'package:figenie/consts.dart';
 import 'package:figenie/model/key_point.dart';
+import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/key_point_info.dart';
 import 'package:figenie/pages/tour_details/tour_details_controller.dart';
 import 'package:figenie/widgets/custom_card.dart';
@@ -174,9 +175,21 @@ class TourDetailsView extends StatelessWidget {
 
   Widget cardUI(BuildContext context, KeyPoint keyPoint) {
     return CustomCard(
-      name: keyPoint.name,
-      description: keyPoint.description,
-      image: keyPoint.images[0],
+      name: (state.tour.type == TourType.secret &&
+              !state.user.completedTours
+                  .any((usersTour) => usersTour.id == state.tour.id))
+          ? ""
+          : keyPoint.name,
+      description: (state.tour.type == TourType.secret &&
+              !state.user.completedTours
+                  .any((usersTour) => usersTour.id == state.tour.id))
+          ? "Complete tour to reveal description"
+          : keyPoint.description,
+      image: (state.tour.type == TourType.secret &&
+              !state.user.completedTours
+                  .any((usersTour) => usersTour.id == state.tour.id))
+          ? "https://i.imgur.com/jibccQd.png"
+          : keyPoint.images[0],
       onTap: () {
         if (state.user.completedTours
             .any((usersTour) => usersTour.id == state.tour.id)) {
