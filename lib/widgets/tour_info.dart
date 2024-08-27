@@ -47,15 +47,13 @@ class _TourInfoState extends State<TourInfo> {
   void didUpdateWidget(covariant TourInfo oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.nextKeyPointIndex != oldWidget.nextKeyPointIndex) {
-      _markAsVisited(widget.nextKeyPointIndex);
+      _markAsVisited(oldWidget.nextKeyPointIndex);
     }
   }
 
   void _markAsVisited(int visitedIndex) {
     setState(() {
-      if (visitedIndex != 0) {
-        visitedKeyPoints[visitedIndex - 1] = true;
-      }
+      visitedKeyPoints[visitedIndex] = true;
     });
   }
 
