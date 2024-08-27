@@ -1,4 +1,3 @@
-import 'dart:developer' as dev;
 import 'package:figenie/model/tour.dart';
 import 'package:figenie/model/user.dart' as u;
 import 'package:figenie/pages/profile/profile_view.dart';
