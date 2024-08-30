@@ -9,7 +9,7 @@ class SearchBar extends StatefulWidget {
   final bool isMap;
   final void Function(Tour) onTourTap;
   final void Function(List<Tour>) updateTours;
-  
+
   const SearchBar({
     super.key,
     required this.controller,
@@ -59,6 +59,7 @@ class _SearchBarState extends State<SearchBar> {
       filteredTours = [];
       shape = 50;
     });
+    widget.updateTours(widget.tours);
     FocusScope.of(context).unfocus();
   }
 

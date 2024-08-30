@@ -21,6 +21,7 @@ import 'package:figenie/model/tour.dart';
 import 'package:figenie/pages/osmap/osmap_view.dart';
 import 'package:figenie/services/tour_service.dart';
 import 'package:figenie/widgets/tour_completion.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class OSMapPage extends StatefulWidget {
   // final String? tourName;
@@ -478,12 +479,24 @@ class OSMapController extends State<OSMapPage>
       builder: (context) => AlertDialog(
         backgroundColor: backgroundColor,
         contentTextStyle: const TextStyle(color: textLightColor, fontSize: 16),
-        title: const Text(
-          'Abandon Tour',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: textColor, fontSize: 20),
-        ),
-        content: const Text('Are you sure you want to abandon the tour?'),
+        title: selectedTour!.isCompleted
+            ? const Text(
+                'Close Tour',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                    fontSize: 20),
+              )
+            : const Text(
+                'Abandon Tour',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                    fontSize: 20),
+              ),
+        content: selectedTour!.isCompleted
+            ? const Text('Are you sure you want to close the tour?')
+            : const Text('Are you sure you want to abandon the tour?'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -529,6 +542,7 @@ class OSMapController extends State<OSMapPage>
   void startTour() {
     if (selectedTour == null) throw Exception("Tour not selected");
     selectedTour!.startTour();
+    WakelockPlus.enable();
     isTourActive = true;
     navBarController.setNavBarVisibility(false);
     hasReachedKeyPoint = false;
@@ -547,6 +561,7 @@ class OSMapController extends State<OSMapPage>
     clearPolylines();
     // getTours();
     getTourMarkers(tours);
+    WakelockPlus.disable();
   }
 
   AnimatedMarker createMarker(

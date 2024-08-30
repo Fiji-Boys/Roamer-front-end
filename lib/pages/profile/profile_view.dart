@@ -194,7 +194,10 @@ class _ProfileViewState extends State<ProfileView> {
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8),
-                                            child: TourCard(tour: tour),
+                                            child: TourCard(
+                                              tour: tour,
+                                              user: widget.state.user!,
+                                            ),
                                           );
                                         }
                                         return const SizedBox.shrink();

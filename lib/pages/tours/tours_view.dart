@@ -66,16 +66,15 @@ class ToursView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TourDetailsPage(
-                tour: tour,
-                // showOnMap: (value) {
-                //   final controller = Get.find<NavigationBarController>();
-                //   controller.setNavBarVisibility(false);
-                //   controller.selectedIndex.value = 2;
+              builder: (context) => TourDetailsPage(tour: tour, user: state.user
+                  // showOnMap: (value) {
+                  //   final controller = Get.find<NavigationBarController>();
+                  //   controller.setNavBarVisibility(false);
+                  //   controller.selectedIndex.value = 2;
 
-                //   Get.toNamed('/map', arguments: value);
-                // },
-              ),
+                  //   Get.toNamed('/map', arguments: value);
+                  // },
+                  ),
             ));
       },
       showArrow: true,

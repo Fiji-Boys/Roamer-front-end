@@ -199,7 +199,8 @@ class _AnotherUserProfileState extends State<AnotherUserProfile> {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8),
-                                    child: TourCard(tour: tours[index]),
+                                    child: TourCard(
+                                        tour: tours[index], user: widget.user),
                                   );
                                 },
                               ),
