@@ -106,9 +106,9 @@ class _ProfileViewState extends State<ProfileView> {
                           const SizedBox(height: 12.0),
                           ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                   secondaryColor),
-                              foregroundColor: MaterialStateProperty.all<Color>(
+                              foregroundColor: WidgetStateProperty.all<Color>(
                                   backgroundColor),
                             ),
                             onPressed: widget.state.signOut,
@@ -170,8 +170,8 @@ class _ProfileViewState extends State<ProfileView> {
                                         children: [
                                           Image.asset(
                                             "assets/mascot_2.png",
-                                            width: 216,
-                                            height: 216,
+                                            width: 138,
+                                            height: 138,
                                           ),
                                           const SizedBox(height: 16.0),
                                           const Text(
